@@ -405,6 +405,12 @@
         }
 
         /* 增加页面留白 */
+/* QS表格语言切换：根据语言隐藏中英文列 */
+.qs-table.hide-en td:nth-child(2), .qs-table.hide-en th:nth-child(2) { display: none; }
+.qs-table.hide-zh td:nth-child(4), .qs-table.hide-zh th:nth-child(4) { display: none; }
+/* U.S.News表格语言切换：根据语言隐藏中英文列 */
+.usnews-table.hide-en td:nth-child(2), .usnews-table.hide-en th:nth-child(2) { display: none; }
+.usnews-table.hide-zh td:nth-child(3), .usnews-table.hide-zh th:nth-child(3) { display: none; }
         .section-padding {
             padding: 8rem 0;
         }
@@ -459,7 +465,18 @@
                     <a href="#cases" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">成功案例</a>
                     <a href="#team" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">专家团队</a>
                     <a href="#process" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">服务流程</a>
-                    <a href="#testimonials" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">学员评价</a>
+                    <div class="relative group">
+                        <button class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300 flex items-center space-x-1">
+                            <span>实用工具</span>
+                            <svg class="w-4 h-4 text-gray-700 group-hover:text-yellow-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="absolute left-0 top-full z-50 w-64 bg-white shadow-xl border border-gray-200 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200">
+    <button @click="openTool('qs2026')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">2025-2026 QS世界大学排名</button>
+    <button @click="openTool('usnews2026')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">2026 U.S.News美国大学排名</button>
+</div>
+                    </div>
                     
                     <!-- 语言切换 -->
                     <div class="flex items-center space-x-3 text-sm font-elegant">
@@ -493,7 +510,18 @@
                 <a href="#cases" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">成功案例</a>
                 <a href="#team" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">专家团队</a>
                 <a href="#process" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">服务流程</a>
-                <a href="#testimonials" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">学员评价</a>
+                <div x-data="{ open: false }" class="border border-gray-200 rounded-lg">
+                    <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2 text-gray-700 hover:text-yellow-600 font-elegant font-medium">
+                        <span>实用工具</span>
+                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div x-show="open" x-transition class="mt-2 space-y-2 pl-3 pb-3">
+                        <button @click="openTool('qs2026'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">2025-2026 QS世界大学排名</button>
+                        <button @click="openTool('usnews2026'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">2026 U.S.News美国大学排名</button>
+                    </div>
+                </div>
                 <button @click="openModal('contact')" class="w-full luxury-button text-white py-4 rounded-full font-medium">
                     联系我们
                 </button>
@@ -719,7 +747,17 @@
             </div>
 
             <!-- 服务流程预览 -->
-            <div class="luxury-card rounded-3xl p-12 shadow-2xl" data-aos="fade-up">
+            <div class="mt-10 text-center" data-aos="fade-up">
+    <button @click="openTool('qs2026')" class="luxury-button text-white px-8 py-3 rounded-full font-elegant">
+        使用工具：2025-2026 QS世界大学排名
+    </button>
+    <div class="mt-4">
+        <button @click="openTool('usnews2026')" class="luxury-button text-white px-8 py-3 rounded-full font-elegant">
+            使用工具：2026 U.S.News美国大学排名
+        </button>
+    </div>
+</div>
+<div class="luxury-card rounded-3xl p-12 shadow-2xl" data-aos="fade-up">
                 <h3 class="text-2xl font-luxury font-bold text-center text-gray-800 mb-12 tracking-wide">我们的服务流程</h3>
                 <div class="grid md:grid-cols-4 gap-8">
                     <div class="text-center">
@@ -944,91 +982,274 @@
     <!-- 豪华分割线 -->
     <div class="luxury-divider"></div>
 
-    <!-- 学员评价 -->
-    <section id="testimonials" class="section-padding bg-gray-50">
+    <!-- 实用工具 -->
+    <div x-show="toolsModalOpen" x-transition @click.self="closeTool()" @keydown.escape.window="closeTool()" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center" style="display: none;">
+    <section id="tools" x-show="toolsModalOpen" class="relative w-[96%] max-w-7xl max-h-[92vh] overflow-y-auto rounded-3xl bg-white shadow-2xl p-8">
         <div class="container mx-auto">
-            <div class="text-center mb-20" data-aos="fade-up">
-                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">学员评价</h2>
-                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">
-                    听听我们成功学员的真实声音
-                </p>
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">实用工具</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">权威数据与智能工具，助力精准申请</p>
             </div>
 
-            <!-- 评价轮播 -->
-            <div class="relative max-w-7xl mx-auto" x-data="{ currentTestimonial: 0 }">
-                <div class="overflow-hidden rounded-3xl">
-                    <div class="flex transition-transform duration-700 ease-in-out" 
-                         :style="`transform: translateX(-${currentTestimonial * 100}%)`">
-                        <template x-for="(testimonial, index) in testimonials" :key="testimonial.id">
-                            <div class="w-full flex-shrink-0">
-                                <div class="testimonial-luxury p-12 md:p-16 mx-6 rounded-3xl">
-                                    <div class="grid md:grid-cols-3 gap-12 items-center">
-                                        <!-- 学员照片 -->
-                                        <div class="text-center">
-                                            <img :src="testimonial.avatar" :alt="testimonial.name" 
-                                                 class="w-40 h-40 rounded-full mx-auto mb-6 object-cover border-4 border-yellow-200 shadow-lg">
-                                            <h4 class="font-luxury font-bold text-gray-800 text-xl mb-2" x-text="testimonial.name"></h4>
-                                            <p class="text-yellow-600 font-elegant font-semibold text-lg" x-text="testimonial.school"></p>
-                                            <p class="text-gray-600 font-serif" x-text="testimonial.major"></p>
-                                        </div>
-                                        
-                                        <!-- 评价内容 -->
-                                        <div class="md:col-span-2">
-                                            <!-- 星级评分 -->
-                                            <div class="flex mb-6">
-                                                <template x-for="i in 5">
-                                                    <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                                    </svg>
-                                                </template>
-                                            </div>
-                                            
-                                            <blockquote class="text-xl text-gray-700 font-serif italic mb-8 leading-relaxed" x-text="testimonial.content"></blockquote>
-                                            
-                                            <!-- 录取结果 -->
-                                            <div class="luxury-card p-6 rounded-xl">
-                                                <p class="font-elegant font-semibold text-gray-600 mb-4">录取结果：</p>
-                                                <div class="flex flex-wrap gap-3">
-                                                    <template x-for="offer in testimonial.offers">
-                                                        <span class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-elegant font-semibold px-4 py-2 rounded-full" 
-                                                              x-text="offer"></span>
-                                                    </template>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+            <!-- QS 2025-2026 World University Rankings -->
+            <div id="tools-qs2026" x-show="activeTool === 'qs2026'" class="luxury-card rounded-3xl p-8 shadow-2xl" data-aos="fade-up">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800 tracking-wide">2025-2026 QS世界大学排名</h3>
+                        <p class="text-gray-600 font-serif">QS World University Rankings</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-sm font-elegant font-bold px-4 py-2 rounded-full">2026</span>
+                        <button @click="closeTool()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 font-serif" :aria-label="language === 'zh' ? '关闭' : 'Close'" x-text="language === 'zh' ? '关闭' : 'Close'"></button>
                     </div>
                 </div>
 
-                <!-- 导航按钮 -->
-                <button @click="currentTestimonial = currentTestimonial > 0 ? currentTestimonial - 1 : testimonials.length - 1"
-                        class="absolute left-6 top-1/2 transform -translate-y-1/2 luxury-card rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </button>
-                
-                <button @click="currentTestimonial = currentTestimonial < testimonials.length - 1 ? currentTestimonial + 1 : 0"
-                        class="absolute right-6 top-1/2 transform                        -translate-y-1/2 luxury-card rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
+                <div class="overflow-x-auto">
+                    <table class="qs-table min-w-full text-left" :class="language === 'zh' ? 'hide-en' : 'hide-zh'">
+                        <thead class="bg-yellow-50">
+                            <tr>
+                                <th class="px-4 py-3 text-gray-700 font-elegant">排名</th>
+                                <th class="px-4 py-3 text-gray-700 font-elegant">学校名称</th>
+                                <th class="px-4 py-3 text-gray-700 font-elegant">总分</th>
+                                <th class="px-4 py-3 text-gray-700 font-elegant" x-show="language === 'zh'">中文名</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr><td class="px-4 py-3">1</td><td class="px-4 py-3">Massachusetts Institute of Technology (MIT)</td><td class="px-4 py-3">100</td><td class="px-4 py-3" x-show="language === 'zh'">麻省理工学院</td></tr>
+                            <tr><td class="px-4 py-3">2</td><td class="px-4 py-3">Imperial College London</td><td class="px-4 py-3">99.4</td><td class="px-4 py-3" x-show="language === 'zh'">帝国理工学院</td></tr>
+                            <tr><td class="px-4 py-3">3</td><td class="px-4 py-3">Stanford University</td><td class="px-4 py-3">98.9</td><td class="px-4 py-3" x-show="language === 'zh'">斯坦福大学</td></tr>
+                            <tr><td class="px-4 py-3">4</td><td class="px-4 py-3">University of Oxford</td><td class="px-4 py-3">97.9</td><td class="px-4 py-3" x-show="language === 'zh'">牛津大学</td></tr>
+                            <tr><td class="px-4 py-3">5</td><td class="px-4 py-3">Harvard University</td><td class="px-4 py-3">97.7</td><td class="px-4 py-3" x-show="language === 'zh'">哈佛大学</td></tr>
+                            <tr><td class="px-4 py-3">6</td><td class="px-4 py-3">University of Cambridge</td><td class="px-4 py-3">97.2</td><td class="px-4 py-3" x-show="language === 'zh'">剑桥大学</td></tr>
+                            <tr><td class="px-4 py-3">7</td><td class="px-4 py-3">ETH Zurich (Swiss Federal Institute of Technology)</td><td class="px-4 py-3">96.7</td><td class="px-4 py-3" x-show="language === 'zh'">苏黎世联邦理工学院</td></tr>
+                            <tr><td class="px-4 py-3">8</td><td class="px-4 py-3">National University of Singapore (NUS)</td><td class="px-4 py-3">95.9</td><td class="px-4 py-3" x-show="language === 'zh'">新加坡国立大学</td></tr>
+                            <tr><td class="px-4 py-3">9</td><td class="px-4 py-3">UCL (University College London)</td><td class="px-4 py-3">95.8</td><td class="px-4 py-3" x-show="language === 'zh'">伦敦大学学院</td></tr>
+                            <tr><td class="px-4 py-3">10</td><td class="px-4 py-3">California Institute of Technology (Caltech)</td><td class="px-4 py-3">94.3</td><td class="px-4 py-3" x-show="language === 'zh'">加州理工学院</td></tr>
+                            <tr><td class="px-4 py-3">11</td><td class="px-4 py-3">The University of Hong Kong</td><td class="px-4 py-3">94.2</td><td class="px-4 py-3" x-show="language === 'zh'">香港大学</td></tr>
+                            <tr><td class="px-4 py-3">12</td><td class="px-4 py-3">Nanyang Technological University, Singapore (NTU Singapore)</td><td class="px-4 py-3">93.7</td><td class="px-4 py-3" x-show="language === 'zh'">南洋理工学院</td></tr>
+                            <tr><td class="px-4 py-3">13</td><td class="px-4 py-3">University of Chicago</td><td class="px-4 py-3">93</td><td class="px-4 py-3" x-show="language === 'zh'">芝加哥大学</td></tr>
+                            <tr><td class="px-4 py-3">14</td><td class="px-4 py-3">Peking University</td><td class="px-4 py-3">92.6</td><td class="px-4 py-3" x-show="language === 'zh'">北京大学</td></tr>
+                            <tr><td class="px-4 py-3">15</td><td class="px-4 py-3">University of Pennsylvania</td><td class="px-4 py-3">92.5</td><td class="px-4 py-3" x-show="language === 'zh'">宾夕法尼亚大学</td></tr>
+                            <tr><td class="px-4 py-3">16</td><td class="px-4 py-3">Cornell University</td><td class="px-4 py-3">91.6</td><td class="px-4 py-3" x-show="language === 'zh'">康奈尔大学</td></tr>
+                            <tr><td class="px-4 py-3">17</td><td class="px-4 py-3">Tsinghua University</td><td class="px-4 py-3">91.2</td><td class="px-4 py-3" x-show="language === 'zh'">清华大学</td></tr>
+                            <tr><td class="px-4 py-3">17</td><td class="px-4 py-3">University of California, Berkeley (UCB)</td><td class="px-4 py-3">91.2</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学伯克利分校</td></tr>
+                            <tr><td class="px-4 py-3">19</td><td class="px-4 py-3">The University of Melbourne</td><td class="px-4 py-3">90.8</td><td class="px-4 py-3" x-show="language === 'zh'">墨尔本大学</td></tr>
+                            <tr><td class="px-4 py-3">20</td><td class="px-4 py-3">The University of New South Wales</td><td class="px-4 py-3">90.7</td><td class="px-4 py-3" x-show="language === 'zh'">新南威尔士大学</td></tr>
+                            <tr><td class="px-4 py-3">21</td><td class="px-4 py-3">Yale University</td><td class="px-4 py-3">90.4</td><td class="px-4 py-3" x-show="language === 'zh'">耶鲁大学</td></tr>
+                            <tr><td class="px-4 py-3">22</td><td class="px-4 py-3">école Polytechnique Fédérale de Lausanne</td><td class="px-4 py-3">90.2</td><td class="px-4 py-3" x-show="language === 'zh'">洛桑联邦理工学院</td></tr>
+                            <tr><td class="px-4 py-3">22</td><td class="px-4 py-3">Technical University of Munich</td><td class="px-4 py-3">90.2</td><td class="px-4 py-3" x-show="language === 'zh'">慕尼黑工业大学</td></tr>
+                            <tr><td class="px-4 py-3">24</td><td class="px-4 py-3">Johns Hopkins University</td><td class="px-4 py-3">89.7</td><td class="px-4 py-3" x-show="language === 'zh'">约翰斯·霍普金斯大学</td></tr>
+                            <tr><td class="px-4 py-3">25</td><td class="px-4 py-3">Princeton University</td><td class="px-4 py-3">89.4</td><td class="px-4 py-3" x-show="language === 'zh'">普林斯顿大学</td></tr>
+                            <tr><td class="px-4 py-3">25</td><td class="px-4 py-3">The University of Sydney</td><td class="px-4 py-3">89.4</td><td class="px-4 py-3" x-show="language === 'zh'">悉尼大学</td></tr>
+                            <tr><td class="px-4 py-3">27</td><td class="px-4 py-3">McGill University</td><td class="px-4 py-3">88.9</td><td class="px-4 py-3" x-show="language === 'zh'">麦吉尔大学</td></tr>
+                            <tr><td class="px-4 py-3">28</td><td class="px-4 py-3">PSL University</td><td class="px-4 py-3">88.6</td><td class="px-4 py-3" x-show="language === 'zh'">巴黎文理研究大学</td></tr>
+                            <tr><td class="px-4 py-3">29</td><td class="px-4 py-3">University of Toronto</td><td class="px-4 py-3">88.5</td><td class="px-4 py-3" x-show="language === 'zh'">多伦多大学</td></tr>
+                            <tr><td class="px-4 py-3">30</td><td class="px-4 py-3">Fudan University</td><td class="px-4 py-3">88.4</td><td class="px-4 py-3" x-show="language === 'zh'">复旦大学</td></tr>
+                            <tr><td class="px-4 py-3">31</td><td class="px-4 py-3">King's College London (KCL)</td><td class="px-4 py-3">88.3</td><td class="px-4 py-3" x-show="language === 'zh'">伦敦国王学院</td></tr>
+                            <tr><td class="px-4 py-3">32</td><td class="px-4 py-3">Australian National University</td><td class="px-4 py-3">87.4</td><td class="px-4 py-3" x-show="language === 'zh'">澳大利亚国立大学</td></tr>
+                            <tr><td class="px-4 py-3">32</td><td class="px-4 py-3">The Chinese University of Hong Kong</td><td class="px-4 py-3">87.4</td><td class="px-4 py-3" x-show="language === 'zh'">香港中文大学</td></tr>
+                            <tr><td class="px-4 py-3">34</td><td class="px-4 py-3">University of Edinburgh</td><td class="px-4 py-3">87.2</td><td class="px-4 py-3" x-show="language === 'zh'">爱丁堡大学</td></tr>
+                            <tr><td class="px-4 py-3">35</td><td class="px-4 py-3">The University of Manchester</td><td class="px-4 py-3">86.4</td><td class="px-4 py-3" x-show="language === 'zh'">曼彻斯特大学</td></tr>
+                            <tr><td class="px-4 py-3">36</td><td class="px-4 py-3">Monash University</td><td class="px-4 py-3">85.8</td><td class="px-4 py-3" x-show="language === 'zh'">蒙纳士大学</td></tr>
+                            <tr><td class="px-4 py-3">36</td><td class="px-4 py-3">The University of Tokyo</td><td class="px-4 py-3">85.8</td><td class="px-4 py-3" x-show="language === 'zh'">东京大学</td></tr>
+                            <tr><td class="px-4 py-3">38</td><td class="px-4 py-3">Columbia University</td><td class="px-4 py-3">85.6</td><td class="px-4 py-3" x-show="language === 'zh'">哥伦比亚大学</td></tr>
+                            <tr><td class="px-4 py-3">38</td><td class="px-4 py-3">Seoul National University</td><td class="px-4 py-3">85.6</td><td class="px-4 py-3" x-show="language === 'zh'">首尔国立大学</td></tr>
+                            <tr><td class="px-4 py-3">40</td><td class="px-4 py-3">University of British Columbia</td><td class="px-4 py-3">85.5</td><td class="px-4 py-3" x-show="language === 'zh'">不列颠哥伦比亚大学</td></tr>
+                            <tr><td class="px-4 py-3">41</td><td class="px-4 py-3">Institut Polytechnique de Paris</td><td class="px-4 py-3">85.4</td><td class="px-4 py-3" x-show="language === 'zh'">巴黎理工学院</td></tr>
+                            <tr><td class="px-4 py-3">42</td><td class="px-4 py-3">Northwestern University</td><td class="px-4 py-3">85.1</td><td class="px-4 py-3" x-show="language === 'zh'">西北大学</td></tr>
+                            <tr><td class="px-4 py-3">42</td><td class="px-4 py-3">The University of Queensland</td><td class="px-4 py-3">85.1</td><td class="px-4 py-3" x-show="language === 'zh'">昆士兰大学</td></tr>
+                            <tr><td class="px-4 py-3">44</td><td class="px-4 py-3">The Hong Kong University of Science and Technology</td><td class="px-4 py-3">84.8</td><td class="px-4 py-3" x-show="language === 'zh'">香港科技大学</td></tr>
+                            <tr><td class="px-4 py-3">45</td><td class="px-4 py-3">University of Michigan-Ann Arbor</td><td class="px-4 py-3">84.7</td><td class="px-4 py-3" x-show="language === 'zh'">密西根大学安娜堡校区</td></tr>
+                            <tr><td class="px-4 py-3">46</td><td class="px-4 py-3">University of California, Los Angeles (UCLA)</td><td class="px-4 py-3">84.4</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学洛杉矶分校</td></tr>
+                            <tr><td class="px-4 py-3">47</td><td class="px-4 py-3">Delft University of Technology</td><td class="px-4 py-3">84.3</td><td class="px-4 py-3" x-show="language === 'zh'">代尔夫特理工大学</td></tr>
+                            <tr><td class="px-4 py-3">47</td><td class="px-4 py-3">Shanghai Jiao Tong University</td><td class="px-4 py-3">84.3</td><td class="px-4 py-3" x-show="language === 'zh'">上海交通大学</td></tr>
+                            <tr><td class="px-4 py-3">49</td><td class="px-4 py-3">Zhejiang University</td><td class="px-4 py-3">84</td><td class="px-4 py-3" x-show="language === 'zh'">浙江大学</td></tr>
+                            <tr><td class="px-4 py-3">50</td><td class="px-4 py-3">Yonsei University</td><td class="px-4 py-3">82.9</td><td class="px-4 py-3" x-show="language === 'zh'">延世大学</td></tr>
+                            <tr><td class="px-4 py-3">51</td><td class="px-4 py-3">University of Bristol</td><td class="px-4 py-3">82.5</td><td class="px-4 py-3" x-show="language === 'zh'">布里斯托大学</td></tr>
+                            <tr><td class="px-4 py-3">52</td><td class="px-4 py-3">Carnegie Mellon University</td><td class="px-4 py-3">82.3</td><td class="px-4 py-3" x-show="language === 'zh'">卡内基梅隆大学</td></tr>
+                            <tr><td class="px-4 py-3">53</td><td class="px-4 py-3">The University of Amsterdam</td><td class="px-4 py-3">81.5</td><td class="px-4 py-3" x-show="language === 'zh'">阿姆斯特丹大学</td></tr>
+                            <tr><td class="px-4 py-3">54</td><td class="px-4 py-3">The Hong Kong Polytechnic University</td><td class="px-4 py-3">81.2</td><td class="px-4 py-3" x-show="language === 'zh'">香港理工大学</td></tr>
+                            <tr><td class="px-4 py-3">55</td><td class="px-4 py-3">New York University (NYU)</td><td class="px-4 py-3">81.1</td><td class="px-4 py-3" x-show="language === 'zh'">纽约大学</td></tr>
+                            <tr><td class="px-4 py-3">56</td><td class="px-4 py-3">London School of Economics and Political Science (LSE)</td><td class="px-4 py-3">80.5</td><td class="px-4 py-3" x-show="language === 'zh'">伦敦政治经济学院</td></tr>
+                            <tr><td class="px-4 py-3">57</td><td class="px-4 py-3">Kyoto University</td><td class="px-4 py-3">80.2</td><td class="px-4 py-3" x-show="language === 'zh'">京都大学</td></tr>
+                            <tr><td class="px-4 py-3">58</td><td class="px-4 py-3">Ludwig-Maximilians-Universit?t München</td><td class="px-4 py-3">80.1</td><td class="px-4 py-3" x-show="language === 'zh'">慕尼黑大学</td></tr>
+                            <tr><td class="px-4 py-3">58</td><td class="px-4 py-3">Universiti Malaya (UM)</td><td class="px-4 py-3">80.1</td><td class="px-4 py-3" x-show="language === 'zh'">马来亚大学</td></tr>
+                            <tr><td class="px-4 py-3">60</td><td class="px-4 py-3">KU Leuven</td><td class="px-4 py-3">79.7</td><td class="px-4 py-3" x-show="language === 'zh'">鲁汶大学</td></tr>
+                            <tr><td class="px-4 py-3">61</td><td class="px-4 py-3">Korea University</td><td class="px-4 py-3">79.6</td><td class="px-4 py-3" x-show="language === 'zh'">高丽大学</td></tr>
+                            <tr><td class="px-4 py-3">62</td><td class="px-4 py-3">Duke University</td><td class="px-4 py-3">79</td><td class="px-4 py-3" x-show="language === 'zh'">杜克大学</td></tr>
+                            <tr><td class="px-4 py-3">63</td><td class="px-4 py-3">City University of Hong Kong</td><td class="px-4 py-3">78.9</td><td class="px-4 py-3" x-show="language === 'zh'">香港城市大学</td></tr>
+                            <tr><td class="px-4 py-3">63</td><td class="px-4 py-3">National Taiwan University (NTU)</td><td class="px-4 py-3">78.9</td><td class="px-4 py-3" x-show="language === 'zh'">台湾大学</td></tr>
+                            <tr><td class="px-4 py-3">65</td><td class="px-4 py-3">The University of Auckland</td><td class="px-4 py-3">77.5</td><td class="px-4 py-3" x-show="language === 'zh'">奥克兰大学</td></tr>
+                            <tr><td class="px-4 py-3">66</td><td class="px-4 py-3">University of California, San Diego (UCSD)</td><td class="px-4 py-3">76.9</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学圣地亚哥分校</td></tr>
+                            <tr><td class="px-4 py-3">67</td><td class="px-4 py-3">King Fahd University of Petroleum & Minerals</td><td class="px-4 py-3">76.5</td><td class="px-4 py-3" x-show="language === 'zh'">法赫德法国石油和矿物大学</td></tr>
+                            <tr><td class="px-4 py-3">68</td><td class="px-4 py-3">University of Texas at Austin</td><td class="px-4 py-3">76.4</td><td class="px-4 py-3" x-show="language === 'zh'">?德克萨斯大学奥斯汀分校</td></tr>
+                            <tr><td class="px-4 py-3">69</td><td class="px-4 py-3">Brown University</td><td class="px-4 py-3">76.2</td><td class="px-4 py-3" x-show="language === 'zh'">布朗大学</td></tr>
+                            <tr><td class="px-4 py-3">70</td><td class="px-4 py-3">Université Paris-Saclay</td><td class="px-4 py-3">75.9</td><td class="px-4 py-3" x-show="language === 'zh'">巴黎萨克雷大学</td></tr>
+                            <tr><td class="px-4 py-3">70</td><td class="px-4 py-3">University of Illinois at Urbana-Champaign</td><td class="px-4 py-3">75.9</td><td class="px-4 py-3" x-show="language === 'zh'">伊利诺伊大学香槟分校</td></tr>
+                            <tr><td class="px-4 py-3">72</td><td class="px-4 py-3">Lund University</td><td class="px-4 py-3">75.7</td><td class="px-4 py-3" x-show="language === 'zh'">隆德大学</td></tr>
+                            <tr><td class="px-4 py-3">72</td><td class="px-4 py-3">Sorbonne University (merged from Paris IV & UPMC)</td><td class="px-4 py-3">75.7</td><td class="px-4 py-3" x-show="language === 'zh'">索邦大学</td></tr>
+                            <tr><td class="px-4 py-3">74</td><td class="px-4 py-3">The University of Warwick</td><td class="px-4 py-3">75.2</td><td class="px-4 py-3" x-show="language === 'zh'">华威大学</td></tr>
+                            <tr><td class="px-4 py-3">75</td><td class="px-4 py-3">Trinity College Dublin, The University of Dublin</td><td class="px-4 py-3">73.9</td><td class="px-4 py-3" x-show="language === 'zh'">都柏林三一学院</td></tr>
+                            <tr><td class="px-4 py-3">76</td><td class="px-4 py-3">University of Birmingham</td><td class="px-4 py-3">73.8</td><td class="px-4 py-3" x-show="language === 'zh'">伯明翰大学</td></tr>
+                            <tr><td class="px-4 py-3">77</td><td class="px-4 py-3">The University of Western Australia</td><td class="px-4 py-3">73.7</td><td class="px-4 py-3" x-show="language === 'zh'">西澳大学</td></tr>
+                            <tr><td class="px-4 py-3">78</td><td class="px-4 py-3">KTH Royal Institute of Technology</td><td class="px-4 py-3">73.6</td><td class="px-4 py-3" x-show="language === 'zh'">皇家理工学院</td></tr>
+                            <tr><td class="px-4 py-3">79</td><td class="px-4 py-3">University of Glasgow</td><td class="px-4 py-3">73.4</td><td class="px-4 py-3" x-show="language === 'zh'">格拉斯哥大学</td></tr>
+                            <tr><td class="px-4 py-3">80</td><td class="px-4 py-3">Ruprecht-Karls-Universit?t Heidelberg</td><td class="px-4 py-3">73</td><td class="px-4 py-3" x-show="language === 'zh'">海德堡大学</td></tr>
+                            <tr><td class="px-4 py-3">81</td><td class="px-4 py-3">University of Washington</td><td class="px-4 py-3">72.7</td><td class="px-4 py-3" x-show="language === 'zh'">华盛顿大学</td></tr>
+                            <tr><td class="px-4 py-3">82</td><td class="px-4 py-3">Adelaide University</td><td class="px-4 py-3">72.6</td><td class="px-4 py-3" x-show="language === 'zh'">阿德莱德大学</td></tr>
+                            <tr><td class="px-4 py-3">82</td><td class="px-4 py-3">Pennsylvania State University</td><td class="px-4 py-3">72.6</td><td class="px-4 py-3" x-show="language === 'zh'">宾夕法尼亚州立大学</td></tr>
+                            <tr><td class="px-4 py-3">84</td><td class="px-4 py-3">Universidad de Buenos Aires</td><td class="px-4 py-3">72.3</td><td class="px-4 py-3" x-show="language === 'zh'">布宜诺斯艾利斯大学</td></tr>
+                            <tr><td class="px-4 py-3">85</td><td class="px-4 py-3">Tokyo Institute of Technology</td><td class="px-4 py-3">72.1</td><td class="px-4 py-3" x-show="language === 'zh'">东京工业大学</td></tr>
+                            <tr><td class="px-4 py-3">86</td><td class="px-4 py-3">University of Leeds</td><td class="px-4 py-3">72</td><td class="px-4 py-3" x-show="language === 'zh'">利兹大学</td></tr>
+                            <tr><td class="px-4 py-3">87</td><td class="px-4 py-3">University of Southampton</td><td class="px-4 py-3">71.2</td><td class="px-4 py-3" x-show="language === 'zh'">南安普顿大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Boston University</td><td class="px-4 py-3">71.1</td><td class="px-4 py-3" x-show="language === 'zh'">波士顿大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Freie Universit?t Berlin</td><td class="px-4 py-3">71.1</td><td class="px-4 py-3" x-show="language === 'zh'">柏林自由大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Purdue University</td><td class="px-4 py-3">71.1</td><td class="px-4 py-3" x-show="language === 'zh'">普渡大学</td></tr>
+                            <tr><td class="px-4 py-3">91</td><td class="px-4 py-3">The University of Osaka</td><td class="px-4 py-3">71</td><td class="px-4 py-3" x-show="language === 'zh'">大阪大学</td></tr>
+                            <tr><td class="px-4 py-3">92</td><td class="px-4 py-3">The University of Sheffield</td><td class="px-4 py-3">70.9</td><td class="px-4 py-3" x-show="language === 'zh'">谢菲尔德大学</td></tr>
+                            <tr><td class="px-4 py-3">93</td><td class="px-4 py-3">Uppsala University</td><td class="px-4 py-3">70.3</td><td class="px-4 py-3" x-show="language === 'zh'">乌普萨拉大学</td></tr>
+                            <tr><td class="px-4 py-3">94</td><td class="px-4 py-3">Durham University</td><td class="px-4 py-3">70.1</td><td class="px-4 py-3" x-show="language === 'zh'">杜伦大学</td></tr>
+                            <tr><td class="px-4 py-3">94</td><td class="px-4 py-3">University of Alberta</td><td class="px-4 py-3">70.1</td><td class="px-4 py-3" x-show="language === 'zh'">阿尔伯塔大学</td></tr>
+                            <tr><td class="px-4 py-3">96</td><td class="px-4 py-3">University of Technology Sydney</td><td class="px-4 py-3">69.9</td><td class="px-4 py-3" x-show="language === 'zh'">悉尼科技大学</td></tr>
+                            <tr><td class="px-4 py-3">97</td><td class="px-4 py-3">The University of Nottingham</td><td class="px-4 py-3">69.4</td><td class="px-4 py-3" x-show="language === 'zh'">诺丁汉大学</td></tr>
+                            <tr><td class="px-4 py-3">98</td><td class="px-4 py-3">Karlsruhe Institute of Technology (KIT)</td><td class="px-4 py-3">69.1</td><td class="px-4 py-3" x-show="language === 'zh'">卡尔斯鲁厄理工学院</td></tr>
+                            <tr><td class="px-4 py-3">98</td><td class="px-4 py-3">Politecnico di Milano</td><td class="px-4 py-3">69.1</td><td class="px-4 py-3" x-show="language === 'zh'">米兰理工大学</td></tr>
+                            <tr><td class="px-4 py-3">100</td><td class="px-4 py-3">University of Zurich (UZH)</td><td class="px-4 py-3">68.5</td><td class="px-4 py-3" x-show="language === 'zh'">苏黎世大学</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                <!-- 指示器 -->
-                <div class="flex justify-center mt-12 space-x-3">
-                    <template x-for="(testimonial, index) in testimonials" :key="index">
-                        <button @click="currentTestimonial = index"
-                                :class="currentTestimonial === index ? 'bg-yellow-600' : 'bg-gray-300'"
-                                class="w-4 h-4 rounded-full transition-all duration-300 hover:scale-110"></button>
-                    </template>
+            <div id="tools-usnews2026" x-show="activeTool === 'usnews2026'" class="luxury-card rounded-3xl p-8 shadow-2xl" data-aos="fade-up">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800 tracking-wide">2026 U.S.News美国大学排名</h3>
+                        <p class="text-gray-600 font-serif">2026 U.S.News Best National University Rankings</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-sm font-elegant font-bold px-4 py-2 rounded-full">2026</span>
+                        <button @click="closeTool()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 font-serif" :aria-label="language === 'zh' ? '关闭' : 'Close'" x-text="language === 'zh' ? '关闭' : 'Close'"></button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="usnews-table min-w-full text-left" :class="language === 'zh' ? 'hide-en' : 'hide-zh'">
+                        <thead class="bg-yellow-50">
+                            <tr>
+                                <th class="px-4 py-3 text-gray-700 font-elegant">排名</th>
+                                <th class="px-4 py-3 text-gray-700 font-elegant">学校名称</th>
+                                <th class="px-4 py-3 text-gray-700 font-elegant" x-show="language === 'zh'">中文名</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr><td class="px-4 py-3">1</td><td class="px-4 py-3">Princeton University</td><td class="px-4 py-3" x-show="language === 'zh'">普林斯顿大学</td></tr>
+                            <tr><td class="px-4 py-3">2</td><td class="px-4 py-3">Massachusetts Institute of Technology</td><td class="px-4 py-3" x-show="language === 'zh'">麻省理工学院</td></tr>
+                            <tr><td class="px-4 py-3">3</td><td class="px-4 py-3">Harvard University</td><td class="px-4 py-3" x-show="language === 'zh'">哈佛大学</td></tr>
+                            <tr><td class="px-4 py-3">4</td><td class="px-4 py-3">Stanford University</td><td class="px-4 py-3" x-show="language === 'zh'">斯坦福大学</td></tr>
+                            <tr><td class="px-4 py-3">4</td><td class="px-4 py-3">Yale University</td><td class="px-4 py-3" x-show="language === 'zh'">耶鲁大学</td></tr>
+                            <tr><td class="px-4 py-3">6</td><td class="px-4 py-3">University of Chicago</td><td class="px-4 py-3" x-show="language === 'zh'">芝加哥大学</td></tr>
+                            <tr><td class="px-4 py-3">7</td><td class="px-4 py-3">Duke University</td><td class="px-4 py-3" x-show="language === 'zh'">杜克大学</td></tr>
+                            <tr><td class="px-4 py-3">7</td><td class="px-4 py-3">Johns Hopkins University</td><td class="px-4 py-3" x-show="language === 'zh'">约翰霍普金斯大学</td></tr>
+                            <tr><td class="px-4 py-3">7</td><td class="px-4 py-3">Northwestern University</td><td class="px-4 py-3" x-show="language === 'zh'">西北大学</td></tr>
+                            <tr><td class="px-4 py-3">7</td><td class="px-4 py-3">University of Pennsylvania</td><td class="px-4 py-3" x-show="language === 'zh'">宾夕法尼亚大学</td></tr>
+                            <tr><td class="px-4 py-3">11</td><td class="px-4 py-3">California Institute of Technology</td><td class="px-4 py-3" x-show="language === 'zh'">加州理工学院</td></tr>
+                            <tr><td class="px-4 py-3">12</td><td class="px-4 py-3">Cornell University</td><td class="px-4 py-3" x-show="language === 'zh'">康奈尔大学</td></tr>
+                            <tr><td class="px-4 py-3">13</td><td class="px-4 py-3">Brown University</td><td class="px-4 py-3" x-show="language === 'zh'">布朗大学</td></tr>
+                            <tr><td class="px-4 py-3">13</td><td class="px-4 py-3">Dartmouth College</td><td class="px-4 py-3" x-show="language === 'zh'">达特茅斯学院</td></tr>
+                            <tr><td class="px-4 py-3">15</td><td class="px-4 py-3">Columbia University in the City of New York</td><td class="px-4 py-3" x-show="language === 'zh'">哥伦比亚大学</td></tr>
+                            <tr><td class="px-4 py-3">15</td><td class="px-4 py-3">University of California-Berkeley</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学伯克利分校</td></tr>
+                            <tr><td class="px-4 py-3">17</td><td class="px-4 py-3">Rice University</td><td class="px-4 py-3" x-show="language === 'zh'">莱斯大学</td></tr>
+                            <tr><td class="px-4 py-3">17</td><td class="px-4 py-3">University of California-Los Angeles</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学洛杉矶分校</td></tr>
+                            <tr><td class="px-4 py-3">17</td><td class="px-4 py-3">Vanderbilt University</td><td class="px-4 py-3" x-show="language === 'zh'">范德堡大学</td></tr>
+                            <tr><td class="px-4 py-3">20</td><td class="px-4 py-3">Carnegie Mellon University</td><td class="px-4 py-3" x-show="language === 'zh'">卡内基梅隆大学</td></tr>
+                            <tr><td class="px-4 py-3">20</td><td class="px-4 py-3">University of Michigan-Ann Arbor</td><td class="px-4 py-3" x-show="language === 'zh'">密歇根大学安娜堡分校</td></tr>
+                            <tr><td class="px-4 py-3">20</td><td class="px-4 py-3">University of Notre Dame</td><td class="px-4 py-3" x-show="language === 'zh'">圣母大学</td></tr>
+                            <tr><td class="px-4 py-3">20</td><td class="px-4 py-3">Washington University in St Louis</td><td class="px-4 py-3" x-show="language === 'zh'">圣路易斯华盛顿大学</td></tr>
+                            <tr><td class="px-4 py-3">24</td><td class="px-4 py-3">Emory University</td><td class="px-4 py-3" x-show="language === 'zh'">埃默里大学</td></tr>
+                            <tr><td class="px-4 py-3">24</td><td class="px-4 py-3">Georgetown University</td><td class="px-4 py-3" x-show="language === 'zh'">乔治敦大学</td></tr>
+                            <tr><td class="px-4 py-3">26</td><td class="px-4 py-3">University of North Carolina at Chapel Hill</td><td class="px-4 py-3" x-show="language === 'zh'">北卡罗来纳大学教堂山分校</td></tr>
+                            <tr><td class="px-4 py-3">26</td><td class="px-4 py-3">University of Virginia-Main Campus</td><td class="px-4 py-3" x-show="language === 'zh'">弗吉尼亚大学</td></tr>
+                            <tr><td class="px-4 py-3">28</td><td class="px-4 py-3">University of Southern California</td><td class="px-4 py-3" x-show="language === 'zh'">南加州大学</td></tr>
+                            <tr><td class="px-4 py-3">29</td><td class="px-4 py-3">University of California-San Diego</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学圣地亚哥分校</td></tr>
+                            <tr><td class="px-4 py-3">30</td><td class="px-4 py-3">University of Florida</td><td class="px-4 py-3" x-show="language === 'zh'">佛罗里达大学</td></tr>
+                            <tr><td class="px-4 py-3">30</td><td class="px-4 py-3">The University of Texas at Austin</td><td class="px-4 py-3" x-show="language === 'zh'">德克萨斯大学奥斯汀分校</td></tr>
+                            <tr><td class="px-4 py-3">32</td><td class="px-4 py-3">Georgia Institute of Technology-Main Campus</td><td class="px-4 py-3" x-show="language === 'zh'">佐治亚理工学院</td></tr>
+                            <tr><td class="px-4 py-3">32</td><td class="px-4 py-3">New York University</td><td class="px-4 py-3" x-show="language === 'zh'">纽约大学</td></tr>
+                            <tr><td class="px-4 py-3">32</td><td class="px-4 py-3">University of California-Davis</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学戴维斯分校</td></tr>
+                            <tr><td class="px-4 py-3">32</td><td class="px-4 py-3">University of California-Irvine</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学尔湾分校</td></tr>
+                            <tr><td class="px-4 py-3">36</td><td class="px-4 py-3">Boston College</td><td class="px-4 py-3" x-show="language === 'zh'">波士顿学院</td></tr>
+                            <tr><td class="px-4 py-3">36</td><td class="px-4 py-3">Tufts University</td><td class="px-4 py-3" x-show="language === 'zh'">塔夫茨大学</td></tr>
+                            <tr><td class="px-4 py-3">36</td><td class="px-4 py-3">University of Illinois at Urbana-Champaign</td><td class="px-4 py-3" x-show="language === 'zh'">伊利诺伊大学香槟分校</td></tr>
+                            <tr><td class="px-4 py-3">36</td><td class="px-4 py-3">University of Wisconsin-Madison</td><td class="px-4 py-3" x-show="language === 'zh'">威斯康星大学麦迪逊分校</td></tr>
+                            <tr><td class="px-4 py-3">40</td><td class="px-4 py-3">University of California-Santa Barbara</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学圣塔芭芭拉分校</td></tr>
+                            <tr><td class="px-4 py-3">41</td><td class="px-4 py-3">Ohio State University-Main Campus</td><td class="px-4 py-3" x-show="language === 'zh'">俄亥俄州立大学</td></tr>
+                            <tr><td class="px-4 py-3">42</td><td class="px-4 py-3">Boston University</td><td class="px-4 py-3" x-show="language === 'zh'">波士顿大学</td></tr>
+                            <tr><td class="px-4 py-3">42</td><td class="px-4 py-3">Rutgers University-New Brunswick</td><td class="px-4 py-3" x-show="language === 'zh'">罗格斯大学</td></tr>
+                            <tr><td class="px-4 py-3">42</td><td class="px-4 py-3">University of Maryland-College Park</td><td class="px-4 py-3" x-show="language === 'zh'">马里兰大学帕克分校</td></tr>
+                            <tr><td class="px-4 py-3">42</td><td class="px-4 py-3">University of Washington-Seattle Campus</td><td class="px-4 py-3" x-show="language === 'zh'">华盛顿大学</td></tr>
+                            <tr><td class="px-4 py-3">46</td><td class="px-4 py-3">Lehigh University</td><td class="px-4 py-3" x-show="language === 'zh'">里海大学</td></tr>
+                            <tr><td class="px-4 py-3">46</td><td class="px-4 py-3">Northeastern University</td><td class="px-4 py-3" x-show="language === 'zh'">东北大学</td></tr>
+                            <tr><td class="px-4 py-3">46</td><td class="px-4 py-3">Purdue University-Main Campus</td><td class="px-4 py-3" x-show="language === 'zh'">普渡大学</td></tr>
+                            <tr><td class="px-4 py-3">46</td><td class="px-4 py-3">University of Georgia</td><td class="px-4 py-3" x-show="language === 'zh'">佐治亚大学</td></tr>
+                            <tr><td class="px-4 py-3">46</td><td class="px-4 py-3">University of Rochester</td><td class="px-4 py-3" x-show="language === 'zh'">罗切斯特大学</td></tr>
+                            <tr><td class="px-4 py-3">51</td><td class="px-4 py-3">Case Western Reserve University</td><td class="px-4 py-3" x-show="language === 'zh'">凯斯西储大学</td></tr>
+                            <tr><td class="px-4 py-3">51</td><td class="px-4 py-3">Florida State University</td><td class="px-4 py-3" x-show="language === 'zh'">佛罗里达州立大学</td></tr>
+                            <tr><td class="px-4 py-3">51</td><td class="px-4 py-3">Texas A & M University-College Station</td><td class="px-4 py-3" x-show="language === 'zh'">德州农工大学</td></tr>
+                            <tr><td class="px-4 py-3">51</td><td class="px-4 py-3">Virginia Polytechnic Institute and State University</td><td class="px-4 py-3" x-show="language === 'zh'">弗吉尼亚理工</td></tr>
+                            <tr><td class="px-4 py-3">51</td><td class="px-4 py-3">Wake Forest University</td><td class="px-4 py-3" x-show="language === 'zh'">维克森林大学</td></tr>
+                            <tr><td class="px-4 py-3">51</td><td class="px-4 py-3">College of William and Mary</td><td class="px-4 py-3" x-show="language === 'zh'">威廉玛丽学院</td></tr>
+                            <tr><td class="px-4 py-3">57</td><td class="px-4 py-3">University of California-Merced</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学默塞德分校</td></tr>
+                            <tr><td class="px-4 py-3">57</td><td class="px-4 py-3">Villanova University</td><td class="px-4 py-3" x-show="language === 'zh'">维拉诺瓦大学</td></tr>
+                            <tr><td class="px-4 py-3">59</td><td class="px-4 py-3">George Washington University</td><td class="px-4 py-3" x-show="language === 'zh'">乔治华盛顿大学</td></tr>
+                            <tr><td class="px-4 py-3">59</td><td class="px-4 py-3">The Pennsylvania State University</td><td class="px-4 py-3" x-show="language === 'zh'">宾夕法尼亚州立大学</td></tr>
+                            <tr><td class="px-4 py-3">59</td><td class="px-4 py-3">Santa Clara University</td><td class="px-4 py-3" x-show="language === 'zh'">圣克拉拉大学</td></tr>
+                            <tr><td class="px-4 py-3">59</td><td class="px-4 py-3">Stony Brook University</td><td class="px-4 py-3" x-show="language === 'zh'">纽约州立大学石溪分校</td></tr>
+                            <tr><td class="px-4 py-3">59</td><td class="px-4 py-3">University of Minnesota-Twin Cities</td><td class="px-4 py-3" x-show="language === 'zh'">明尼苏达大学双城分校</td></tr>
+                            <tr><td class="px-4 py-3">64</td><td class="px-4 py-3">Michigan State University</td><td class="px-4 py-3" x-show="language === 'zh'">密歇根州立大学</td></tr>
+                            <tr><td class="px-4 py-3">64</td><td class="px-4 py-3">North Carolina State University at Raleigh</td><td class="px-4 py-3" x-show="language === 'zh'">北卡罗来纳州立大学</td></tr>
+                            <tr><td class="px-4 py-3">64</td><td class="px-4 py-3">Rensselaer Polytechnic Institute</td><td class="px-4 py-3" x-show="language === 'zh'">伦斯勒理工学院</td></tr>
+                            <tr><td class="px-4 py-3">64</td><td class="px-4 py-3">University of Massachusetts-Amherst</td><td class="px-4 py-3" x-show="language === 'zh'">马萨诸塞大学安姆斯特分校</td></tr>
+                            <tr><td class="px-4 py-3">64</td><td class="px-4 py-3">University of Miami</td><td class="px-4 py-3" x-show="language === 'zh'">迈阿密大学</td></tr>
+                            <tr><td class="px-4 py-3">69</td><td class="px-4 py-3">Brandeis University</td><td class="px-4 py-3" x-show="language === 'zh'">布兰迪斯大学</td></tr>
+                            <tr><td class="px-4 py-3">69</td><td class="px-4 py-3">Tulane University of Louisiana</td><td class="px-4 py-3" x-show="language === 'zh'">杜兰大学</td></tr>
+                            <tr><td class="px-4 py-3">69</td><td class="px-4 py-3">University of Connecticut</td><td class="px-4 py-3" x-show="language === 'zh'">康涅狄格大学</td></tr>
+                            <tr><td class="px-4 py-3">69</td><td class="px-4 py-3">University of Pittsburgh-Pittsburgh Campus</td><td class="px-4 py-3" x-show="language === 'zh'">匹兹堡大学</td></tr>
+                            <tr><td class="px-4 py-3">73</td><td class="px-4 py-3">Binghamton University</td><td class="px-4 py-3" x-show="language === 'zh'">纽约州立大学宾汉姆顿分校</td></tr>
+                            <tr><td class="px-4 py-3">73</td><td class="px-4 py-3">Indiana University-Bloomington</td><td class="px-4 py-3" x-show="language === 'zh'">印第安纳大学伯明顿分校</td></tr>
+                            <tr><td class="px-4 py-3">75</td><td class="px-4 py-3">Clemson University</td><td class="px-4 py-3" x-show="language === 'zh'">克莱姆森大学</td></tr>
+                            <tr><td class="px-4 py-3">75</td><td class="px-4 py-3">Rutgers University-Newark</td><td class="px-4 py-3" x-show="language === 'zh'">罗格斯大学纽瓦克分校</td></tr>
+                            <tr><td class="px-4 py-3">75</td><td class="px-4 py-3">Syracuse University</td><td class="px-4 py-3" x-show="language === 'zh'">雪城大学</td></tr>
+                            <tr><td class="px-4 py-3">75</td><td class="px-4 py-3">University at Buffalo</td><td class="px-4 py-3" x-show="language === 'zh'">纽约州立大学布法罗分校</td></tr>
+                            <tr><td class="px-4 py-3">75</td><td class="px-4 py-3">University of California-Riverside</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学河滨分校</td></tr>
+                            <tr><td class="px-4 py-3">80</td><td class="px-4 py-3">Colorado School of Mines</td><td class="px-4 py-3" x-show="language === 'zh'">科罗拉多矿业大学</td></tr>
+                            <tr><td class="px-4 py-3">80</td><td class="px-4 py-3">Drexel University</td><td class="px-4 py-3" x-show="language === 'zh'">德雷塞尔大学</td></tr>
+                            <tr><td class="px-4 py-3">80</td><td class="px-4 py-3">New Jersey Institute of Technology</td><td class="px-4 py-3" x-show="language === 'zh'">新泽西理工大学</td></tr>
+                            <tr><td class="px-4 py-3">80</td><td class="px-4 py-3">Stevens Institute of Technology</td><td class="px-4 py-3" x-show="language === 'zh'">史蒂文斯理工学院</td></tr>
+                            <tr><td class="px-4 py-3">84</td><td class="px-4 py-3">Pepperdine University</td><td class="px-4 py-3" x-show="language === 'zh'">佩珀代因大学</td></tr>
+                            <tr><td class="px-4 py-3">84</td><td class="px-4 py-3">University of Illinois at Chicago</td><td class="px-4 py-3" x-show="language === 'zh'">伊利诺伊大学芝加哥分校</td></tr>
+                            <tr><td class="px-4 py-3">84</td><td class="px-4 py-3">Worcester Polytechnic Institute</td><td class="px-4 py-3" x-show="language === 'zh'">伍斯特理工学院</td></tr>
+                            <tr><td class="px-4 py-3">84</td><td class="px-4 py-3">Yeshiva University</td><td class="px-4 py-3" x-show="language === 'zh'">叶史瓦大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">American University</td><td class="px-4 py-3" x-show="language === 'zh'">美利坚大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Baylor University</td><td class="px-4 py-3" x-show="language === 'zh'">贝勒大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Howard University</td><td class="px-4 py-3" x-show="language === 'zh'">霍华德大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Marquette University</td><td class="px-4 py-3" x-show="language === 'zh'">马凯特大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Rochester Institute of Technology</td><td class="px-4 py-3" x-show="language === 'zh'">罗切斯特理工</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">Southern Methodist University</td><td class="px-4 py-3" x-show="language === 'zh'">南卫理公会大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">University of California-Santa Cruz</td><td class="px-4 py-3" x-show="language === 'zh'">加州大学圣克鲁兹分校</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">University of Delaware</td><td class="px-4 py-3" x-show="language === 'zh'">特拉华大学</td></tr>
+                            <tr><td class="px-4 py-3">88</td><td class="px-4 py-3">University of South Florida-Main Campus</td><td class="px-4 py-3" x-show="language === 'zh'">南佛罗里达大学</td></tr>
+                            <tr><td class="px-4 py-3">97</td><td class="px-4 py-3">Florida International University</td><td class="px-4 py-3" x-show="language === 'zh'">佛罗里达国际大学</td></tr>
+                            <tr><td class="px-4 py-3">97</td><td class="px-4 py-3">Fordham University</td><td class="px-4 py-3" x-show="language === 'zh'">福特汉姆大学</td></tr>
+                            <tr><td class="px-4 py-3">97</td><td class="px-4 py-3">Rutgers University--Camden</td><td class="px-4 py-3" x-show="language === 'zh'">罗格斯大学卡姆登分校</td></tr>
+                            <tr><td class="px-4 py-3">97</td><td class="px-4 py-3">Texas Christian University</td><td class="px-4 py-3" x-show="language === 'zh'">德克萨斯基督教大学</td></tr>
+                            <tr><td class="px-4 py-3">97</td><td class="px-4 py-3">University of Colorado Boulder</td><td class="px-4 py-3" x-show="language === 'zh'">科罗拉多大学博尔德分校</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </section>
+    </div>
 
     <!-- 联系我们 -->
     <section class="section-padding bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white relative overflow-hidden">
@@ -1301,6 +1522,8 @@
                 loading: true,
                 mobileMenuOpen: false,
                 modalOpen: null,
+                toolsModalOpen: false,
+                activeTool: null,
                 language: 'zh',
                 caseFilter: 'all',
                 translationsCache: new WeakMap(),
@@ -1975,6 +2198,18 @@
 
                 closeModal() {
                     this.modalOpen = null;
+                    document.body.style.overflow = 'auto';
+                },
+
+                // 工具弹窗控制
+                openTool(tool) {
+                    this.activeTool = tool;
+                    this.toolsModalOpen = true;
+                    document.body.style.overflow = 'hidden';
+                },
+                closeTool() {
+                    this.toolsModalOpen = false;
+                    this.activeTool = null;
                     document.body.style.overflow = 'auto';
                 },
 
