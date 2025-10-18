@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>引力坊教育科技 | 专业留学咨询与教育培训</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 豪华感字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1A2938;
+            --accent-color: #D4AF37;
+            --gold-light: #F4E4BC;
+            --gold-dark: #B8860B;
+            --light-bg: #FEFCF7;
+            --text-primary: #1A2938;
+            --text-secondary: #6B7280;
+            --luxury-gold: #C9A961;
+        }
+        
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+        
+        .font-luxury {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .font-elegant {
+            font-family: 'Cinzel', serif;
+        }
+        
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* 视频背景样式 */
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(26, 41, 56, 0.85) 0%,
+                rgba(212, 175, 55, 0.15) 50%,
+                rgba(26, 41, 56, 0.9) 100%
+            );
+            z-index: -1;
+        }
+
+        /* 豪华线条分割 */
+        .luxury-divider {
+            position: relative;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            margin: 6rem 0;
+        }
+
+        .luxury-divider::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--light-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+        }
+
+        .luxury-divider::after {
+            content: '◆';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--accent-color);
+            font-size: 16px;
+            background: var(--light-bg);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        /* 高端卡片样式 */
+        .luxury-card {
+            background: linear-gradient(145deg, #ffffff 0%, #fefcf7 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(212, 175, 55, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .luxury-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .luxury-card:hover::before {
+            left: 100%;
+        }
+
+        .luxury-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 20px 60px rgba(212, 175, 55, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        /* 学校水印样式 */
+        .school-watermark {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(212, 175, 55, 0.1);
+            z-index: 1;
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 豪华按钮样式 */
+        .luxury-button {
+            /* 两端一致的金色渐变 */
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--gold-light) 50%, var(--accent-color) 100%);
+            border: 2px solid transparent;
+            color: #ffffff; /* 保证按钮文字与图标为白色 */
+            position: relative;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .luxury-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .luxury-button:hover::before {
+            left: 100%;
+        }
+
+        /* 统计数字豪华样式 */
+        .luxury-stat {
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-color), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);
+        }
+
+        /* 导航栏固定背景 - 修复透明问题 */
+        .nav-fixed {
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 导航栏默认背景 */
+        nav {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* 移动端下滑隐藏导航栏 */
+        .nav-hidden {
+            transform: translateY(-100%);
+        }
+
+        /* 豪华时间轴 */
+        .luxury-timeline {
+            position: relative;
+        }
+
+        .luxury-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-color), var(--gold-light), var(--accent-color));
+            transform: translateX(-50%);
+        }
+
+        .timeline-node {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border: 4px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3);
+            z-index: 10;
+        }
+
+        /* 豪华评价卡片 */
+        .testimonial-luxury {
+            background: linear-gradient(145deg, #ffffff 0%, #fefcf7 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            position: relative;
+        }
+
+        .testimonial-luxury::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 30px;
+            font-size: 4rem;
+            color: var(--accent-color);
+            font-family: 'Playfair Display', serif;
+            opacity: 0.3;
+        }
+
+        /* 响应式视频 */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh; /* 动态视口高度，改善部分安卓设备的显示 */
+            overflow: hidden;
+        }
+
+        /* 修复移动端英雄区域被遮挡问题 */
+        .hero-content {
+            padding-top: 100px;
+        }
+
+        @media (max-width: 768px) {
+            html { font-size: 13px; }
+            .video-container {
+                height: 60vh;
+                height: 60dvh;
+                overflow: visible;
+            }
+
+            /* 缩小移动端整体排版 */
+            h1 { font-size: 1.75rem !important; line-height: 1.3; }
+            h2 { font-size: 1.5rem !important; line-height: 1.3; }
+            h3 { font-size: 1.25rem !important; line-height: 1.3; }
+            p { font-size: 0.95rem; }
+
+            /* 英雄区域微调 */
+            .hero-content {
+                padding-top: 120px;
+            }
+            .hero-content h1 { font-size: 2rem !important; }
+            .hero-content p { font-size: 0.95rem; }
+            .hero-content .grid { gap: 1rem !important; }
+            .hero-content .flex { gap: 0.75rem !important; }
+
+            /* 计数器与标签 */
+            .counter { font-size: 1.75rem !important; }
+            .counter + div { font-size: 0.9rem !important; }
+
+            /* 移动端按钮与卡片缩小 */
+            .luxury-button { font-size: 0.95rem !important; padding: 0.75rem 1rem !important; }
+            .luxury-card { padding: 1rem !important; }
+            .testimonial-luxury { padding: 1rem !important; }
+
+            /* 移动端菜单文字缩小 */
+            .lg\:hidden.bg-white a { font-size: 0.95rem; padding: 0.5rem 0; }
+
+            /* 水印位置与大小 */
+            .school-watermark {
+                font-size: 1.6rem;
+                top: 8px;
+                right: 8px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            html { font-size: 12.5px; }
+        }
+
+        /* 自定义滚动条 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        /* 加载动画 */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(212, 175, 55, 0.3);
+            border-top: 3px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 浮动元素动画 */
+        .floating-element {
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(1deg); }
+            50% { transform: translateY(-10px) rotate(-1deg); }
+            75% { transform: translateY(-15px) rotate(0.5deg); }
+        }
+
+        /* 模态框动画 */
+        .modal-enter {
+            animation: modalEnter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        @keyframes modalEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* 成功案例卡片底部金色条统一样式 */
+        .case-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-card .gold-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--accent-color), var(--gold-light), var(--accent-color));
+        }
+
+        /* 增加页面留白 */
+        .section-padding {
+            padding: 8rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .section-padding {
+                padding: 3rem 0;
+            }
+        }
+
+        /* 容器最大宽度和留白 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body x-data="appData()" x-init="init()">
+    <!-- 页面加载动画 -->
+    <div x-show="loading" x-transition class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-6"></div>
+            <p class="text-gray-600 font-luxury text-lg">正在加载精彩内容...</p>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-40">
+        <div class="container mx-auto py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <img src="https://s2.loli.net/2025/10/17/TpXWuZnvyVQ96rf.png" 
+                         alt="引力坊教育科技" 
+                         class="h-12 w-auto">
+                </div>
+
+                <!-- 桌面端菜单 -->
+                <div class="hidden lg:flex items-center space-x-10">
+                    <a href="#about" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">关于我们</a>
+                    <a href="#services" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">核心服务</a>
+                    <a href="#cases" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">成功案例</a>
+                    <a href="#team" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">专家团队</a>
+                    <a href="#process" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">服务流程</a>
+                    <a href="#testimonials" class="text-gray-700 hover:text-yellow-600 font-elegant font-medium tracking-wide transition-all duration-300">学员评价</a>
+                    
+                    <!-- 语言切换 -->
+                    <div class="flex items-center space-x-3 text-sm font-elegant">
+                        <button @click="setLanguage('zh')" 
+                                :class="[language === 'zh' ? 'font-bold text-yellow-600' : 'text-gray-700']">中</button>
+                        <span class="text-gray-400">/</span>
+                        <button @click="setLanguage('en')" 
+                                :class="[language === 'en' ? 'font-bold text-yellow-600' : 'text-gray-700']">EN</button>
+                    </div>
+                    
+                    <button @click="openModal('contact')" 
+                            class="luxury-button text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        联系我们
+                    </button>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen; document.body.classList.toggle('menu-open', mobileMenuOpen)" class="lg:hidden p-2">
+                    <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 移动端菜单 -->
+        <div x-show="mobileMenuOpen" x-transition class="lg:hidden bg-white shadow-lg border-t border-gray-200">
+            <div class="px-6 py-8 space-y-6">
+                <a href="#about" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">关于我们</a>
+                <a href="#services" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">核心服务</a>
+                <a href="#cases" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">成功案例</a>
+                <a href="#team" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">专家团队</a>
+                <a href="#process" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">服务流程</a>
+                <a href="#testimonials" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-yellow-600 font-elegant font-medium">学员评价</a>
+                <button @click="openModal('contact')" class="w-full luxury-button text-white py-4 rounded-full font-medium">
+                    联系我们
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 - 16:9视频背景 -->
+    <section class="relative video-container flex items-center justify-center overflow-hidden">
+        <!-- 视频背景 -->
+        <video autoplay muted loop class="hero-video">
+            <source src="https://cdn.pixabay.com/video/2019/02/16/21472-318172509.mp4" type="video/mp4">
+        </video>
+        
+        <!-- 视频遮罩 -->
+        <div class="hero-overlay"></div>
+
+        <!-- 背景装饰元素 -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-32 h-32 border border-yellow-400/20 rounded-full floating-element"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-24 h-24 border border-yellow-400/10 rounded-full floating-element" style="animation-delay: -3s;"></div>
+        </div>
+
+        <div class="container mx-auto text-center relative z-10 hero-content">
+            <div data-aos="fade-up" data-aos-duration="1200">
+                <h1 class="text-5xl md:text-7xl font-luxury font-black text-white mb-8 leading-tight tracking-wide">
+                    名校密码<br>
+                    <span class="luxury-stat text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">破译</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed font-serif">
+                    我们不仅是向导，更是您在全球顶尖名校激烈竞争中的绝对优势
+                </p>
+                
+                <!-- 统计数据 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 max-w-5xl mx-auto">
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                        <div class="text-3xl md:text-5xl font-luxury font-black luxury-stat counter" x-text="stats.students">0</div>
+                        <div class="text-white/80 text-lg font-elegant tracking-wider">成功学员</div>
+                    </div>
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                        <div class="text-3xl md:text-5xl font-luxury font-black luxury-stat counter" x-text="stats.schools">0</div>
+                        <div class="text-white/80 text-lg font-elegant tracking-wider">合作院校</div>
+                    </div>
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="400">
+                        <div class="text-3xl md:text-5xl font-luxury font-black luxury-stat counter" x-text="stats.rate + '%'">0%</div>
+                        <div class="text-white/80 text-lg font-elegant tracking-wider">录取成功率</div>
+                    </div>
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="500">
+                        <div class="text-3xl md:text-5xl font-luxury font-black luxury-stat counter" x-text="stats.experience">0</div>
+                        <div class="text-white/80 text-lg font-elegant tracking-wider">年专业经验</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <button @click="openModal('contact')" 
+                            class="luxury-button text-white px-12 py-5 rounded-full text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                        立即开始规划
+                        <svg class="inline-block ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- 豪华分割线 -->
+    <div class="luxury-divider"></div>
+
+    <!-- 关于我们 -->
+    <section id="about" class="section-padding bg-white">
+        <div class="container mx-auto">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">认识您的专属顾问</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif leading-relaxed">
+                    作为世界顶尖院校的前高级顾问，我们拥有多年将雄心壮志转变为录取通知书的丰富经验
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+                <!-- 左侧图片 -->
+                <div class="relative" data-aos="fade-right">
+                    <div class="absolute -top-6 -left-6 w-full h-full border-2 border-yellow-600/30 rounded-lg transform rotate-2"></div>
+                    <div class="absolute -bottom-6 -right-6 w-full h-full border-2 border-yellow-600/20 rounded-lg transform -rotate-1"></div>
+                    <img src="https://s2.loli.net/2025/10/17/TyMv2olG9kPanqQ.png" 
+                         alt="Mira Shi" 
+                         class="relative z-10 w-full rounded-lg shadow-2xl">
+                </div>
+
+                <!-- 右侧内容 -->
+                <div data-aos="fade-left">
+                    <h3 class="text-3xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">Mira Shi</h3>
+                    <p class="text-lg text-gray-700 mb-8 leading-relaxed font-serif">
+                        融合了莱斯大学的强大技术背景与对教育领域的深刻理解，为您提供无与伦比的申请优势。
+                    </p>
+
+                    <!-- 特色标签 -->
+                    <div class="grid grid-cols-2 gap-6 mb-10">
+                        <div class="luxury-card p-6 rounded-xl text-center">
+                            <div class="text-yellow-600 font-luxury font-black text-2xl mb-2">500+</div>
+                            <div class="text-gray-600 font-elegant">成功案例</div>
+                        </div>
+                        <div class="luxury-card p-6 rounded-xl text-center">
+                            <div class="text-yellow-600 font-luxury font-black text-2xl mb-2">98%</div>
+                            <div class="text-gray-600 font-elegant">满意度</div>
+                        </div>
+                        <div class="luxury-card p-6 rounded-xl text-center">
+                            <div class="text-yellow-600 font-luxury font-black text-2xl mb-2">50+</div>
+                            <div class="text-gray-600 font-elegant">合作院校</div>
+                        </div>
+                        <div class="luxury-card p-6 rounded-xl text-center">
+                            <div class="text-yellow-600 font-luxury font-black text-2xl mb-2">8年</div>
+                            <div class="text-gray-600 font-elegant">专业经验</div>
+                        </div>
+                    </div>
+
+                    <!-- 专业背景 -->
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4" x-show="true" x-transition>
+                            <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            
+                            <span class="text-gray-700 text-lg font-serif">深厚学术背景：莱斯大学电子工程本硕，技术功底扎实</span>
+                        </div>
+                        <div class="flex items-start space-x-4" x-show="true" x-transition>
+                            <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span class="text-gray-700 text-lg font-serif">顶尖留学专家：G5、常春藤等全球顶尖名校资深顾问</span>
+                        </div>
+                        <div class="flex items-start space-x-4" x-show="true" x-transition>
+                            <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span class="text-gray-700 text-lg font-serif">个性化规划：融合科技与教育经验，量身定制成功策略</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 豪华分割线 -->
+    <div class="luxury-divider"></div>
+
+    <!-- 核心服务 -->
+    <section id="services" class="section-padding bg-gray-50">
+        <div class="container mx-auto">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">您的战略工具箱</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">
+                    多维并进，成就卓越教育之路
+                </p>
+            </div>
+
+            <!-- 服务卡片 -->
+            <div class="grid md:grid-cols-3 gap-10 mb-20">
+                <div class="luxury-card p-10 rounded-2xl" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-yellow-600 mb-8">
+                        <svg width="64" height="64" viewBox="0 0 64 64" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <title>海外升学咨询</title>
+                            <!-- 极简地球：外圈 + 一条纬线 + 一条经线 -->
+                            <circle cx="32" cy="32" r="16"/>
+                            <path d="M16 32h32M32 16v32"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">海外升学咨询</h3>
+                    <p class="text-gray-600 mb-8 text-lg font-serif leading-relaxed">从个人陈述到面试准备，为全球顶尖大学的申请提供专家级指导</p>
+                    <ul class="space-y-4 text-gray-600 font-serif">
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>院校选择与定位</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>申请材料优化</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>面试辅导培训</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>签证申请指导</li>
+                    </ul>
+                </div>
+
+                <div class="luxury-card p-10 rounded-2xl" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-yellow-600 mb-8">
+                        <svg width="64" height="64" viewBox="0 0 64 64" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <title>精英教育培训</title>
+                            <!-- 极简奖章：圆章 + 两条绶带 -->
+                            <circle cx="32" cy="20" r="10"/>
+                            <path d="M26 30l-6 10M38 30l6 10"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">精英教育培训</h3>
+                    <p class="text-gray-600 mb-8 text-lg font-serif leading-relaxed">量身定制的学术强化课程与备考方案，打造极具竞争力的学生档案</p>
+                    <ul class="space-y-4 text-gray-600 font-serif">
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>标准化考试培训</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>学术背景提升</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>竞赛项目指导</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>科研实习推荐</li>
+                    </ul>
+                </div>
+
+                <div class="luxury-card p-10 rounded-2xl" data-aos="fade-up" data-aos-delay="300">
+                    <div class="text-yellow-600 mb-8">
+                        <svg width="64" height="64" viewBox="0 0 64 64" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <title>AI驱动的教育科技</title>
+                            <!-- 极简芯片：方框 + 每边两根引脚 -->
+                            <path d="M20 20h24v24H20z"/>
+                            <path d="M28 14v6M36 14v6M28 44v6M36 44v6M14 28h6M14 36h6M44 28h6M44 36h6"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">AI驱动的教育科技</h3>
+                    <p class="text-gray-600 mb-8 text-lg font-serif leading-relaxed">开发创新的人工智能软件，实现个性化学习路径并优化教育成果</p>
+                    <ul class="space-y-4 text-gray-600 font-serif">
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>智能学习系统</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>个性化推荐算法</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>数据分析报告</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-600 rounded-full mr-4"></span>智能匹配系统</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 服务流程预览 -->
+            <div class="luxury-card rounded-3xl p-12 shadow-2xl" data-aos="fade-up">
+                <h3 class="text-2xl font-luxury font-bold text-center text-gray-800 mb-12 tracking-wide">我们的服务流程</h3>
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="text-2xl font-luxury font-black text-white">1</span>
+                        </div>
+                        <h4 class="font-luxury font-bold text-gray-800 mb-3 text-lg">初步咨询</h4>
+                        <p class="text-gray-600 font-serif">深入了解学生背景与目标</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="text-2xl font-luxury font-black text-white">2</span>
+                        </div>
+                        <h4 class="font-luxury font-bold text-gray-800 mb-3 text-lg">方案制定</h4>
+                        <p class="text-gray-600 font-serif">量身定制个性化申请策略</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="text-2xl font-luxury font-black text-white">3</span>
+                        </div>
+                        <h4 class="font-luxury font-bold text-gray-800 mb-3 text-lg">执行跟进</h4>
+                        <p class="text-gray-600 font-serif">全程指导申请材料准备</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="text-2xl font-luxury font-black text-white">4</span>
+                        </div>
+                        <h4 class="font-luxury font-bold text-gray-800 mb-3 text-lg">成功录取</h4>
+                        <p class="text-gray-600 font-serif">获得心仪院校录取通知</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 豪华分割线 -->
+    <div class="luxury-divider"></div>
+
+    <!-- 成功案例 -->
+    <section id="cases" class="section-padding bg-white">
+        <div class="container mx-auto">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">卓越成果</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">
+                    真实录取案例，实力不言自明
+                </p>
+            </div>
+
+            <!-- 筛选按钮 -->
+            <div class="flex justify-center mb-16">
+                <div class="luxury-card p-3 rounded-full">
+                    <button @click="caseFilter = 'all'" 
+                            :class="caseFilter === 'all' ? 'luxury-button text-white' : 'text-gray-600 hover:text-gray-800'"
+                            class="px-8 py-3 rounded-full font-elegant font-semibold transition-all duration-300">
+                        全部案例
+                    </button>
+                    <button @click="caseFilter = 'undergraduate'" 
+                            :class="caseFilter === 'undergraduate' ? 'luxury-button text-white' : 'text-gray-600 hover:text-gray-800'"
+                            class="px-8 py-3 rounded-full font-elegant font-semibold transition-all duration-300">
+                        本科录取
+                    </button>
+                    <button @click="caseFilter = 'graduate'" 
+                            :class="caseFilter === 'graduate' ? 'luxury-button text-white' : 'text-gray-600 hover:text-gray-800'"
+                            class="px-8 py-3 rounded-full font-elegant font-semibold transition-all duration-300">
+                        研究生录取
+                    </button>
+                </div>
+            </div>
+
+            <!-- 案例网格 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                <template x-for="(case_, index) in filteredCases" :key="case_.id">
+                    <div class="luxury-card rounded-2xl case-card"
+                         data-aos="fade-up" :data-aos-delay="index * 100">
+                        
+                        <!-- 学校水印 -->
+                        <div class="school-watermark" x-text="case_.watermark"></div>
+                        
+                        <div class="p-8 relative z-10">
+                            <!-- 学校标签 -->
+                            <div class="flex items-center justify-between mb-6">
+                                <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-sm font-elegant font-bold px-4 py-2 rounded-full" 
+                                      x-text="case_.level"></span>
+                                <span class="text-sm text-gray-500 font-elegant" x-text="case_.rank"></span>
+                            </div>
+                            
+                            <!-- 学校名称 -->
+                            <h3 class="text-xl font-luxury font-bold text-gray-800 mb-3" x-text="case_.school"></h3>
+                            
+                            <!-- 专业 -->
+                            <p class="text-lg text-yellow-600 font-elegant font-semibold mb-4" x-text="case_.major"></p>
+                            
+                            <!-- 学生背景 -->
+                            <div class="mb-6">
+                                <p class="text-sm font-elegant font-semibold text-gray-400 mb-2">学生背景</p>
+                                <p class="text-gray-600 font-serif" x-text="case_.background"></p>
+                            </div>
+                            
+                            <!-- 申请亮点 -->
+                            <div x-show="case_.highlights">
+                                <p class="text-sm font-elegant font-semibold text-gray-400 mb-3">申请亮点</p>
+                                <template x-for="highlight in case_.highlights">
+                                    <div class="flex items-center mb-2">
+                                        <span class="w-2 h-2 bg-yellow-600 rounded-full mr-3"></span>
+                                        <span class="text-sm text-gray-600 font-serif" x-text="highlight"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                        
+                        <!-- 底部装饰线 -->
+                        <div class="gold-bar"></div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- 查看更多按钮 -->
+            <div class="text-center" data-aos="fade-up">
+                <button @click="openModal('moreCases')" 
+                        class="luxury-button text-white px-12 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    查看更多案例
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 豪华分割线 -->
+    <div class="luxury-divider"></div>
+
+    <!-- 专家团队 -->
+    <section id="team" class="section-padding bg-gray-50">
+        <div class="container mx-auto">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">专家团队</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">
+                    汇聚全球顶尖教育专家，为您的留学之路保驾护航
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <template x-for="(member, index) in teamMembers" :key="member.id">
+                    <div class="luxury-card rounded-2xl overflow-hidden"
+                         data-aos="fade-up" :data-aos-delay="index * 150">
+                        <div class="aspect-w-3 aspect-h-4">
+                            <img :src="member.image" :alt="member.name" 
+                                 class="w-full h-80 object-cover">
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-xl font-luxury font-bold text-gray-800 mb-2" x-text="member.name"></h3>
+                            <p class="text-yellow-600 font-elegant font-semibold mb-4 text-lg" x-text="member.title"></p>
+                            <p class="text-gray-600 font-serif mb-6 leading-relaxed" x-text="member.description"></p>
+                            
+                            <!-- 专业领域标签 -->
+                            <div class="flex flex-wrap gap-3">
+                                <template x-for="expertise in member.expertise">
+                                    <span class="bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-sm font-elegant px-3 py-1 rounded-full border border-yellow-300" 
+                                          x-text="expertise"></span>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <!-- 豪华分割线 -->
+    <div class="luxury-divider"></div>
+
+    <!-- 服务流程详细 -->
+    <section id="process" class="section-padding bg-white">
+        <div class="container mx-auto">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">服务流程</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">
+                    科学规划，步步为营，确保每个环节都精益求精
+                </p>
+            </div>
+
+            <!-- 豪华时间轴 -->
+            <div class="max-w-6xl mx-auto">
+                <div class="luxury-timeline">
+                    <template x-for="(step, index) in processSteps" :key="step.id">
+                        <div class="relative mb-20" data-aos="fade-up" :data-aos-delay="index * 200">
+   
+                            <!-- 内容卡片 -->
+                            <div :class="index % 2 === 0 ? 'pr-1/2 mr-12 text-right' : 'pl-1/2 ml-12'">
+                                <div class="luxury-card p-10 rounded-2xl">
+                                    <div class="flex items-center mb-6" :class="index % 2 === 0 ? 'justify-end' : 'justify-start'">
+                                        <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-elegant font-bold px-6 py-2 rounded-full text-lg" 
+                                              x-text="'第' + (index + 1) + '步'"></span>
+                                    </div>
+                                    <h3 class="text-2xl font-luxury font-bold text-gray-800 mb-4" x-text="step.title"></h3>
+                                    <p class="text-gray-600 font-serif text-lg mb-6 leading-relaxed" x-text="step.description"></p>
+                                    
+                                    <!-- 详细内容 -->
+                                    <ul class="space-y-3 mb-6">
+                                        <template x-for="detail in step.details">
+                                            <li class="flex items-center text-gray-600 font-serif" 
+                                                :class="index % 2 === 0 ? 'justify-end' : 'justify-start'">
+                                                <span class="w-2 h-2 bg-yellow-600 rounded-full mr-3" 
+                                                      :class="index % 2 === 0 ? 'order-2 ml-3 mr-0' : ''"></span>
+                                                <span x-text="detail"></span>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                    
+                                    <!-- 预计时间 -->
+                                    <div class="pt-6 border-t border-gray-200">
+                                        <span class="text-sm text-gray-500 font-elegant">预计时间：</span>
+                                        <span class="text-sm font-elegant font-semibold text-yellow-600" x-text="step.duration"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 豪华分割线 -->
+    <div class="luxury-divider"></div>
+
+    <!-- 学员评价 -->
+    <section id="testimonials" class="section-padding bg-gray-50">
+        <div class="container mx-auto">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">学员评价</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">
+                    听听我们成功学员的真实声音
+                </p>
+            </div>
+
+            <!-- 评价轮播 -->
+            <div class="relative max-w-7xl mx-auto" x-data="{ currentTestimonial: 0 }">
+                <div class="overflow-hidden rounded-3xl">
+                    <div class="flex transition-transform duration-700 ease-in-out" 
+                         :style="`transform: translateX(-${currentTestimonial * 100}%)`">
+                        <template x-for="(testimonial, index) in testimonials" :key="testimonial.id">
+                            <div class="w-full flex-shrink-0">
+                                <div class="testimonial-luxury p-12 md:p-16 mx-6 rounded-3xl">
+                                    <div class="grid md:grid-cols-3 gap-12 items-center">
+                                        <!-- 学员照片 -->
+                                        <div class="text-center">
+                                            <img :src="testimonial.avatar" :alt="testimonial.name" 
+                                                 class="w-40 h-40 rounded-full mx-auto mb-6 object-cover border-4 border-yellow-200 shadow-lg">
+                                            <h4 class="font-luxury font-bold text-gray-800 text-xl mb-2" x-text="testimonial.name"></h4>
+                                            <p class="text-yellow-600 font-elegant font-semibold text-lg" x-text="testimonial.school"></p>
+                                            <p class="text-gray-600 font-serif" x-text="testimonial.major"></p>
+                                        </div>
+                                        
+                                        <!-- 评价内容 -->
+                                        <div class="md:col-span-2">
+                                            <!-- 星级评分 -->
+                                            <div class="flex mb-6">
+                                                <template x-for="i in 5">
+                                                    <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                    </svg>
+                                                </template>
+                                            </div>
+                                            
+                                            <blockquote class="text-xl text-gray-700 font-serif italic mb-8 leading-relaxed" x-text="testimonial.content"></blockquote>
+                                            
+                                            <!-- 录取结果 -->
+                                            <div class="luxury-card p-6 rounded-xl">
+                                                <p class="font-elegant font-semibold text-gray-600 mb-4">录取结果：</p>
+                                                <div class="flex flex-wrap gap-3">
+                                                    <template x-for="offer in testimonial.offers">
+                                                        <span class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-elegant font-semibold px-4 py-2 rounded-full" 
+                                                              x-text="offer"></span>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- 导航按钮 -->
+                <button @click="currentTestimonial = currentTestimonial > 0 ? currentTestimonial - 1 : testimonials.length - 1"
+                        class="absolute left-6 top-1/2 transform -translate-y-1/2 luxury-card rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                
+                <button @click="currentTestimonial = currentTestimonial < testimonials.length - 1 ? currentTestimonial + 1 : 0"
+                        class="absolute right-6 top-1/2 transform                        -translate-y-1/2 luxury-card rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+
+                <!-- 指示器 -->
+                <div class="flex justify-center mt-12 space-x-3">
+                    <template x-for="(testimonial, index) in testimonials" :key="index">
+                        <button @click="currentTestimonial = index"
+                                :class="currentTestimonial === index ? 'bg-yellow-600' : 'bg-gray-300'"
+                                class="w-4 h-4 rounded-full transition-all duration-300 hover:scale-110"></button>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section class="section-padding bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white relative overflow-hidden">
+        <!-- 背景装饰 -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-96 h-96 border border-yellow-400 rounded-full floating-element"></div>
+            <div class="absolute bottom-20 right-20 w-64 h-64 border border-yellow-400 rounded-full floating-element" style="animation-delay: -4s;"></div>
+        </div>
+
+        <div class="container mx-auto relative z-10">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-white mb-6 tracking-wide">联系我们</h2>
+                <p class="text-xl text-white/90 max-w-4xl mx-auto font-serif">
+                    每天仅限三个免费沟通名额，把握机会，开启您的名校之路
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-16 max-w-6xl mx-auto">
+                <!-- 联系方式 -->
+                <div data-aos="fade-right">
+                    <div class="luxury-card p-12 rounded-3xl">
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800 mb-8 tracking-wide">联系方式</h3>
+                        
+                        <!-- 电话 -->
+                        <div class="flex items-center mb-8 p-6 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl border border-yellow-200">
+                            <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mr-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-elegant font-semibold mb-2">咨询热线</p>
+                                <p class="text-xl font-luxury font-bold text-gray-800">18519739539</p>
+                                <p class="text-sm text-gray-500 font-serif">工作时间：9:00-21:00</p>
+                            </div>
+                        </div>
+
+                        <!-- 办公地址 -->
+                        <div class="flex items-center mb-8 p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-elegant font-semibold mb-2">办公地址</p>
+                                <p class="text-lg font-luxury font-bold text-gray-800">北京 · 杭州</p>
+                                <p class="text-sm text-gray-500 font-serif">双城服务，就近咨询</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 微信二维码 -->
+                <div data-aos="fade-left">
+                    <div class="luxury-card p-12 rounded-3xl text-center">
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800 mb-8 tracking-wide">微信咨询</h3>
+                        
+                        <div class="relative inline-block">
+                            <img src="https://s2.loli.net/2025/10/17/MT5Pt7jcHoylQWh.jpg" 
+                                 alt="微信二维码" 
+                                 class="w-80 h-80 mx-auto rounded-2xl shadow-2xl border-4 border-yellow-200">
+                            
+                            <!-- 装饰边框 -->
+                            <div class="absolute -top-4 -left-4 w-8 h-8 border-t-4 border-l-4 border-yellow-400 rounded-tl-lg"></div>
+                            <div class="absolute -top-4 -right-4 w-8 h-8 border-t-4 border-r-4 border-yellow-400 rounded-tr-lg"></div>
+                            <div class="absolute -bottom-4 -left-4 w-8 h-8 border-b-4 border-l-4 border-yellow-400 rounded-bl-lg"></div>
+                            <div class="absolute -bottom-4 -right-4 w-8 h-8 border-b-4 border-r-4 border-yellow-400 rounded-br-lg"></div>
+                        </div>
+                        
+                        <p class="text-lg text-gray-600 font-serif mt-8 mb-4">扫码添加微信</p>
+                        <p class="text-sm text-gray-500 font-elegant">获取专属留学规划方案</p>
+                        
+                        <!-- 限额提醒 -->
+                        <div class="mt-8 p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl border border-red-200">
+                            <p class="text-red-600 font-elegant font-semibold">⚡ 每日仅限3个免费咨询名额</p>
+                            <p class="text-sm text-red-500 font-serif mt-1">先到先得，预约从速</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto">
+            <div class="grid md:grid-cols-4 gap-12">
+                <!-- 公司信息 -->
+                <div class="md:col-span-2">
+                    <img src="https://s2.loli.net/2025/10/19/u5xnre3SGcpiWqX.png" 
+                         alt="引力坊教育科技" 
+                         class="h-16 w-auto mb-6">
+                    <p class="text-gray-300 font-serif text-lg leading-relaxed mb-6">
+                        专注于为有志于全球顶尖名校的学生提供个性化、专业化的留学咨询与教育培训服务。
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors duration-300">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors duration-300">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors duration-300">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 快速链接 -->
+                <div>
+                    <h4 class="font-luxury font-bold text-xl mb-6 text-yellow-400">快速链接</h4>
+                    <ul class="space-y-4 font-serif">
+                        <li><a href="#about" class="text-gray-300 hover:text-white transition-colors duration-300">关于我们</a></li>
+                        <li><a href="#services" class="text-gray-300 hover:text-white transition-colors duration-300">核心服务</a></li>
+                        <li><a href="#cases" class="text-gray-300 hover:text-white transition-colors duration-300">成功案例</a></li>
+                        <li><a href="#team" class="text-gray-300 hover:text-white transition-colors duration-300">专家团队</a></li>
+                    </ul>
+                </div>
+
+                <!-- 联系信息 -->
+                <div>
+                    <h4 class="font-luxury font-bold text-xl mb-6 text-yellow-400">联系信息</h4>
+                    <ul class="space-y-4 font-serif text-gray-300">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            18519739539
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            北京 · 杭州
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-400 font-serif">
+                    © 2024 引力坊教育科技. 保留所有权利.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 模态框 -->
+    <!-- 联系我们模态框 -->
+    <div x-show="modalOpen === 'contact'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal()"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full modal-enter">
+                <div class="bg-white px-8 pt-8 pb-4">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800">联系我们</h3>
+                        <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- 电话联系 -->
+                        <div class="luxury-card p-6 rounded-xl text-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="font-luxury font-bold text-gray-800 text-lg mb-2">电话咨询</h4>
+                            <p class="text-xl font-luxury font-bold text-green-600 mb-2">18519739539</p>
+                            <p class="text-sm text-gray-500 font-serif">工作时间：9:00-21:00</p>
+                        </div>
+                        
+                        <!-- 微信联系 -->
+                        <div class="luxury-card p-6 rounded-xl text-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18 0 .659-.52 1.188-1.162 1.188-.642 0-1.162-.529-1.162-1.188 0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18 0 .659-.52 1.188-1.162 1.188-.642 0-1.162-.529-1.162-1.188 0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.858zm-3.288 1.333c.472 0 .857.383.857.857 0 .473-.385.857-.857.857a.857.857 0 0 1 0-1.714zm4.273 0c.472 0 .857.384.857.857 0 .473-.385.857-.857.857a.857.857 0 0 1 0-1.714z"/>
+                                </svg>
+                            </div>
+                            <h4 class="font-luxury font-bold text-gray-800 text-lg mb-4">微信咨询</h4>
+                            <img src="https://s2.loli.net/2025/10/17/MT5Pt7jcHoylQWh.jpg" 
+                                 alt="微信二维码" 
+                                 class="w-32 h-32 mx-auto rounded-lg border-2 border-blue-200">
+                        </div>
+                    </div>
+                    
+                    <!-- 限额提醒 -->
+                    <div class="mt-6 p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl border border-red-200">
+                        <p class="text-center text-red-600 font-elegant font-semibold">⚡ 每日仅限3个免费咨询名额，先到先得</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 更多案例模态框 -->
+    <div x-show="modalOpen === 'moreCases'" x-transition class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal()"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full modal-enter">
+                <div class="bg-white px-8 pt-8 pb-4 max-h-screen overflow-y-auto custom-scrollbar">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800">更多成功案例</h3>
+                        <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- 更多案例网格 -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                        <template x-for="(case_, index) in allCases" :key="case_.id">
+                            <div class="luxury-card rounded-xl case-card p-6">
+                                <!-- 学校水印 -->
+                                <div class="school-watermark text-2xl" x-text="case_.watermark"></div>
+                                
+                                <div class="relative z-10">
+                                    <!-- 学校标签 -->
+                                    <div class="flex items-center justify-between mb-4">
+                                        <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-xs font-elegant font-bold px-3 py-1 rounded-full" 
+                                              x-text="case_.level"></span>
+                                        <span class="text-xs text-gray-500 font-elegant" x-text="case_.rank"></span>
+                                    </div>
+                                    
+                                    <!-- 学校名称 -->
+                                    <h4 class="text-lg font-luxury font-bold text-gray-800 mb-2" x-text="case_.school"></h4>
+                                    
+                                    <!-- 专业 -->
+                                    <p class="text-yellow-600 font-elegant font-semibold mb-3                                    " x-text="case_.major"></p>
+                                    
+                                    <!-- 学生背景 -->
+                                    <div class="mb-4">
+                                        <p class="text-xs font-elegant font-semibold text-gray-400 mb-1">学生背景</p>
+                                        <p class="text-sm text-gray-600 font-serif" x-text="case_.background"></p>
+                                    </div>
+                                </div>
+                                
+                                <!-- 底部装饰线 -->
+                                <div class="gold-bar"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function appData() {
+            return {
+                loading: true,
+                mobileMenuOpen: false,
+                modalOpen: null,
+                language: 'zh',
+                caseFilter: 'all',
+                translationsCache: new WeakMap(),
+                translations: {
+                    '关于我们': 'About',
+                    '核心服务': 'Services',
+                    '成功案例': 'Cases',
+                    '专家团队': 'Team',
+                    '服务流程': 'Process',
+                    '学员评价': 'Reviews',
+                    '联系我们': 'Contact',
+                    '名校密码': 'The Admission Code.',
+                    '破译': 'Cracked.',
+                    '我们不仅是向导，更是您在全球顶尖名校激烈竞争中的绝对优势': 'We are not just guides — we are your decisive edge in the fierce competition for top global universities.',
+                    '成功学员': 'Successful Students',
+                    '合作院校': 'Partner Schools',
+                    '录取成功率': 'Admission Success Rate',
+                    '年专业经验': 'Years of Expertise',
+                    '立即开始规划': 'Start Planning Now',
+                    '观看介绍视频': 'Watch Introduction Video',
+                    '方案制定': 'Strategy Design',
+                    '执行跟进': 'Execution & Follow-up',
+                    '成功录取': 'Admission Success',
+                    '量身定制个性化申请策略': 'Tailored application strategy',
+                    '全程指导申请材料准备': 'Full guidance on application materials',
+                    '获得心仪院校录取通知': 'Receive offer from your target university',
+                    '卓越成果': 'Outstanding Results',
+                    '真实录取案例，实力不言自明': 'Real admissions — results speak for themselves',
+                    '全部案例': 'All Cases',
+                    '本科录取': 'Undergraduate Admission',
+                    '研究生录取': 'Graduate Admission',
+                    '查看更多案例': 'View More Cases',
+                    '学生背景': 'Student Background',
+                    '申请亮点': 'Application Highlights',
+                    // 流程标题
+                    '初步评估': 'Initial Assessment',
+                    '方案定制': 'Custom Plan',
+                    '材料准备': 'Materials Preparation',
+                    '申请提交': 'Application Submission',
+                    '面试辅导': 'Interview Coaching',
+                    '录取跟进': 'Admission Follow-up',
+                    // 流程细节
+                    '学术背景分析': 'Academic background analysis',
+                    '职业规划讨论': 'Career planning discussion',
+                    '院校匹配评估': 'School-fit evaluation',
+                    '申请时间规划': 'Application timeline planning',
+                    '院校清单确定': 'Finalize school list',
+                    '申请策略制定': 'Define application strategy',
+                    '背景提升规划': 'Profile enhancement plan',
+                    '时间节点安排': 'Milestone scheduling',
+                    '个人陈述指导': 'Personal statement guidance',
+                    '推荐信协调': 'Recommendation letter coordination',
+                    '简历优化': 'Resume optimization',
+                    '作品集准备': 'Portfolio preparation',
+                    '网申系统填写': 'Online application completion',
+                    '材料上传检查': 'Document upload check',
+                    '申请费缴纳': 'Pay application fees',
+                    '状态跟踪': 'Status tracking',
+                    '面试技巧培训': 'Interview skills training',
+                    '模拟面试练习': 'Mock interview practice',
+                    '问题答案准备': 'Answer preparation',
+                    '心理素质训练': 'Mental readiness training',
+                    '申请状态监控': 'Application status monitoring',
+                    '补充材料提交': 'Supplemental materials submission',
+                    '录取结果分析': 'Offer analysis',
+                    '入学准备指导': 'Enrollment preparation guidance',
+                    '汇聚全球顶尖教育专家，为您的留学之路保驾护航': 'Bringing together world-class education experts to safeguard your study-abroad journey',
+                    '科学规划，步步为营，确保每个环节都精益求精': 'Scientific planning, steady progress, excellence in every stage',
+                    '预计时间：': 'Estimated Time:',
+                    '听听我们成功学员的真实声音': 'Hear the real voices of our successful students',
+                    '录取结果：': 'Admission Results:',
+                    '每天仅限三个免费沟通名额，把握机会，开启您的名校之路': 'Only three free consultation slots daily — seize the opportunity to start your journey to top universities',
+                    '联系方式': 'Contact Information',
+                    '咨询热线': 'Consultation Hotline',
+                    '工作时间：9:00-21:00': 'Working Hours: 9:00–21:00',
+                    '办公地址': 'Office Address',
+                    '北京 · 杭州': 'Beijing · Hangzhou',
+                    '双城服务，就近咨询': 'Dual-city service, nearby consultation',
+                    '微信咨询': 'WeChat Consultation',
+                    '扫码添加微信': 'Scan to add WeChat',
+                    '获取专属留学规划方案': 'Get your personalized study-abroad plan',
+                    '⚡ 每日仅限3个免费咨询名额': '⚡ Only 3 free consultation slots per day',
+                    '先到先得，预约从速': 'First come, first served — book quickly',
+                    '公司信息': 'Company Info',
+                    '快速链接': 'Quick Links',
+                    '联系信息': 'Contact Info',
+                    '专注于为有志于全球顶尖名校的学生提供个性化、专业化的留学咨询与教育培训服务。': 'We provide personalized, professional study-abroad consulting and education training for students aspiring to top global universities.',
+                    '电话咨询': 'Phone Consultation',
+                    '更多成功案例': 'More Success Cases',
+
+                    // 新增：关于我们模块
+                    '认识您的专属顾问': 'Meet Your Advisor',
+                    '作为世界顶尖院校的前高级顾问，我们拥有多年将雄心壮志转变为录取通知书的丰富经验': 'Former senior advisors to top universities — we turn ambition into offers.',
+                    '融合了莱斯大学的强大技术背景与对教育领域的深刻理解，为您提供无与伦比的申请优势。': 'Combine Rice University’s strong tech background with deep education insights to deliver unmatched application advantage.',
+                    '满意度': 'Satisfaction',
+                    '专业经验': 'Professional Experience',
+                    '深厚学术背景：莱斯大学电子工程本硕，技术功底扎实': 'Strong academic foundation: BS/MS in Electrical Engineering (Rice), robust technical skills',
+                    '顶尖留学专家：G5、常春藤等全球顶尖名校资深顾问': 'Top admissions expert: Experienced advisor for G5, Ivy League, and more',
+                    '个性化规划：融合科技与教育经验，量身定制成功策略': 'Personalized planning: Blend tech and education experience to tailor success strategies',
+
+                    // 新增：服务模块
+                    '您的战略工具箱': 'Your Strategic Toolkit',
+                    '多维并进，成就卓越教育之路': 'Progress on multiple fronts toward excellence',
+                    '海外升学咨询': 'Admissions Consulting',
+                    '从个人陈述到面试准备，为全球顶尖大学的申请提供专家级指导': 'Expert guidance for applications to top universities — from personal statements to interviews',
+                    '院校选择与定位': 'School selection & positioning',
+                    '申请材料优化': 'Application materials optimization',
+                    '面试辅导培训': 'Interview coaching',
+                    '签证申请指导': 'Visa application guidance',
+                    '精英教育培训': 'Elite Training',
+                    '量身定制的学术强化课程与备考方案，打造极具竞争力的学生档案': 'Tailored academic strengthening and exam prep to build a highly competitive profile',
+                    '标准化考试培训': 'Standardized test preparation',
+                    '学术背景提升': 'Academic background enhancement',
+                    '竞赛项目指导': 'Competition guidance',
+                    '科研实习推荐': 'Research internship recommendation',
+                    'AI驱动的教育科技': 'AI-powered EdTech',
+                    '开发创新的人工智能软件，实现个性化学习路径并优化教育成果': 'Develop innovative AI software to personalize learning paths and optimize outcomes',
+                    '智能学习系统': 'Intelligent learning systems',
+                    '个性化推荐算法': 'Personalized recommendation algorithms',
+                    '数据分析报告': 'Data analysis reports',
+                    '智能匹配系统': 'Smart matching systems',
+
+                    // 新增：流程预览
+                    '我们的服务流程': 'Our Process',
+                    '初步咨询': 'Initial Consultation',
+                    '深入了解学生背景与目标': 'Deeply understand student background and goals',
+
+                    // 新增：评价与联系
+                    '听听我们成功学员的真实声音': 'Hear from our successful students',
+                    '每天仅限三个免费沟通名额，把握机会，开启您的名校之路': 'Only three free consultations daily — seize the chance to start your journey to top schools',
+                    '双城服务，就近咨询': 'Two-city service — consult nearby',
+                    '录取结果': 'Admission Results',
+
+                    // 新增：团队头衔与领域
+                    '创始人 & 首席顾问': 'Founder & Chief Advisor',
+                    '学术总监': 'Academic Director',
+                    '资深顾问': 'Senior Advisor',
+                    '人机交互': 'Human–Computer Interaction',
+                    '跨学科设计': 'Interdisciplinary Design',
+                    '教育产品创新': 'Education Product Innovation',
+                    '研究型申请': 'Research-track applications',
+                    '科研指导': 'Research mentorship',
+                    '论文发表': 'Publications',
+                    '学术写作': 'Academic writing',
+                    '背景提升': 'Profile enhancement',
+                    // 团队成员介绍
+                    '莱斯大学电子工程硕士，8年留学咨询经验，专注G5及常春藤申请': 'M.S. Electrical Engineering (Rice); 8 years consulting; specializing in G5 and Ivy League applications',
+                    '宾夕法尼亚大学教育学博士，前著名大学招生委员会成员，15年教育行业经验': 'Ph.D. in Education (University of Pennsylvania); former admissions committee member; 15 years in education',
+                    '加州伯克利大学MBA，专注商科及STEM专业申请，成功率95%以上': 'MBA (UC Berkeley); specializes in business and STEM applications; 95%+ success rate',
+                    // 团队成员标签
+                    'G5申请': 'G5 Applications',
+                    '常春藤': 'Ivy League',
+                    '工程专业': 'Engineering Majors',
+                    'AI教育': 'AI Education',
+                    '招生政策': 'Admissions Policy',
+                    '文书指导': 'Essay Guidance',
+                    '面试培训': 'Interview Training',
+                    '学术规划': 'Academic Planning',
+                    '商科申请': 'Business Applications',
+                    'STEM专业': 'STEM Programs',
+                    'MBA咨询': 'MBA Consulting',
+                    '奖学金申请': 'Scholarship Applications',
+                    // 流程描述
+                    '全面了解学生背景、目标院校和专业偏好，制定初步申请策略': 'Understand background, target schools and program preferences; define the initial strategy',
+                    '基于评估结果，量身定制个性化申请方案和背景提升计划': 'Tailor a personalized application plan and profile enhancement based on the assessment',
+                    '指导完成所有申请材料，包括文书写作、推荐信准备等': 'Guide completion of all application materials, including essays and recommendation letters',
+                    '协助完成网申填写和材料提交，确保申请无误按时递交': 'Assist with online application and document submission to ensure on-time, error-free submission',
+                    '针对性面试培训，提升面试表现和录取概率': 'Targeted interview training to improve performance and increase admission chances',
+                    '跟踪申请状态，协助处理补充材料和最终录取选择': 'Track application status, handle supplemental materials, and support final offer decisions',
+                    '持续至录取': 'Until admission',
+                    // 评价姓名与内容
+                    '李同学': 'Li (Student)',
+                    '王同学': 'Wang (Student)',
+                    '张同学': 'Zhang (Student)',
+                    'Mira老师的专业指导让我成功进入了梦校康奈尔大学从选校到文书，每个环节都得到了精心指导。特别是面试培训，让我在面试中表现出色。': "Mira’s professional guidance helped me get into my dream school, Cornell. From school selection to essays, every step was carefully guided. The interview coaching, in particular, made me stand out.",
+                    '在引力坊的帮助下，我不仅拿到了哥伦比亚大学巴纳德学院的offer，还获得了半额奖学金。老师们的专业水平和服务态度都让我非常满意。': "With GravityFang’s help, I received an offer from Barnard College of Columbia University and a half scholarship. The team’s professionalism and service impressed me.",
+                    '作为工程专业的学生，我在申请过程中遇到了很多技术性问题。Mira老师凭借他的工程背景，给了我最专业的建议。': "As an engineering student, I faced many technical issues during the application. Mira’s engineering background gave me the most professional advice.",
+                    '职业发展': 'Career development',
+                    '跨学科申请': 'Interdisciplinary applications',
+
+                    '优异的数学成绩': 'Outstanding math performance',
+                    '工程项目经验': 'Engineering project experience',
+                    '面试表现出色': 'Excellent interview performance',
+                    '经济学研究背景': 'Economics research background',
+                    '优秀学术成绩': 'Strong academic performance',
+                    '导师推荐信': 'Professor recommendations',
+                    '化学竞赛获奖': 'Chemistry competition awards',
+                    '实验室研究经验': 'Laboratory research experience',
+                    '学术论文发表': 'Academic publications',
+                    '跨学科研究': 'Interdisciplinary research',
+                    'AI项目经验': 'AI project experience',
+                    '创新思维能力': 'Innovative thinking ability',
+                    '机器人项目': 'Robotics projects',
+                    '控制系统研究': 'Control systems research',
+                    '工程实践经验': 'Engineering practice experience',
+                    '领导力经验': 'Leadership experience',
+                    '商业项目': 'Business projects',
+                    '国际视野': 'Global perspective',
+                    'G5申请': 'G5 Applications',
+                    '常春藤': 'Ivy League',
+                    '工程专业': 'Engineering',
+                    'AI教育': 'AI Education',
+                    '招生政策': 'Admissions Policy',
+                    '文书指导': 'Essay Guidance',
+                    '面试培训': 'Interview Training',
+                    '学术规划': 'Academic Planning',
+                    '商科申请': 'Business Applications',
+                    'STEM专业': 'STEM Majors',
+                    'MBA咨询': 'MBA Consulting',
+                    '奖学金申请': 'Scholarship Applications',
+                    '学生背景': 'Student Background',
+                    'Imperial College ME': 'Imperial College ME',
+                    'UCL ME': 'UCL ME',
+                    'Edinburgh ME': 'Edinburgh ME',
+                    'Mira老师的专业指导让我成功进入了梦校康奈尔大学从选校到文书，每个环节都得到了精心指导。特别是面试培训，让我在面试中表现出色。': "Mira’s professional guidance helped me get into my dream school, Cornell. From school selection to essays, every step was carefully coached — especially the interview training, which made me shine.",
+                    '在引力坊的帮助下，我不仅拿到了哥伦比亚大学巴纳德学院的offer，还获得了半额奖学金。老师们的专业水平和服务态度都让我非常满意。': "With GravityFang’s help, I not only received an offer from Barnard College (Columbia) but also a half scholarship. The team’s professionalism and service impressed me.",
+                    '作为工程专业的学生，我在申请过程中遇到了很多技术性问题。Mira老师凭借他的工程背景，给了我最专业的建议。': "As an engineering student, I faced many technical challenges during the application. Mira, with his engineering background, gave me the most professional advice."
+                },
+                stats: {
+                    students: 0,
+                    schools: 0,
+                    rate: 0,
+                    experience: 0
+                },
+                
+                // 成功案例数据
+                successCases: [
+                    {
+                        id: 1,
+                        school: 'Imperial College London',
+                        major: 'Mechanical Engineering',
+                        level: 'Undergraduate',
+                        rank: 'World #2',
+                        background: '4A*, STEP II',
+                        watermark: 'ICL',
+                        highlights: ['优异的数学成绩', '工程项目经验', '面试表现出色']
+                    },
+                    {
+                        id: 2,
+                        school: 'Oxford University',
+                        major: 'MPhil Economics',
+                        level: 'Graduate',
+                        rank: 'World #3',
+                        background: 'First Class Honours, IELTS 8.0',
+                        watermark: 'OXF',
+                        highlights: ['经济学研究背景', '优秀学术成绩', '导师推荐信']
+                    },
+                    {
+                        id: 3,
+                        school: 'Cambridge University',
+                        major: 'Chemistry',
+                        level: 'Undergraduate',
+                        rank: 'World #4',
+                        background: '3A*1A, IELTS 7.5',
+                        watermark: 'CAM',
+                        highlights: ['化学竞赛获奖', '实验室研究经验', '学术论文发表']
+                    },
+                    {
+                        id: 4,
+                        school: 'Stanford University',
+                        major: 'Symbolic Systems',
+                        level: 'Undergraduate',
+                        rank: 'World #5',
+                        background: 'SAT 1570, Published Research',
+                        watermark: 'STF',
+                        highlights: ['跨学科研究', 'AI项目经验', '创新思维能力']
+                    },
+                    {
+                        id: 5,
+                        school: 'ETH Zurich',
+                        major: 'M.S. Robotics, Systems & Control',
+                        level: 'Graduate',
+                        rank: 'World #7',
+                        background: 'B.S. MechE, 3.95 GPA',
+                        watermark: 'ETH',
+                        highlights: ['机器人项目', '控制系统研究', '工程实践经验']
+                    },
+                    {
+                        id: 6,
+                        school: 'NUS',
+                        major: 'Business Administration',
+                        level: 'Undergraduate',
+                        rank: 'World #8 / Asia #1',
+                        background: 'IB 44/45, Leadership ECA',
+                        watermark: 'NUS',
+                        highlights: ['领导力经验', '商业项目', '国际视野']
+                    }
+                ],
+
+                // 所有案例数据（包括更多案例）
+                allCases: [
+                    {
+                        id: 1,
+                        school: 'Imperial College London',
+                        major: 'Mechanical Engineering',
+                        level: 'Undergraduate',
+                        rank: 'World #2',
+                        background: '4A*, STEP II',
+                        watermark: 'ICL'
+                    },
+                    {
+                        id: 2,
+                        school: 'Oxford University',
+                        major: 'MPhil Economics',
+                        level: 'Graduate',
+                        rank: 'World #3',
+                        background: 'First Class Honours, IELTS 8.0',
+                        watermark: 'OXF'
+                    },
+                    {
+                        id: 3,
+                        school: 'Cambridge University',
+                        major: 'Chemistry',
+                        level: 'Undergraduate',
+                        rank: 'World #4',
+                        background: '3A*1A, IELTS 7.5',
+                        watermark: 'CAM'
+                    },
+                    {
+                        id: 4,
+                        school: 'Stanford University',
+                        major: 'Symbolic Systems',
+                        level: 'Undergraduate',
+                        rank: 'World #5',
+                        background: 'SAT 1570, Published Research',
+                        watermark: 'STF'
+                    },
+                    {
+                        id: 5,
+                        school: 'ETH Zurich',
+                        major: 'M.S. Robotics, Systems & Control',
+                        level: 'Graduate',
+                        rank: 'World #7',
+                        background: 'B.S. MechE, 3.95 GPA',
+                        watermark: 'ETH'
+                    },
+                    {
+                        id: 6,
+                        school: 'NUS',
+                        major: 'Business Administration',
+                        level: 'Undergraduate',
+                        rank: 'World #8 / Asia #1',
+                        background: 'IB 44/45, Leadership ECA',
+                        watermark: 'NUS'
+                    },
+                    {
+                        id: 7,
+                        school: 'UCLA',
+                        major: 'Computer Science',
+                        level: 'Undergraduate',
+                        rank: 'World #10 / US Public #1',
+                        background: 'SAT 1550, 4.0 GPA, 10 APs',
+                        watermark: 'UCLA'
+                    },
+                    {
+                        id: 8,
+                        school: 'Columbia University',
+                        major: 'M.S. Data Science',
+                        level: 'Graduate',
+                        rank: 'World #15 Ivy',
+                        background: 'GRE 330, 3.9 GPA',
+                        watermark: 'COL'
+                    },
+                    {
+                        id: 9,
+                        school: 'University of Toronto',
+                        major: 'Rotman Commerce',
+                        level: 'Undergraduate',
+                        rank: 'Canada #1',
+                        background: 'IB 43/45, Founder of NPO',
+                        watermark: 'UOT'
+                    },
+                    {
+                        id: 10,
+                        school: 'Nanyang Technological',
+                        major: 'M.Eng Aerospace',
+                        level: 'Graduate',
+                        rank: 'World #24',
+                        background: 'B.Eng with High Honours',
+                        watermark: 'NTU'
+                    },
+                    {
+                        id: 11,
+                        school: 'University of Hong Kong',
+                        major: 'Electronic Engineering (ElecE)',
+                        level: 'Undergraduate',
+                        rank: 'Hong Kong #1',
+                        background: '4A*, Factory Volunteering',
+                        watermark: 'HKU'
+                    },
+                    {
+                        id: 12,
+                        school: 'Johns Hopkins',
+                        major: 'M.S. Finance',
+                        level: 'Graduate',
+                        rank: 'World #28',
+                        background: 'GMAT 740, 3.8 GPA',
+                        watermark: 'JHU'
+                    },
+                    {
+                        id: 13,
+                        school: 'Cornell University',
+                        major: 'Biological Engineering',
+                        level: 'Undergraduate',
+                        rank: 'World #30 Ivy',
+                        background: 'TOEFL 111, ACT 35, 9 APs',
+                        watermark: 'COR'
+                    },
+                    {
+                        id: 14,
+                        school: 'McGill University',
+                        major: 'Political Science',
+                        level: 'Undergraduate',
+                        rank: 'Canada #2',
+                        background: 'Model UN President, IELTS 8.5',
+                        watermark: 'MCG'
+                    },
+                    {
+                        id: 15,
+                        school: 'London School of Economics',
+                        major: 'MSc Management',
+                        level: 'Graduate',
+                        rank: 'Social Sci #7 / World #45',
+                        background: '2:1 Degree, Relevant Internships',
+                        watermark: 'LSE'
+                    },
+                    {
+                        id: 16,
+                        school: 'CUHK',
+                        major: 'M.S. FinTech',
+                        level: 'Graduate',
+                        rank: 'Hong Kong #2',
+                        background: 'GRE 328, Big Four Internship',
+                        watermark: 'CUHK'
+                    },
+                    {
+                        id: 17,
+                        school: 'HKUST',
+                        major: 'MSc Financial Technology',
+                        level: 'Graduate',
+                        rank: 'World #58',
+                        background: 'GRE 325, 3.7 GPA',
+                        watermark: 'HKUST'
+                    },
+                    {
+                        id: 18,
+                        school: 'Pomona College',
+                        major: 'Sociology',
+                        level: 'Undergraduate',
+                        rank: 'Liberal Arts #3',
+                        background: 'TOEFL 108, SAT 1500, 6 APs',
+                        watermark: 'POM'
+                    },
+                    {
+                        id: 19,
+                        school: 'EHL Hospitality Business School',
+                        major: 'B.Sc. Hospitality Management',
+                        level: 'Undergraduate',
+                        rank: 'Hospitality #1',
+                        background: 'Trilingual, 5-Star Hotel Experience',
+                        watermark: 'EHL'
+                    },
+                    {
+                        id: 20,
+                        school: 'INSEAD',
+                        major: 'MBA',
+                        level: 'Graduate',
+                        rank: 'Business #2',
+                        background: 'GMAT 730, 5 Years WE at FAANG',
+                        watermark: 'INS'
+                    },
+                    {
+                        id: 21,
+                        school: 'University of British Columbia',
+                        major: 'M.A.Sc. Civil Engineering',
+                        level: 'Graduate',
+                        rank: 'Canada #3',
+                        background: '3.8 GPA, Co-op Experience',
+                        watermark: 'UBC'
+                    }
+                ],
+
+                // 团队成员数据
+                teamMembers: [
+                    {
+                        id: 1,
+                        name: 'Mira Shi',
+                        title: '创始人 & 首席顾问',
+                        image: 'https://s2.loli.net/2025/10/19/zwLWpRCYuHk15cb.png',
+                        description: '莱斯大学电子工程硕士，8年留学咨询经验，专注G5及常春藤申请',
+                        expertise: ['G5申请', '常春藤', '工程专业', 'AI教育']
+                    },
+                    {
+                        id: 2,
+                        name: 'Dr. Wilson',
+                        title: '学术总监',
+                        image: 'https://s2.loli.net/2025/10/19/NpkFByY8g7JqMtZ.png',
+                        description: '宾夕法尼亚大学教育学博士，前著名大学招生委员会成员，15年教育行业经验',
+                        expertise: ['招生政策', '文书指导', '面试培训', '学术规划']
+                    },
+                    {
+                        id: 3,
+                        name: 'Sarah Chen',
+                        title: '资深顾问',
+                        image: 'https://s2.loli.net/2025/10/19/Oiz3mZTEKS4pPLk.png',
+                        description: '加州伯克利大学MBA，专注商科及STEM专业申请，成功率95%以上',
+                        expertise: ['商科申请', 'STEM专业', 'MBA咨询', '奖学金申请']
+                    }
+                ],
+
+                // 服务流程数据
+                processSteps: [
+                    {
+                        id: 1,
+                        title: '初步评估',
+                        description: '全面了解学生背景、目标院校和专业偏好，制定初步申请策略',
+                        details: ['学术背景分析', '职业规划讨论', '院校匹配评估', '申请时间规划'],
+                        duration: '1-2周'
+                    },
+                    {
+                        id: 2,
+                        title: '方案定制',
+                        description: '基于评估结果，量身定制个性化申请方案和背景提升计划',
+                        details: ['院校清单确定', '申请策略制定', '背景提升规划', '时间节点安排'],
+                        duration: '2-3周'
+                    },
+                    {
+                        id: 3,
+                        title: '材料准备',
+                        description: '指导完成所有申请材料，包括文书写作、推荐信准备等',
+                        details: ['个人陈述指导', '推荐信协调', '简历优化', '作品集准备'],
+                        duration: '2-3个月'
+                    },
+                    {
+                        id: 4,
+                        title: '申请提交',
+                        description: '协助完成网申填写和材料提交，确保申请无误按时递交',
+                        details: ['网申系统填写', '材料上传检查', '申请费缴纳', '状态跟踪'],
+                        duration: '1个月'
+                    },
+                    {
+                        id: 5,
+                        title: '面试辅导',
+                        description: '针对性面试培训，提升面试表现和录取概率',
+                        details: ['面试技巧培训', '模拟面试练习', '问题答案准备', '心理素质训练'],
+                        duration: '2-4周'
+                    },
+                    {
+                        id: 6,
+                        title: '录取跟进',
+                        description: '跟踪申请状态，协助处理补充材料和最终录取选择',
+                        details: ['申请状态监控', '补充材料提交', '录取结果分析', '入学准备指导'],
+                        duration: '持续至录取'
+                    }
+                ],
+
+                // 学员评价数据
+                testimonials: [
+                    {
+                        id: 1,
+                        name: '李同学',
+                        school: 'Cornell University',
+                        major: 'Information Technology',
+                        avatar: 'https://s2.loli.net/2025/10/19/47AUcfredlmxguq.png',
+                        content: 'Mira老师的专业指导让我成功进入了梦校康奈尔大学从选校到文书，每个环节都得到了精心指导。特别是面试培训，让我在面试中表现出色。',
+                        offers: ['Cornell IT', 'UC Berkeley CS']
+                    },
+                    {
+                        id: 2,
+                        name: '王同学',
+                        school: 'Barnard College',
+                        major: 'Economics',
+                        avatar: 'https://s2.loli.net/2025/10/19/3lWGah2QtKHngym.png',
+                        content: '在引力坊的帮助下，我不仅拿到了哥伦比亚大学巴纳德学院的offer，还获得了半额奖学金。老师们的专业水平和服务态度都让我非常满意。',
+                        offers: ['Barnard Economics', 'LSE Economics', 'UCL Economics']
+                    },
+                    {
+                        id: 3,
+                        name: '张同学',
+                        school: 'Imperial College London',
+                        major: 'Mechanical Engineering',
+                        avatar: 'https://s2.loli.net/2025/10/19/d8p2ocHyUEk1DMS.png',
+                        content: '作为工程专业的学生，我在申请过程中遇到了很多技术性问题。Mira老师凭借他的工程背景，给了我最专业的建议。',
+                        offers: ['Imperial College ME', 'UCL ME', 'Edinburgh ME']
+                    }
+                ],
+
+                // 计算属性：过滤后的案例
+                get filteredCases() {
+                    if (this.caseFilter === 'all') {
+                        return this.successCases;
+                    }
+                    return this.successCases.filter(case_ => case_.level.toLowerCase() === this.caseFilter);
+                },
+
+                // 初始化函数
+                init() {
+                    // 模拟加载
+                    setTimeout(() => {
+                        this.loading = false;
+                    }, 2000);
+
+                    // 设置语言属性
+                    document.documentElement.lang = this.language;
+                    document.title = this.language === 'en' ? 'GravityFang Education | Study Abroad Consulting & Training' : '引力坊教育科技 | 专业留学咨询与教育培训';
+
+                    // 初始化AOS动画
+                    AOS.init({
+                        duration: 1000,
+                        once: true,
+                        offset: 100
+                    });
+
+                    // MutationObserver：语言为英文时，后续渲染也保持翻译
+                    const observer = new MutationObserver(() => {
+                        if (this.language === 'en') {
+                            if (!this._translateScheduled) {
+                                this._translateScheduled = true;
+                                requestAnimationFrame(() => {
+                                    this._translateScheduled = false;
+                                    this.applyTranslations();
+                                });
+                            }
+                        }
+                    });
+                    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+                    // 启动统计数字动画
+                    this.animateStats();
+                },
+
+                // 统计数字动画
+                animateStats() {
+                    const targets = {
+                        students: 500,
+                        schools: 50,
+                        rate: 95,
+                        experience: 8
+                    };
+
+                    const duration = 2000;
+                    const startTime = Date.now();
+
+                    const animate = () => {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+
+                        // 使用缓动函数
+                        const easeOut = 1 - Math.pow(1 - progress, 3);
+
+                        this.stats.students = Math.floor(targets.students * easeOut);
+                        this.stats.schools = Math.floor(targets.schools * easeOut);
+                        this.stats.rate = Math.floor(targets.rate * easeOut);
+                        this.stats.experience = Math.floor(targets.experience * easeOut);
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    };
+
+                    // 延迟启动动画
+                    setTimeout(() => {
+                        animate();
+                    }, 1000);
+                },
+
+                // 模态框控制
+                openModal(type) {
+                    this.modalOpen = type;
+                    document.body.style.overflow = 'hidden';
+                },
+
+                closeModal() {
+                    this.modalOpen = null;
+                    document.body.style.overflow = 'auto';
+                },
+
+                // 语言切换
+                setLanguage(lang) {
+                    this.language = lang;
+                    document.documentElement.lang = lang;
+                    document.title = lang === 'en' ? 'GravityFang Education | Study Abroad Consulting & Training' : '引力坊教育科技 | 专业留学咨询与教育培训';
+                    this.applyTranslations();
+                },
+
+                // 英文翻译应用
+                applyTranslations() {
+                    if (this.language === 'en') {
+                        this.translateNode(document.body);
+                    } else {
+                        this.restoreNode(document.body);
+                    }
+                },
+
+                // 翻译文本节点
+                translateNode(node) {
+                    if (!node) return;
+                    const skipTags = ['SCRIPT', 'STYLE', 'NOSCRIPT'];
+                    if (node.nodeType === Node.ELEMENT_NODE && skipTags.includes(node.tagName)) {
+                        return;
+                    }
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const original = node.textContent;
+                        const translated = this.translateText(original);
+                        if (translated && translated !== original) {
+                            if (!this.translationsCache.has(node)) {
+                                this.translationsCache.set(node, original);
+                            }
+                            node.textContent = translated;
+                        }
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        for (const child of node.childNodes) {
+                            this.translateNode(child);
+                        }
+                    }
+                },
+
+                // 还原中文
+                restoreNode(node) {
+                    if (!node) return;
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        if (this.translationsCache.has(node)) {
+                            node.textContent = this.translationsCache.get(node);
+                        }
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        for (const child of node.childNodes) {
+                            this.restoreNode(child);
+                        }
+                    }
+                },
+
+                // 文本翻译
+                translateText(text) {
+                    if (!text) return null;
+                    const t = text.trim();
+
+                    // 特殊模式：第X步 -> Step X
+                    const stepMatch = /^第\s*(\d+)\s*步$/.exec(t);
+                    if (stepMatch) {
+                        return `Step ${stepMatch[1]}`;
+                    }
+
+                    // 前缀替换：预计时间
+                    if (t.startsWith('预计时间：')) {
+                        return t.replace('预计时间：', 'Estimated Time: ');
+                    }
+
+                    // 前缀替换：工作时间
+                    if (t.startsWith('工作时间：')) {
+                        return t.replace('工作时间：', 'Working Hours: ');
+                    }
+
+                    // 文本包含式替换：版权
+                    if (t.includes('保留所有权利')) {
+                        return t.replace('保留所有权利', 'All rights reserved');
+                    }
+
+                    // 主标题组合处理
+                    if (t === '名校密码 破译') {
+                        return 'The Admission Code. Cracked.';
+                    }
+
+                    // 局部片段替换（处理合并句子）
+                    const partials = [
+                        ['每日仅限3个免费咨询名额', 'Only 3 free consultation slots per day'],
+                        ['先到先得', 'First come, first served'],
+                        ['预约从速', 'Book quickly'],
+                        ['扫码添加微信', 'Scan to add WeChat']
+                    ];
+                    for (const [zh, en] of partials) {
+                        if (t.includes(zh)) {
+                            return t.replace(zh, en);
+                        }
+                    }
+
+                    // 姓氏 + 同学 模式：将中文姓氏转为拼音并添加标注
+                    const nameMatch = /^([\u4e00-\u9fa5]{1,2})同学$/.exec(t);
+                    if (nameMatch) {
+                        const surnameMap = {
+                            '李':'Li','王':'Wang','张':'Zhang','陈':'Chen','刘':'Liu','杨':'Yang','黄':'Huang','赵':'Zhao','周':'Zhou','吴':'Wu','郑':'Zheng','朱':'Zhu','何':'He','孙':'Sun','马':'Ma','胡':'Hu','郭':'Guo','林':'Lin','高':'Gao','罗':'Luo','梁':'Liang','宋':'Song','唐':'Tang','徐':'Xu','许':'Xu','韩':'Han','曹':'Cao','袁':'Yuan','邓':'Deng','傅':'Fu','崔':'Cui','薛':'Xue','谢':'Xie','蒋':'Jiang'
+                        };
+                        const zhSurname = nameMatch[1];
+                        const enSurname = surnameMap[zhSurname] || zhSurname;
+                        return `${enSurname} (Student)`;
+                    }
+
+                    // 查字典（精确匹配）
+                    if (this.translations[t]) {
+                        return this.translations[t];
+                    }
+
+                    // 数字和单位翻译：周/月
+                    if (/^\d+(-\d+)?(周|个月)$/.test(t)) {
+                        const isWeek = t.endsWith('周');
+                        return t.replace(isWeek ? '周' : '个月', isWeek ? ' weeks' : ' months');
+                    }
+                    if (t === '持续至录取') return 'Until admission';
+
+                    return null;
+                }
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // 导航栏滚动效果（移动端下滑隐藏，上滑显示）
+            let lastScrollTop = 0;
+            const nav = document.querySelector('nav');
+            const isMobileQuery = window.matchMedia('(max-width: 1024px)');
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                // 固定背景
+                if (scrollTop > 100) {
+                    nav.classList.add('nav-fixed');
+                } else {
+                    nav.classList.remove('nav-fixed');
+                }
+
+                // 移动端隐藏逻辑（菜单打开时不隐藏）
+                const isMobile = isMobileQuery.matches;
+                const menuOpen = document.body.classList.contains('menu-open');
+                
+                if (isMobile && !menuOpen) {
+                    const delta = scrollTop - lastScrollTop;
+                    if (scrollTop > 100 && delta > 10) {
+                        nav.classList.add('nav-hidden');
+                    } else if (delta < -10 || scrollTop < 100) {
+                        nav.classList.remove('nav-hidden');
+                    }
+                } else {
+                    nav.classList.remove('nav-hidden');
+                }
+                
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            });
+        });
+    </script>
+</body>
+</html>
