@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -12,6 +13,9 @@
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Leaflet for interactive maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         :root {
@@ -411,6 +415,11 @@
 /* U.S.News表格语言切换：根据语言隐藏中英文列 */
 .usnews-table.hide-en td:nth-child(2), .usnews-table.hide-en th:nth-child(2) { display: none; }
 .usnews-table.hide-zh td:nth-child(3), .usnews-table.hide-zh th:nth-child(3) { display: none; }
+/* 专业-职业映射（美国）表格语言切换：根据语言隐藏中英文列 */
+.cip-table.hide-en td:nth-child(2), .cip-table.hide-en th:nth-child(2) { display: none; }
+.cip-table.hide-en td:nth-child(4), .cip-table.hide-en th:nth-child(4) { display: none; }
+.cip-table.hide-zh td:nth-child(3), .cip-table.hide-zh th:nth-child(3) { display: none; }
+.cip-table.hide-zh td:nth-child(5), .cip-table.hide-zh th:nth-child(5) { display: none; }
         .section-padding {
             padding: 8rem 0;
         }
@@ -435,6 +444,10 @@
                 padding-right: 1rem;
             }
         }
+
+        /* 大学地图容器样式 */
+        .unimap-container { height: 480px; }
+        .unimap-toolbar button { transition: background-color .2s ease; }
     </style>
 </head>
 
@@ -475,6 +488,8 @@
                         <div class="absolute left-0 top-full z-50 w-64 bg-white shadow-xl border border-gray-200 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200">
     <button @click="openTool('qs2026')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">2025-2026 QS世界大学排名</button>
     <button @click="openTool('usnews2026')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">2026 U.S.News美国大学排名</button>
+    <button @click="openTool('cipcareers')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">专业与职业映射（美国）</button>
+    <button @click="openTool('unimap')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">大学地图（坐标绘制）</button>
 </div>
                     </div>
                     
@@ -520,6 +535,8 @@
                     <div x-show="open" x-transition class="mt-2 space-y-2 pl-3 pb-3">
                         <button @click="openTool('qs2026'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">2025-2026 QS世界大学排名</button>
                         <button @click="openTool('usnews2026'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">2026 U.S.News美国大学排名</button>
+                        <button @click="openTool('cipcareers'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">专业与职业映射（美国）</button>
+                        <button @click="openTool('unimap'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">大学地图（坐标绘制）</button>
                     </div>
                 </div>
                 <button @click="openModal('contact')" class="w-full luxury-button text-white py-4 rounded-full font-medium">
@@ -754,6 +771,16 @@
     <div class="mt-4">
         <button @click="openTool('usnews2026')" class="luxury-button text-white px-8 py-3 rounded-full font-elegant">
             使用工具：2026 U.S.News美国大学排名
+        </button>
+    </div>
+    <div class="mt-4">
+        <button @click="openTool('cipcareers')" class="luxury-button text-white px-8 py-3 rounded-full font-elegant">
+            使用工具：专业与职业映射（美国）
+        </button>
+    </div>
+    <div class="mt-4">
+        <button @click="openTool('unimap')" class="luxury-button text-white px-8 py-3 rounded-full font-elegant">
+            使用工具：大学地图（坐标绘制）
         </button>
     </div>
 </div>
@@ -1247,9 +1274,478 @@
                     </table>
                 </div>
             </div>
+
+            <!-- 专业与职业映射（美国） -->
+            <div id="tools-cipcareers" x-show="activeTool === 'cipcareers'" class="luxury-card rounded-3xl p-8 shadow-2xl" data-aos="fade-up">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800 tracking-wide">专业与职业映射（美国）</h3>
+                        <p class="text-gray-600 font-serif">Major & Career Mapping (U.S.)</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-sm font-elegant font-bold px-4 py-2 rounded-full">USA</span>
+                        <button @click="closeTool()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 font-serif" :aria-label="language === 'zh' ? '关闭' : 'Close'" x-text="language === 'zh' ? '关闭' : 'Close'"></button>
+                    </div>
+                </div>
+
+                <div x-data="{ q: '', matchRow(q,...fields){ q=q.trim().toLowerCase(); if(!q) return true; return fields.some(f=> (f||'').toLowerCase().includes(q)); } }">
+                    <div class="flex items-center gap-3 mb-4">
+                        <input x-model="q" type="text" placeholder="搜索CIP/专业/职业关键词" class="w-full border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 font-serif" />
+                        <button @click="q=''" class="px-3 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 font-serif" :aria-label="language === 'zh' ? '清空' : 'Clear'" x-text="language === 'zh' ? '清空' : 'Clear'"></button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="cip-table min-w-full text-left" :class="language === 'zh' ? 'hide-en' : 'hide-zh'">
+                            <thead class="bg-yellow-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">CIP代码</th>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">专业（EN）</th>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">专业（中文）</th>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">典型职业（EN）</th>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">典型职业（中文）</th>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">入门薪资（USD）</th>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">就业前景</th>
+                                    <th class="px-4 py-3 text-gray-700 font-elegant">Indeed</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr x-show="matchRow(q, '11.0701','Computer Science','计算机科学','Software Developer; Data Analyst','软件开发工程师；数据分析师')">
+                                    <td class="px-4 py-3">11.0701</td>
+                                    <td class="px-4 py-3">Computer Science</td>
+                                    <td class="px-4 py-3">计算机科学</td>
+                                    <td class="px-4 py-3">Software Developer; Data Analyst</td>
+                                    <td class="px-4 py-3">软件开发工程师；数据分析师</td>
+                                    <td class="px-4 py-3">$70,000–$90,000</td>
+                                    <td class="px-4 py-3">High demand; 20% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=software+developer" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '14.1901','Mechanical Engineering','机械工程','Mechanical Engineer; Manufacturing Engineer','机械工程师；制造工程师')">
+                                    <td class="px-4 py-3">14.1901</td>
+                                    <td class="px-4 py-3">Mechanical Engineering</td>
+                                    <td class="px-4 py-3">机械工程</td>
+                                    <td class="px-4 py-3">Mechanical Engineer; Manufacturing Engineer</td>
+                                    <td class="px-4 py-3">机械工程师；制造工程师</td>
+                                    <td class="px-4 py-3">$65,000–$85,000</td>
+                                    <td class="px-4 py-3">Stable; 10% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=mechanical+engineer" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '52.0201','Business Administration','工商管理','Business Analyst; Operations Manager','商业分析师；运营经理')">
+                                    <td class="px-4 py-3">52.0201</td>
+                                    <td class="px-4 py-3">Business Administration</td>
+                                    <td class="px-4 py-3">工商管理</td>
+                                    <td class="px-4 py-3">Business Analyst; Operations Manager</td>
+                                    <td class="px-4 py-3">商业分析师；运营经理</td>
+                                    <td class="px-4 py-3">$55,000–$75,000</td>
+                                    <td class="px-4 py-3">Strong; 8% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=business+analyst" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '42.0101','Psychology','心理学','HR Specialist; Counselor','人力资源专员；咨询师')">
+                                    <td class="px-4 py-3">42.0101</td>
+                                    <td class="px-4 py-3">Psychology</td>
+                                    <td class="px-4 py-3">心理学</td>
+                                    <td class="px-4 py-3">HR Specialist; Counselor</td>
+                                    <td class="px-4 py-3">人力资源专员；咨询师</td>
+                                    <td class="px-4 py-3">$45,000–$60,000</td>
+                                    <td class="px-4 py-3">Moderate; 6% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=hr+specialist" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '45.0601','Economics','经济学','Financial Analyst; Policy Analyst','金融分析师；政策分析师')">
+                                    <td class="px-4 py-3">45.0601</td>
+                                    <td class="px-4 py-3">Economics</td>
+                                    <td class="px-4 py-3">经济学</td>
+                                    <td class="px-4 py-3">Financial Analyst; Policy Analyst</td>
+                                    <td class="px-4 py-3">金融分析师；政策分析师</td>
+                                    <td class="px-4 py-3">$60,000–$80,000</td>
+                                    <td class="px-4 py-3">Strong; 7% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=financial+analyst" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '51.3801','Nursing','护理学','Registered Nurse; Nurse Practitioner','注册护士；执业护士')">
+                                    <td class="px-4 py-3">51.3801</td>
+                                    <td class="px-4 py-3">Nursing</td>
+                                    <td class="px-4 py-3">护理学</td>
+                                    <td class="px-4 py-3">Registered Nurse; Nurse Practitioner</td>
+                                    <td class="px-4 py-3">注册护士；执业护士</td>
+                                    <td class="px-4 py-3">$60,000–$75,000</td>
+                                    <td class="px-4 py-3">Very strong; 15% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=registered+nurse" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '30.7102','Data Science','数据科学','Data Scientist; Machine Learning Engineer','数据科学家；机器学习工程师')">
+                                    <td class="px-4 py-3">30.7102</td>
+                                    <td class="px-4 py-3">Data Science</td>
+                                    <td class="px-4 py-3">数据科学</td>
+                                    <td class="px-4 py-3">Data Scientist; Machine Learning Engineer</td>
+                                    <td class="px-4 py-3">数据科学家；机器学习工程师</td>
+                                    <td class="px-4 py-3">$80,000–$110,000</td>
+                                    <td class="px-4 py-3">High demand; 20%+ growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=data+scientist" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '52.0801','Finance','金融学','Financial Analyst; Investment Banking Analyst','金融分析师；投行分析师')">
+                                    <td class="px-4 py-3">52.0801</td>
+                                    <td class="px-4 py-3">Finance</td>
+                                    <td class="px-4 py-3">金融学</td>
+                                    <td class="px-4 py-3">Financial Analyst; Investment Banking Analyst</td>
+                                    <td class="px-4 py-3">金融分析师；投行分析师</td>
+                                    <td class="px-4 py-3">$65,000–$90,000</td>
+                                    <td class="px-4 py-3">Competitive; cyclical</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=investment+banking+analyst" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '14.1001','Electrical Engineering','电气工程','Electrical Engineer; Hardware Engineer','电气工程师；硬件工程师')">
+                                    <td class="px-4 py-3">14.1001</td>
+                                    <td class="px-4 py-3">Electrical Engineering</td>
+                                    <td class="px-4 py-3">电气工程</td>
+                                    <td class="px-4 py-3">Electrical Engineer; Hardware Engineer</td>
+                                    <td class="px-4 py-3">电气工程师；硬件工程师</td>
+                                    <td class="px-4 py-3">$70,000–$95,000</td>
+                                    <td class="px-4 py-3">Solid; 7% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=electrical+engineer" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '26.0101','Biology','生物学','Research Associate; Biotech Analyst','研究助理；生物技术分析师')">
+                                    <td class="px-4 py-3">26.0101</td>
+                                    <td class="px-4 py-3">Biology</td>
+                                    <td class="px-4 py-3">生物学</td>
+                                    <td class="px-4 py-3">Research Associate; Biotech Analyst</td>
+                                    <td class="px-4 py-3">研究助理；生物技术分析师</td>
+                                    <td class="px-4 py-3">$50,000–$70,000</td>
+                                    <td class="px-4 py-3">Growing; 5–10% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=research+associate+biology" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <!-- 更多专业与职业行 -->
+                                <tr x-show="matchRow(q, '27.0101','Mathematics','数学','Actuary; Data Analyst; Operations Research Analyst; Quantitative Analyst; Statistician','精算师；数据分析师；运筹分析师；量化分析师；统计师')">
+                                    <td class="px-4 py-3">27.0101</td>
+                                    <td class="px-4 py-3">Mathematics</td>
+                                    <td class="px-4 py-3">数学</td>
+                                    <td class="px-4 py-3">Actuary; Data Analyst; Operations Research Analyst; Quantitative Analyst; Statistician</td>
+                                    <td class="px-4 py-3">精算师；数据分析师；运筹分析师；量化分析师；统计师</td>
+                                    <td class="px-4 py-3">$65,000–$95,000</td>
+                                    <td class="px-4 py-3">Strong; 15% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=actuary" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '14.0801','Civil Engineering','土木工程','Structural Engineer; Transportation Engineer; Water Resources Engineer; Construction Manager; Geotechnical Engineer','结构工程师；交通工程师；水资源工程师；施工经理；岩土工程师')">
+                                    <td class="px-4 py-3">14.0801</td>
+                                    <td class="px-4 py-3">Civil Engineering</td>
+                                    <td class="px-4 py-3">土木工程</td>
+                                    <td class="px-4 py-3">Structural Engineer; Transportation Engineer; Water Resources Engineer; Construction Manager; Geotechnical Engineer</td>
+                                    <td class="px-4 py-3">结构工程师；交通工程师；水资源工程师；施工经理；岩土工程师</td>
+                                    <td class="px-4 py-3">$65,000–$90,000</td>
+                                    <td class="px-4 py-3">Solid; 8% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=civil+engineer" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '14.0901','Computer Engineering','计算机工程','Firmware Engineer; Systems Engineer; Network Engineer; Embedded Engineer','固件工程师；系统工程师；网络工程师；嵌入式工程师')">
+                                    <td class="px-4 py-3">14.0901</td>
+                                    <td class="px-4 py-3">Computer Engineering</td>
+                                    <td class="px-4 py-3">计算机工程</td>
+                                    <td class="px-4 py-3">Firmware Engineer; Systems Engineer; Network Engineer; Embedded Engineer</td>
+                                    <td class="px-4 py-3">固件工程师；系统工程师；网络工程师；嵌入式工程师</td>
+                                    <td class="px-4 py-3">$75,000–$105,000</td>
+                                    <td class="px-4 py-3">High demand; 12% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=computer+engineer" target="_blank" class="text黄色-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '52.1401','Marketing','市场营销','Marketing Specialist; Digital Marketing Analyst; Brand Manager; SEO Specialist; Content Strategist','市场专员；数字营销分析师；品牌经理；SEO专家；内容策略师')">
+                                    <td class="px-4 py-3">52.1401</td>
+                                    <td class="px-4 py-3">Marketing</td>
+                                    <td class="px-4 py-3">市场营销</td>
+                                    <td class="px-4 py-3">Marketing Specialist; Digital Marketing Analyst; Brand Manager; SEO Specialist; Content Strategist</td>
+                                    <td class="px-4 py-3">市场专员；数字营销分析师；品牌经理；SEO专家；内容策略师</td>
+                                    <td class="px-4 py-3">$50,000–$80,000</td>
+                                    <td class="px-4 py-3">Dynamic; 8% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=marketing+specialist" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '40.0501','Chemistry','化学','Chemist; Quality Control Analyst; Process Engineer; R&D Scientist; Environmental Scientist','化学师；质量控制分析师；工艺工程师；研发科学家；环境科学家')">
+                                    <td class="px-4 py-3">40.0501</td>
+                                    <td class="px-4 py-3">Chemistry</td>
+                                    <td class="px-4 py-3">化学</td>
+                                    <td class="px-4 py-3">Chemist; Quality Control Analyst; Process Engineer; R&D Scientist; Environmental Scientist</td>
+                                    <td class="px-4 py-3">化学师；质量控制分析师；工艺工程师；研发科学家；环境科学家</td>
+                                    <td class="px-4 py-3">$55,000–$80,000</td>
+                                    <td class="px-4 py-3">Stable; 6% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=chemist" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '51.2201','Public Health','公共卫生','Epidemiologist; Health Policy Analyst; Health Educator; Program Manager; Community Health Specialist','流行病学家；卫生政策分析师；健康教育者；项目经理；社区健康专员')">
+                                    <td class="px-4 py-3">51.2201</td>
+                                    <td class="px-4 py-3">Public Health</td>
+                                    <td class="px-4 py-3">公共卫生</td>
+                                    <td class="px-4 py-3">Epidemiologist; Health Policy Analyst; Health Educator; Program Manager; Community Health Specialist</td>
+                                    <td class="px-4 py-3">流行病学家；卫生政策分析师；健康教育者；项目经理；社区健康专员</td>
+                                    <td class="px-4 py-3">$55,000–$85,000</td>
+                                    <td class="px-4 py-3">Growing; 10% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=public+health" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '11.1003','Cybersecurity','网络安全','Security Engineer; Penetration Tester; SOC Analyst; Security Consultant; Incident Responder','安全工程师；渗透测试工程师；安全运营分析师；安全顾问；应急响应工程师')">
+                                    <td class="px-4 py-3">11.1003</td>
+                                    <td class="px-4 py-3">Cybersecurity</td>
+                                    <td class="px-4 py-3">网络安全</td>
+                                    <td class="px-4 py-3">Security Engineer; Penetration Tester; SOC Analyst; Security Consultant; Incident Responder</td>
+                                    <td class="px-4 py-3">安全工程师；渗透测试工程师；安全运营分析师；安全顾问；应急响应工程师</td>
+                                    <td class="px-4 py-3">$80,000–$120,000</td>
+                                    <td class="px-4 py-3">High demand; 30% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=cybersecurity" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '51.0701','Health/Medical Administrative Services','卫生/医疗管理','Healthcare Administrator; Medical Office Manager; Health Services Manager; Practice Manager','医疗管理者；医疗办公室经理；健康服务经理；诊所经理')">
+                                    <td class="px-4 py-3">51.0701</td>
+                                    <td class="px-4 py-3">Health/Medical Administrative Services</td>
+                                    <td class="px-4 py-3">卫生/医疗管理</td>
+                                    <td class="px-4 py-3">Healthcare Administrator; Medical Office Manager; Health Services Manager; Practice Manager</td>
+                                    <td class="px-4 py-3">医疗管理者；医疗办公室经理；健康服务经理；诊所经理</td>
+                                    <td class="px-4 py-3">$60,000–$85,000</td>
+                                    <td class="px-4 py-3">Stable; 7% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=healthcare+administrator" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '51.2006','Pharmaceutical Sciences','药物科学','Pharmacologist; Regulatory Affairs Specialist; Clinical Trials Associate; Quality Assurance Specialist; Drug Safety Associate','药理学家；法规事务专员；临床试验助理；质量保证专员；药物安全专员')">
+                                    <td class="px-4 py-3">51.2006</td>
+                                    <td class="px-4 py-3">Pharmaceutical Sciences</td>
+                                    <td class="px-4 py-3">药物科学</td>
+                                    <td class="px-4 py-3">Pharmacologist; Regulatory Affairs Specialist; Clinical Trials Associate; Quality Assurance Specialist; Drug Safety Associate</td>
+                                    <td class="px-4 py-3">药理学家；法规事务专员；临床试验助理；质量保证专员；药物安全专员</td>
+                                    <td class="px-4 py-3">$60,000–$90,000</td>
+                                    <td class="px-4 py-3">Growing; 9% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=pharmaceutical+science" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '45.1001','Political Science','政治学','Policy Analyst; Legislative Assistant; Public Affairs Specialist; Diplomatic Service; Political Consultant','政策分析师；立法助理；公共事务专员；外交服务；政治顾问')">
+                                    <td class="px-4 py-3">45.1001</td>
+                                    <td class="px-4 py-3">Political Science</td>
+                                    <td class="px-4 py-3">政治学</td>
+                                    <td class="px-4 py-3">Policy Analyst; Legislative Assistant; Public Affairs Specialist; Diplomatic Service; Political Consultant</td>
+                                    <td class="px-4 py-3">政策分析师；立法助理；公共事务专员；外交服务；政治顾问</td>
+                                    <td class="px-4 py-3">$50,000–$75,000</td>
+                                    <td class="px-4 py-3">Varied; 5% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=policy+analyst" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '23.0101','English Language and Literature','英语语言文学','Editor; Content Writer; Technical Writer; Communications Specialist; Publishing Assistant','编辑；内容写手；技术写手；传播专员；出版助理')">
+                                    <td class="px-4 py-3">23.0101</td>
+                                    <td class="px-4 py-3">English Language and Literature</td>
+                                    <td class="px-4 py-3">英语语言文学</td>
+                                    <td class="px-4 py-3">Editor; Content Writer; Technical Writer; Communications Specialist; Publishing Assistant</td>
+                                    <td class="px-4 py-3">编辑；内容写手；技术写手；传播专员；出版助理</td>
+                                    <td class="px-4 py-3">$45,000–$65,000</td>
+                                    <td class="px-4 py-3">Competitive; portfolio-driven</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=editor" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '31.0501','Sports and Fitness Administration','体育与健身管理','Sports Manager; Fitness Director; Athletic Program Coordinator; Sports Marketing Specialist; Athletic Director','体育经理；健身主管；体育项目协调员；体育营销专员；体育总监')">
+                                    <td class="px-4 py-3">31.0501</td>
+                                    <td class="px-4 py-3">Sports and Fitness Administration</td>
+                                    <td class="px-4 py-3">体育与健身管理</td>
+                                    <td class="px-4 py-3">Sports Manager; Fitness Director; Athletic Program Coordinator; Sports Marketing Specialist; Athletic Director</td>
+                                    <td class="px-4 py-3">体育经理；健身主管；体育项目协调员；体育营销专员；体育总监</td>
+                                    <td class="px-4 py-3">$45,000–$70,000</td>
+                                    <td class="px-4 py-3">Varied; experience-driven</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=sports+manager" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '11.0802','Data Modeling/Warehousing & Database Admin','数据建模/仓储与数据库管理','Database Administrator; Data Architect; ETL Developer; BI Developer; Data Warehouse Engineer','数据库管理员；数据架构师；ETL开发；商业智能开发；数据仓库工程师')">
+                                    <td class="px-4 py-3">11.0802</td>
+                                    <td class="px-4 py-3">Data Modeling/Warehousing & Database Admin</td>
+                                    <td class="px-4 py-3">数据建模/仓储与数据库管理</td>
+                                    <td class="px-4 py-3">Database Administrator; Data Architect; ETL Developer; BI Developer; Data Warehouse Engineer</td>
+                                    <td class="px-4 py-3">数据库管理员；数据架构师；ETL开发；商业智能开发；数据仓库工程师</td>
+                                    <td class="px-4 py-3">$80,000–$110,000</td>
+                                    <td class="px-4 py-3">Strong; 12% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=database+administrator" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                                <tr x-show="matchRow(q, '15.1200','Computer Engineering Technology','计算机工程技术','Hardware Technician; Test Engineer; Field Engineer; Electronics Technician; Engineering Technologist','硬件技术员；测试工程师；现场工程师；电子技术员；工程技术专家')">
+                                    <td class="px-4 py-3">15.1200</td>
+                                    <td class="px-4 py-3">Computer Engineering Technology</td>
+                                    <td class="px-4 py-3">计算机工程技术</td>
+                                    <td class="px-4 py-3">Hardware Technician; Test Engineer; Field Engineer; Electronics Technician; Engineering Technologist</td>
+                                    <td class="px-4 py-3">硬件技术员；测试工程师；现场工程师；电子技术员；工程技术专家</td>
+                                    <td class="px-4 py-3">$55,000–$80,000</td>
+                                    <td class="px-4 py-3">Stable; 6% growth</td>
+                                    <td class="px-4 py-3"><a href="https://www.indeed.com/jobs?q=hardware+technician" target="_blank" class="text-yellow-600 hover:underline">Search</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 大学地图（坐标绘制） -->
+            <div id="tools-unimap" x-show="activeTool === 'unimap'" class="luxury-card rounded-3xl p-8 shadow-2xl" data-aos="fade-up" x-data="uniMap()" x-init="init()">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800 tracking-wide">大学地图（坐标绘制）</h3>
+                        <p class="text-gray-600 font-serif">University Map (Plot Coordinates)</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button @click="closeTool()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 font-serif" :aria-label="language === 'zh' ? '关闭' : 'Close'" x-text="language === 'zh' ? '关闭' : 'Close'"></button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="unimap-toolbar flex flex-wrap items-center gap-3">
+                        <button @click="loadSample()" class="px-3 py-2 rounded-full bg-yellow-500 text-white font-elegant hover:bg-yellow-600">加载示例</button>
+                        <button @click="plot()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">绘制</button>
+                        <button @click="fitBounds()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">自适应视野</button>
+                        <button @click="clearAll()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">清空</button>
+                        <button @click="downloadGeoJSON()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">导出GeoJSON</button>
+                    </div>
+
+                    <textarea x-model="input" class="w-full border border-gray-300 rounded-xl px-4 py-3 font-serif" rows="6" placeholder="每行：学校名, 纬度, 经度。例如：Harvard University, 42.3770, -71.1167"></textarea>
+
+                    <div id="unimap" class="unimap-container rounded-xl overflow-hidden border border-yellow-200"></div>
+
+                    <p class="text-sm text-gray-500 font-serif">提示：支持坐标格式如“34.021, -118.284”，名称将作为标记提示。</p>
+                </div>
+            </div>
+            <script>
+            function uniMap(){
+              return {
+                map: null,
+                markers: [],
+                input: '',
+                init(){
+                  const container = document.getElementById('unimap');
+                  if (!this.map) {
+                    this.map = L.map(container).setView([20,0], 2);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(this.map);
+                  }
+                  setTimeout(()=> this.map && this.map.invalidateSize(), 100);
+                },
+                loadSample(){
+                  this.input = [
+                    'Harvard University, 42.3770, -71.1167',
+                    'MIT, 42.3601, -71.0942',
+                    'Stanford University, 37.4275, -122.1697',
+                    'University of California, Berkeley, 37.8719, -122.2585',
+                    'UCLA, 34.0689, -118.4452',
+                    'New York University, 40.7295, -73.9965'
+                  ].join('\n');
+                },
+                parseLines(){
+                  return this.input.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(line=>{
+                    const parts = line.split(',').map(p=>p.trim());
+                    if (parts.length < 3) return null;
+                    const name = parts[0];
+                    const lat = parseFloat(parts[1]);
+                    const lng = parseFloat(parts[2]);
+                    if (Number.isFinite(lat) && Number.isFinite(lng)) return {name, lat, lng};
+                    return null;
+                  }).filter(Boolean);
+                },
+                plot(){
+                  this.init();
+                  const pts = this.parseLines();
+                  if (!pts.length) return;
+                  this.clearAll(false);
+                  const bounds = [];
+                  pts.forEach(p=>{
+                    const m = L.marker([p.lat, p.lng]).addTo(this.map);
+                    m.bindPopup('<strong>'+p.name+'</strong><br>'+p.lat+', '+p.lng);
+                    this.markers.push(m);
+                    bounds.push([p.lat, p.lng]);
+                  });
+                  if (bounds.length) this.map.fitBounds(bounds, { padding: [20,20] });
+                },
+                fitBounds(){
+                  const bounds = this.markers.map(m=>m.getLatLng());
+                  if (bounds.length) this.map.fitBounds(bounds, { padding: [20,20] });
+                },
+                clearAll(invalidate=true){
+                  this.markers.forEach(m=> this.map.removeLayer(m));
+                  this.markers = [];
+                  if (invalidate) setTimeout(()=> this.map && this.map.invalidateSize(), 50);
+                },
+                downloadGeoJSON(){
+                  const features = this.markers.map(m=>{
+                    const ll = m.getLatLng();
+                    const name = m.getPopup()?.getContent()?.replace(/<[^>]+>/g,'') || '';
+                    return {
+                      type: 'Feature',
+                      properties: { name },
+                      geometry: { type: 'Point', coordinates: [ll.lng, ll.lat] }
+                    };
+                  });
+                  const geojson = { type: 'FeatureCollection', features };
+                  const blob = new Blob([JSON.stringify(geojson, null, 2)], {type:'application/json'});
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'universities.geojson';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }
+              }
+            }
+            </script>
+
+            </div>
         </div>
     </section>
     </div>
+
+    <!-- 学员评价 -->
+    <section id="testimonials" class="section-padding bg-gray-50">
+        <div class="container mx-auto">
+            <div class="text-center mb-20" data-aos="fade-up">
+                <h2 class="text-4xl md:text-6xl font-luxury font-bold text-gray-800 mb-6 tracking-wide">学员评价</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto font-serif">
+                    听听我们成功学员的真实声音
+                </p>
+            </div>
+
+            <!-- 评价轮播 -->
+            <div class="relative max-w-7xl mx-auto" x-data="{ currentTestimonial: 0 }">
+                <div class="overflow-hidden rounded-3xl">
+                    <div class="flex transition-transform duration-700 ease-in-out" 
+                         :style="`transform: translateX(-${currentTestimonial * 100}%)`">
+                        <template x-for="(testimonial, index) in testimonials" :key="testimonial.id">
+                            <div class="w-full flex-shrink-0">
+                                <div class="testimonial-luxury p-12 md:p-16 mx-6 rounded-3xl">
+                                    <div class="grid md:grid-cols-3 gap-12 items-center">
+                                        <!-- 学员照片 -->
+                                        <div class="text-center">
+                                            <img :src="testimonial.avatar" :alt="testimonial.name" 
+                                                 class="w-40 h-40 rounded-full mx-auto mb-6 object-cover border-4 border-yellow-200 shadow-lg">
+                                            <h4 class="font-luxury font-bold text-gray-800 text-xl mb-2" x-text="testimonial.name"></h4>
+                                            <p class="text-yellow-600 font-elegant font-semibold text-lg" x-text="testimonial.school"></p>
+                                            <p class="text-gray-600 font-serif" x-text="testimonial.major"></p>
+                                        </div>
+                                        
+                                        <!-- 评价内容 -->
+                                        <div class="md:col-span-2">
+                                            <!-- 星级评分 -->
+                                            <div class="flex mb-6">
+                                                <template x-for="i in 5">
+                                                    <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                    </svg>
+                                                </template>
+                                            </div>
+                                            
+                                            <blockquote class="text-xl text-gray-700 font-serif italic mb-8 leading-relaxed" x-text="testimonial.content"></blockquote>
+                                            
+                                            <!-- 录取结果 -->
+                                            <div class="luxury-card p-6 rounded-xl">
+                                                <p class="font-elegant font-semibold text-gray-600 mb-4">录取结果：</p>
+                                                <div class="flex flex-wrap gap-3">
+                                                    <template x-for="offer in testimonial.offers">
+                                                        <span class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-elegant font-semibold px-4 py-2 rounded-full" 
+                                                              x-text="offer"></span>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- 导航按钮 -->
+                <button @click="currentTestimonial = currentTestimonial > 0 ? currentTestimonial - 1 : testimonials.length - 1"
+                        class="absolute left-6 top-1/2 transform -translate-y-1/2 luxury-card rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                
+                <button @click="currentTestimonial = currentTestimonial < testimonials.length - 1 ? currentTestimonial + 1 : 0"
+                        class="absolute right-6 top-1/2 transform                        -translate-y-1/2 luxury-card rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
 
     <!-- 联系我们 -->
     <section class="section-padding bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white relative overflow-hidden">
