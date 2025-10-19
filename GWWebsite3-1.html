@@ -137,6 +137,7 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
             transition: left 0.6s;
+            pointer-events: none;
         }
 
         .luxury-card:hover::before {
@@ -446,7 +447,7 @@
         }
 
         /* 大学地图容器样式 */
-        .unimap-container { height: 480px; }
+        .unimap-container { height: 480px; width: 100%; }
         .unimap-toolbar button { transition: background-color .2s ease; }
     </style>
 </head>
@@ -489,7 +490,7 @@
     <button @click="openTool('qs2026')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">2025-2026 QS世界大学排名</button>
     <button @click="openTool('usnews2026')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">2026 U.S.News美国大学排名</button>
     <button @click="openTool('cipcareers')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">专业与职业映射（美国）</button>
-    <button @click="openTool('unimap')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">大学地图（坐标绘制）</button>
+    <button @click="openTool('unimap')" class="block w-full text-left px-4 py-3 text-gray-700 hover:text-yellow-600 font-elegant">2026 U.S.News美国大学地图</button>
 </div>
                     </div>
                     
@@ -536,7 +537,7 @@
                         <button @click="openTool('qs2026'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">2025-2026 QS世界大学排名</button>
                         <button @click="openTool('usnews2026'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">2026 U.S.News美国大学排名</button>
                         <button @click="openTool('cipcareers'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">专业与职业映射（美国）</button>
-                        <button @click="openTool('unimap'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">大学地图（坐标绘制）</button>
+                        <button @click="openTool('unimap'); mobileMenuOpen = false" class="block w-full text-left text-gray-600 hover:text-yellow-600 font-serif">2026 U.S.News美国大学地图</button>
                     </div>
                 </div>
                 <button @click="openModal('contact')" class="w-full luxury-button text-white py-4 rounded-full font-medium">
@@ -780,7 +781,7 @@
     </div>
     <div class="mt-4">
         <button @click="openTool('unimap')" class="luxury-button text-white px-8 py-3 rounded-full font-elegant">
-            使用工具：大学地图（坐标绘制）
+            使用工具：2026 U.S.News美国大学地图
         </button>
     </div>
 </div>
@@ -1557,11 +1558,11 @@
             </div>
 
             <!-- 大学地图（坐标绘制） -->
-            <div id="tools-unimap" x-show="activeTool === 'unimap'" class="luxury-card rounded-3xl p-8 shadow-2xl" data-aos="fade-up" x-data="uniMap()" x-init="init()">
+            <div id="tools-unimap" x-show="activeTool === 'unimap'" class="luxury-card rounded-3xl p-8 shadow-2xl" data-aos="fade-up" x-data="uniMap()" x-init="init()" x-effect="activeTool === 'unimap' && setTimeout(() => { init(); this.map && this.map.invalidateSize(); }, 60)">
                 <div class="flex items-center justify-between mb-6">
                     <div>
-                        <h3 class="text-2xl font-luxury font-bold text-gray-800 tracking-wide">大学地图（坐标绘制）</h3>
-                        <p class="text-gray-600 font-serif">University Map (Plot Coordinates)</p>
+                        <h3 class="text-2xl font-luxury font-bold text-gray-800 tracking-wide">2026 U.S.News美国大学地图</h3>
+                        <p class="text-gray-600 font-serif">2026 U.S.News U.S. University Map</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button @click="closeTool()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 font-serif" :aria-label="language === 'zh' ? '关闭' : 'Close'" x-text="language === 'zh' ? '关闭' : 'Close'"></button>
@@ -1570,18 +1571,24 @@
 
                 <div class="space-y-4">
                     <div class="unimap-toolbar flex flex-wrap items-center gap-3">
-                        <button @click="loadSample()" class="px-3 py-2 rounded-full bg-yellow-500 text-white font-elegant hover:bg-yellow-600">加载示例</button>
-                        <button @click="plot()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">绘制</button>
+                        <button @click="loadPredefined()" class="px-3 py-2 rounded-full bg-yellow-600 text-white font-elegant hover:bg-yellow-700">加载高校数据</button>
                         <button @click="fitBounds()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">自适应视野</button>
                         <button @click="clearAll()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">清空</button>
                         <button @click="downloadGeoJSON()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">导出GeoJSON</button>
+                        <span class="text-sm text-gray-500 font-serif">点击标记查看“学校名称（排名）”，可下拉选择定位。</span>
                     </div>
 
-                    <textarea x-model="input" class="w-full border border-gray-300 rounded-xl px-4 py-3 font-serif" rows="6" placeholder="每行：学校名, 纬度, 经度。例如：Harvard University, 42.3770, -71.1167"></textarea>
+                    <div class="flex items-center gap-3">
+                        <select x-model="selectedIndex" class="border border-gray-300 rounded-xl px-4 py-2 font-serif">
+                            <option :value="-1">选择学校定位</option>
+                            <template x-for="(item, idx) in predefined" :key="idx">
+                                <option :value="idx" x-text="item.name + '（' + item.rank + '）'"></option>
+                            </template>
+                        </select>
+                        <button @click="focusSelected()" class="px-3 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-serif">定位选中</button>
+                    </div>
 
                     <div id="unimap" class="unimap-container rounded-xl overflow-hidden border border-yellow-200"></div>
-
-                    <p class="text-sm text-gray-500 font-serif">提示：支持坐标格式如“34.021, -118.284”，名称将作为标记提示。</p>
                 </div>
             </div>
             <script>
@@ -1590,13 +1597,130 @@
                 map: null,
                 markers: [],
                 input: '',
+                predefined: [
+                  { name: '普林斯顿大学', rank: 1, lng: -74.65537357, lat: 40.34422632 },
+                  { name: '麻省理工学院', rank: 2, lng: -71.094164, lat: 42.360086 },
+                  { name: '哈佛大学', rank: 3, lng: -71.118252, lat: 42.374431 },
+                  { name: '斯坦福大学', rank: 4, lng: -122.170036, lat: 37.4276 },
+                  { name: '耶鲁大学', rank: 5, lng: -72.922376, lat: 41.316311 },
+                  { name: '芝加哥大学', rank: 6, lng: -87.600395, lat: 41.790443 },
+                  { name: '杜克大学', rank: 7, lng: -78.938231, lat: 36.001422 },
+                  { name: '约翰霍普金斯大学', rank: 7, lng: -76.620518, lat: 39.329898 },
+                  { name: '西北大学', rank: 7, lng: -87.675266, lat: 42.056457 },
+                  { name: '宾夕法尼亚大学', rank: 7, lng: -75.193215, lat: 39.952207 },
+                  { name: '加州理工大学', rank: 11, lng: -118.12527, lat: 34.13765 },
+                  { name: '康奈尔大学', rank: 12, lng: -76.473503, lat: 42.453445 },
+                  { name: '布朗大学', rank: 13, lng: -71.402548, lat: 41.82677 },
+                  { name: '达特茅斯大学', rank: 13, lng: -72.288696, lat: 43.704437 },
+                  { name: '哥伦比亚大学', rank: 15, lng: -73.962573, lat: 40.807532 },
+                  { name: '加州大学伯克利分校', rank: 15, lng: -122.25946, lat: 37.870145 },
+                  { name: '加州大学洛杉矶分校', rank: 17, lng: -118.443849, lat: 34.069915 },
+                  { name: '莱斯大学', rank: 17, lng: -95.403554, lat: 29.716832 },
+                  { name: '范德堡大学', rank: 17, lng: -86.802652, lat: 36.144699 },
+                  { name: '圣母大学', rank: 20, lng: -86.235165, lat: 41.705188 },
+                  { name: '密歇根大学安娜堡分校', rank: 20, lng: -83.738206, lat: 42.27714 },
+                  { name: '卡耐基梅陇大学', rank: 20, lng: -79.94285, lat: 40.4432 },
+                  { name: '华盛顿大学圣路易斯', rank: 20, lng: -90.310796, lat: 38.648784 },
+                  { name: '乔治城大学', rank: 24, lng: -77.07226, lat: 38.907605 },
+                  { name: '埃默里大学', rank: 24, lng: -84.322244, lat: 33.797131 },
+                  { name: '弗吉尼亚大学', rank: 26, lng: -78.50797, lat: 38.033549 },
+                  { name: '北卡莱纳大学教堂山分校', rank: 26, lng: -79.046913, lat: 35.904908 },
+                  { name: '南加州大学', rank: 28, lng: -118.285118, lat: 34.022347 },
+                  { name: '加州大学圣地亚哥分校', rank: 29, lng: -117.234361, lat: 32.881165 },
+                  { name: '佛罗里达大学', rank: 30, lng: -82.353327, lat: 29.646537 },
+                  { name: '德克萨斯大学奥斯汀分校', rank: 30, lng: -97.733522, lat: 30.285023 },
+                  { name: '纽约大学', rank: 32, lng: -73.99646, lat: 40.729507 },
+                  { name: '加州大学戴维斯分校', rank: 32, lng: -121.761713, lat: 38.538225 },
+                  { name: '佐治亚理工学院', rank: 32, lng: -84.396284, lat: 33.775614 },
+                  { name: '加州大学尔湾分校', rank: 32, lng: -117.841676, lat: 33.642373 },
+                  { name: '伊利诺伊大学香槟分校', rank: 36, lng: -88.227164, lat: 40.101945 },
+                  { name: '波士顿学院', rank: 36, lng: -71.168497, lat: 42.335545 },
+                  { name: '塔夫茨大学', rank: 36, lng: -71.118274, lat: 42.408533 },
+                  { name: '威斯康辛大学麦迪逊分校', rank: 36, lng: -89.412489, lat: 43.076585 },
+                  { name: '加州大学圣塔芭芭拉分校', rank: 40, lng: -119.848944, lat: 34.413955 },
+                  { name: '俄亥俄州立大学', rank: 41, lng: -83.028263, lat: 40.006085 },
+                  { name: '波士顿大学', rank: 42, lng: -71.105398, lat: 42.350492 },
+                  { name: '罗格斯大学', rank: 42, lng: -74.447418, lat: 40.500836 },
+                  { name: '马里兰大学帕克分校', rank: 42, lng: -76.942551, lat: 38.986914 },
+                  { name: '华盛顿大学西雅图分校', rank: 42, lng: -122.307395, lat: 47.654412 },
+                  { name: '罗切斯特大学', rank: 46, lng: -77.626009, lat: 43.130549 },
+                  { name: '普渡大学西拉法叶分校', rank: 46, lng: -86.921198, lat: 40.4237 },
+                  { name: '里海大学', rank: 46, lng: -75.377287, lat: 40.605383 },
+                  { name: '佐治亚大学', rank: 46, lng: -83.374986, lat: 33.956642 },
+                  { name: '东北大学', rank: 46, lng: -71.0896418, lat: 42.3398275 },
+                  { name: '维克森林大学', rank: 51, lng: -80.27928373, lat: 36.13547974 },
+                  { name: '德州农工大学', rank: 51, lng: -96.354441, lat: 30.60596 },
+                  { name: '弗吉尼亚理工学院', rank: 51, lng: -80.423417, lat: 37.228379 },
+                  { name: '凯斯西储大学', rank: 51, lng: -81.608386, lat: 41.504336 },
+                  { name: '佛罗里达州立大学', rank: 51, lng: -84.297958, lat: 30.442078 },
+                  { name: '威廉玛丽学院', rank: 51, lng: -76.716252, lat: 37.270965 },
+                  { name: '加州大学默塞德分校', rank: 57, lng: -120.424097, lat: 37.364697 },
+                  { name: '维拉诺瓦大学', rank: 57, lng: -75.34258, lat: 40.036889 },
+                  { name: '明尼苏达大学双城分校', rank: 59, lng: -93.227727, lat: 44.973986 },
+                  { name: '纽约州立石溪大学', rank: 59, lng: -73.123763, lat: 40.904134 },
+                  { name: '宾州州立大学帕克分校', rank: 59, lng: -77.859912, lat: 40.798209 },
+                  { name: '圣塔克拉拉大学', rank: 59, lng: -121.936779, lat: 37.348921 },
+                  { name: '乔治华盛顿大学', rank: 59, lng: -77.048598, lat: 38.899709 },
+                  { name: '北卡罗来纳州立大学罗利分校', rank: 64, lng: -78.681284, lat: 35.785069 },
+                  { name: '马萨诸塞大学安姆斯特分校', rank: 64, lng: -72.531423, lat: 42.387311 },
+                  { name: '密歇根州立大学', rank: 64, lng: -84.479084, lat: 42.725067 },
+                  { name: '迈阿密大学', rank: 64, lng: -80.278135, lat: 25.717389 },
+                  { name: '伦斯勒理工学院', rank: 64, lng: -73.6788884, lat: 42.72974014 },
+                  { name: '布兰迪斯大学', rank: 69, lng: -71.258644, lat: 42.365352 },
+                  { name: '杜兰大学', rank: 69, lng: -90.120318, lat: 29.940723 },
+                  { name: '康涅狄格大学', rank: 69, lng: -72.245269, lat: 41.813536 },
+                  { name: '匹兹堡大学', rank: 69, lng: -79.96053959, lat: 40.44402321 },
+                  { name: '纽约州立大学宾汉姆顿大学', rank: 73, lng: -75.969494, lat: 42.089427 },
+                  { name: '印第安纳大学伯明顿分校', rank: 73, lng: -86.523008, lat: 39.168241 },
+                  { name: '雪城大学', rank: 75, lng: -76.133693, lat: 43.038646 },
+                  { name: '纽约州立大学布法罗分校', rank: 75, lng: -78.789532, lat: 43.001794 },
+                  { name: '加州大学河滨分校', rank: 75, lng: -117.328066, lat: 33.973699 },
+                  { name: '罗格斯大学纽瓦克分校', rank: 75, lng: -74.17455653, lat: 40.74164373 },
+                  { name: '克莱门森大学', rank: 75, lng: -82.84061825, lat: 34.67498915 },
+                  { name: '科罗拉多矿业大学', rank: 80, lng: -105.222589, lat: 39.751041 },
+                  { name: '史蒂文斯理工学院', rank: 80, lng: -74.025649, lat: 40.744816 },
+                  { name: '佩伯代因大学', rank: 84, lng: -118.709596, lat: 34.0415 },
+                  { name: '伊利诺伊大学芝加哥分校', rank: 84, lng: -87.64843735, lat: 41.86860007 },
+                  { name: '特拉华大学', rank: 86, lng: -75.750611, lat: 39.677946 }
+                ],
+                markerByIndex: [],
+                selectedIndex: -1,
+                preloaded: false,
+                resizeBound: false,
                 init(){
                   const container = document.getElementById('unimap');
                   if (!this.map) {
                     this.map = L.map(container).setView([20,0], 2);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(this.map);
+                    if (!this.resizeBound) { window.addEventListener('resize', () => this.map && this.map.invalidateSize()); this.resizeBound = true; }
                   }
                   setTimeout(()=> this.map && this.map.invalidateSize(), 100);
+                  if (!this.preloaded) {
+                    this.loadPredefined();
+                    this.preloaded = true;
+                  }
+                },
+                loadPredefined(){
+                  this.clearAll(false);
+                  const bounds = [];
+                  this.markerByIndex = [];
+                  this.predefined.forEach((p, idx)=>{
+                    const m = L.marker([p.lat, p.lng]).addTo(this.map);
+                    m.bindPopup('<strong>'+p.name+'</strong>（USNEWS综合大学排名：'+p.rank+'）<br>'+p.lat+', '+p.lng);
+                    this.markers.push(m);
+                    this.markerByIndex[idx] = m;
+                    bounds.push([p.lat, p.lng]);
+                  });
+                  if (bounds.length) this.map.fitBounds(bounds, { padding: [20,20] });
+                },
+                focusSelected(){
+                  const idx = this.selectedIndex;
+                  if (idx == null || idx < 0) return;
+                  const m = this.markerByIndex[idx];
+                  if (!m) return;
+                  const ll = m.getLatLng();
+                  this.map.setView(ll, 14);
+                  m.openPopup();
                 },
                 loadSample(){
                   this.input = [
@@ -1640,15 +1764,20 @@
                 clearAll(invalidate=true){
                   this.markers.forEach(m=> this.map.removeLayer(m));
                   this.markers = [];
+                  this.markerByIndex = [];
                   if (invalidate) setTimeout(()=> this.map && this.map.invalidateSize(), 50);
                 },
                 downloadGeoJSON(){
-                  const features = this.markers.map(m=>{
+                  const features = this.markers.map((m, idx)=>{
                     const ll = m.getLatLng();
-                    const name = m.getPopup()?.getContent()?.replace(/<[^>]+>/g,'') || '';
+                    const content = m.getPopup()?.getContent() || '';
+                    const nameMatch = content.match(/<strong>([^<]+)<\/strong>/);
+                    const name = nameMatch ? nameMatch[1] : '';
+                    const rankMatch = content.match(/USNEWS综合大学排名：([0-9]+)/);
+                    const rank = rankMatch ? parseInt(rankMatch[1]) : (this.predefined[idx]?.rank || null);
                     return {
                       type: 'Feature',
-                      properties: { name },
+                      properties: { name, rank },
                       geometry: { type: 'Point', coordinates: [ll.lng, ll.lat] }
                     };
                   });
@@ -2031,6 +2160,7 @@
                     '服务流程': 'Process',
                     '学员评价': 'Reviews',
                     '联系我们': 'Contact',
+                    '2026 U.S.News美国大学地图': '2026 U.S.News U.S. University Map',
                     '名校密码': 'The Admission Code.',
                     '破译': 'Cracked.',
                     '我们不仅是向导，更是您在全球顶尖名校激烈竞争中的绝对优势': 'We are not just guides — we are your decisive edge in the fierce competition for top global universities.',
