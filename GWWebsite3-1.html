@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>引力坊 GRAVITY FANG | 瑞士主义重构版</title>
+    <title>引力坊 GRAVITY FANG</title>
     
     <!-- 核心库 -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -154,6 +153,7 @@
             display: inline-block;
             animation: marquee 40s linear infinite;
         }
+        .clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         @keyframes marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -215,7 +215,10 @@
         <div class="grid grid-cols-12 h-20">
             <!-- Logo -->
             <div class="col-span-4 md:col-span-3 flex items-center px-6 brutal-border-r bg-black text-white">
-                <span class="font-grotesk font-bold text-2xl tracking-tighter">GF.EDU</span>
+                <div class="flex items-center gap-3">
+                    <span x-show="lang==='zh'" class="font-grotesk font-bold text-2xl tracking-tighter">引力坊教育</span>
+                    <span x-show="lang==='en'" class="font-grotesk font-bold text-2xl tracking-tighter">GRAVITY FANG EDU</span>
+                </div>
             </div>
             
             <!-- 菜单 -->
@@ -263,11 +266,9 @@
                             <!-- 独立动画：左侧红线 -->
                             <div id="hero-desc-border" class="absolute left-0 top-0 bottom-0 w-1 bg-swiss-red"></div>
                             
-                            <h2 x-show="lang==='zh'" class="text-3xl md:text-4xl font-bold mb-6 leading-tight gs-reveal bg-white/80 backdrop-blur-sm inline-block md:bg-transparent md:backdrop-blur-none">
-                                名校密码，<br><span class="text-swiss-red">精准破译。</span>
-                            </h2>
-                            <h2 x-show="lang==='en'" class="text-3xl md:text-4xl font-bold mb-6 leading-tight gs-reveal bg-white/80 backdrop-blur-sm inline-block md:bg-transparent md:backdrop-blur-none">
-                                Cracking Elite Admissions,<br><span class="text-swiss-red">with precision.</span>
+                            <h2 id="hero-subtitle" class="text-3xl md:text-4xl font-bold mb-6 leading-tight gs-reveal bg-white/80 backdrop-blur-sm inline-block md:bg-transparent md:backdrop-blur-none">
+                                <span x-show="lang==='zh'">名校密码，<br><span class="text-swiss-red">精准破译。</span></span>
+                                <span x-show="lang==='en'">Cracking Elite Admissions,<br><span class="text-swiss-red">with precision.</span></span>
                             </h2>
                             
                             <!-- 独立动画：文字内容 -->
@@ -298,7 +299,7 @@
                 <template x-for="stat in statsData">
                     <div class="p-8 flex flex-col items-center justify-center hover:bg-swiss-red hover:text-white transition-colors duration-300 cursor-default">
                         <span class="font-grotesk text-5xl md:text-6xl font-bold mb-2" x-text="stat.value"></span>
-                        <span class="font-bold text-xs tracking-[0.2em] uppercase" x-text="stat.label"></span>
+                        <span class="font-bold text-xs tracking-[0.2em] uppercase" x-text="lang==='zh' ? stat.label_zh : stat.label_en"></span>
                     </div>
                 </template>
             </div>
@@ -498,11 +499,11 @@
                                     <div class="flex items-center gap-4 mb-6">
                                         <img :src="t.avatar" class="w-12 h-12 rounded-full border border-black object-cover" :alt="t.name">
                                         <div>
-                                            <h4 class="font-bold text-lg" x-text="t.name"></h4>
+                                            <h4 class="font-bold text-lg" x-text="lang==='zh' ? t.name : t.name_en"></h4>
                                             <p class="text-swiss-red font-bold text-xs uppercase" x-text="t.school"></p>
                                         </div>
                                     </div>
-                                    <p class="text-sm font-medium leading-relaxed opacity-80">“<span x-text="lang==='zh' ? t.content : t.content_en"></span>”</p>
+                                    <p class="text-sm font-medium leading-relaxed opacity-80 whitespace-normal clamp-3">“<span x-text="lang==='zh' ? t.content : t.content_en"></span>”</p>
                                 </div>
                             </template>
                         </div>
@@ -650,16 +651,16 @@
                  ],
 
                                 statsData: [
-                    { value: '500+', label: '成功学员' },
-                    { value: '50+', label: '合作院校' },
-                    { value: '98%', label: '录取率' },
-                    { value: '8Y', label: '行业经验' }
+                    { value: '500+', label_zh: '成功学员', label_en: 'Students Admitted' },
+                    { value: '50+', label_zh: '合作院校', label_en: 'Partner Schools' },
+                    { value: '98%', label_zh: '录取率', label_en: 'Acceptance Rate' },
+                    { value: '8Y', label_zh: '行业经验', label_en: 'Industry Experience' }
                 ],
 
                 testimonials: [
-                    { id: 1, name: '李同学', school: 'Cornell', avatar: 'https://s2.loli.net/2025/10/19/47AUcfredlmxguq.png', content: '专业指导让我成功进入梦校。', content_en: 'Professional guidance helped me get into my dream school.' },
-                    { id: 2, name: '王同学', school: 'Barnard', avatar: 'https://s2.loli.net/2025/10/19/3lWGah2QtKHngym.png', content: '拿到了Offer还有半额奖学金！', content_en: 'I received an offer plus a half scholarship!' },
-                    { id: 3, name: '张同学', school: 'Imperial', avatar: 'https://s2.loli.net/2025/10/19/d8p2ocHyUEk1DMS.png', content: '工程背景给了我最专业的建议。', content_en: 'My engineering background received the most professional advice.' }
+                    { id: 1, name: '李同学', name_en: 'Li', school: 'Cornell', avatar: 'https://s2.loli.net/2025/10/19/47AUcfredlmxguq.png', content: '专业指导让我成功进入梦校。', content_en: 'Professional guidance helped me get into my dream school.' },
+                    { id: 2, name: '王同学', name_en: 'Wang', school: 'Barnard', avatar: 'https://s2.loli.net/2025/10/19/3lWGah2QtKHngym.png', content: '拿到了Offer还有半额奖学金！', content_en: 'I received an offer plus a half scholarship!' },
+                    { id: 3, name: '张同学', name_en: 'Zhang', school: 'Imperial', avatar: 'https://s2.loli.net/2025/10/19/d8p2ocHyUEk1DMS.png', content: '工程背景给了我最专业的建议。', content_en: 'My engineering background received the most professional advice.' }
                 ],
 
                 nextPage() {
@@ -777,7 +778,7 @@
                     return dict[this.lang][key];
                 },
 
-                toggleLang() { this.lang = this.lang === 'zh' ? 'en' : 'zh'; },
+                toggleLang() { this.lang = this.lang === 'zh' ? 'en' : 'zh'; ScrollTrigger.refresh(); },
 
                 openModal(type) {
                     this.activeModal = type;
@@ -824,6 +825,7 @@
                       
                     // 滚动触发动画
                     gsap.utils.toArray('section h2').forEach(h2 => {
+                        if (h2.id === 'hero-subtitle') return;
                         gsap.from(h2, {
                             scrollTrigger: {
                                 trigger: h2,
