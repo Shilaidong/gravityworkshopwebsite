@@ -1,59 +1,55 @@
 @import "tailwindcss";
 
+/*
+ * Type and colour are calibrated against docs/ref-oryzo-v2-frames/*.
+ * The three things that make those frames read as film rather than website:
+ *   1. display type is HEAVY (800–900), uppercase, tight, and huge
+ *   2. body copy is cream and semi-bold — never thin grey
+ *   3. photography stays bright; type earns contrast from a local shadow,
+ *      not from a global dim veil over the whole frame
+ */
+
 :root {
-  /* Warm paper, cool ink, restrained teal */
-  --paper: oklch(0.975 0.006 85);
-  --paper-elevated: oklch(0.99 0.004 85);
-  --ink: oklch(0.22 0.02 250);
-  --ink-soft: oklch(0.38 0.018 250);
-  --mute: oklch(0.58 0.014 240);
-  --line: oklch(0.88 0.01 240);
-  --teal: oklch(0.48 0.09 195);
-  --teal-deep: oklch(0.4 0.08 195);
-  --teal-soft: oklch(0.94 0.025 195);
-  --ink-band: oklch(0.2 0.025 250);
-  --on-ink: oklch(0.96 0.008 85);
-  --on-ink-mute: oklch(0.72 0.015 240);
-  --focus: oklch(0.48 0.09 195);
+  /* void = outside the rounded page frame */
+  --void: oklch(0.06 0.008 60);
+  --stage: oklch(0.145 0.016 58);
+  --stage-deep: oklch(0.105 0.012 58);
+  --cream: oklch(0.955 0.026 88);
+  --teal: oklch(0.7 0.105 185);
+  --teal-deep: oklch(0.5 0.09 195);
 
-  --background: var(--paper);
-  --foreground: var(--ink);
+  --nav-h: 3.5rem;
+  --gutter: clamp(1.1rem, 3.2vw, 3rem);
+  --frame-radius: 18px;
 
-  --space-section: clamp(4.5rem, 10vw, 8rem);
-  --space-gutter: clamp(1.25rem, 4vw, 2.5rem);
-  --measure: 65ch;
-  --nav-h: 4.25rem;
+  /* display scale — see reference frames */
+  --fs-wordmark: clamp(3.6rem, 10.5vw, 10.5rem);
+  --fs-display: clamp(2.3rem, 5.4vw, 4.6rem);
+  --fs-title: clamp(1.75rem, 3.4vw, 2.9rem);
+  --fs-lead: clamp(1.02rem, 1.35vw, 1.28rem);
+  --fs-kicker: clamp(0.68rem, 0.9vw, 0.8rem);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-paper-elevated: var(--paper-elevated);
-  --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
-  --color-mute: var(--mute);
-  --color-line: var(--line);
+  --color-stage: var(--stage);
+  --color-stage-deep: var(--stage-deep);
+  --color-void: var(--void);
+  --color-cream: var(--cream);
   --color-teal: var(--teal);
   --color-teal-deep: var(--teal-deep);
-  --color-teal-soft: var(--teal-soft);
-  --color-ink-band: var(--ink-band);
-  --color-on-ink: var(--on-ink);
-  --color-on-ink-mute: var(--on-ink-mute);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
 }
 
 html {
-  scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--nav-h) + 1rem);
+  scroll-behavior: auto;
+  scroll-padding-top: calc(var(--nav-h) + 0.5rem);
+  background: var(--void);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
@@ -64,151 +60,320 @@ html {
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--stage);
+  color: var(--cream);
   font-family: var(--font-sans), "Noto Sans SC", system-ui, sans-serif;
+  font-weight: 500;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: var(--teal-soft);
-  color: var(--ink);
+  background: oklch(0.55 0.1 185 / 0.4);
+  color: var(--cream);
 }
 
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--teal);
   outline-offset: 3px;
 }
+
+/* ---------- page frame: rounded viewport, void beyond the corners ---------- */
+
+.page-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  border-radius: var(--frame-radius);
+  /* outline follows border-radius and floods outward past the viewport,
+     so only the four corner slivers actually paint */
+  outline: 100vmax solid var(--void);
+}
+
+/* ---------- type ---------- */
 
 .font-display {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
 }
 
-.section-pad {
-  padding-inline: var(--space-gutter);
-  padding-block: var(--space-section);
-}
-
-.container-site {
-  width: min(1120px, 100%);
-  margin-inline: auto;
-}
-
-.container-wide {
-  width: min(1280px, 100%);
-  margin-inline: auto;
-}
-
-.label-kicker {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+/* the giant brand word — bleeds, never centred timidly */
+.t-wordmark {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--fs-wordmark);
+  font-weight: 800;
+  line-height: 0.82;
+  letter-spacing: -0.04em;
   text-transform: uppercase;
-  color: var(--teal);
 }
 
-.btn-primary {
+/* act headline */
+.t-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: var(--fs-display);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+
+/* latin acts read uppercase like the reference; CJK keeps its own case */
+.t-display-caps {
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+}
+
+.t-title {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+/* small bold all-caps label above a headline */
+.t-kicker {
+  font-size: var(--fs-kicker);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--cream);
+}
+
+/* body copy: cream and semi-bold. Never thin grey on photography. */
+.t-lead {
+  font-size: var(--fs-lead);
+  font-weight: 600;
+  line-height: 1.5;
+  color: oklch(0.955 0.026 88 / 0.92);
+  max-width: 34ch;
+}
+
+.t-body {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: oklch(0.955 0.026 88 / 0.72);
+}
+
+.t-micro {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: oklch(0.955 0.026 88 / 0.5);
+}
+
+/* type sitting directly on photography keeps its own contrast */
+.on-photo {
+  text-shadow:
+    0 1px 24px oklch(0.06 0.01 60 / 0.75),
+    0 1px 3px oklch(0.06 0.01 60 / 0.6);
+}
+
+/* ---------- layout ---------- */
+
+/* full-bleed stage padding — content anchors to the frame edge, not a
+   centred column. This is what stops the page reading as a template. */
+.bleed {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+
+.container-exp {
+  width: min(1240px, 100%);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- chrome ---------- */
+
+.nav-link {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: oklch(0.955 0.026 88 / 0.72);
+  transition: color 0.25s var(--ease);
+}
+
+.nav-link:hover {
+  color: var(--cream);
+}
+
+/* active nav item is boxed, like the reference */
+.nav-link-active {
+  color: var(--cream);
+  border: 1px solid oklch(0.955 0.026 88 / 0.8);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+}
+
+/* solid cream chip riding the right edge with vertical type */
+.edge-tab {
+  writing-mode: vertical-rl;
+  background: var(--cream);
+  color: var(--void);
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  padding: 1.1rem 0.55rem;
+  border-radius: 6px 0 0 6px;
+}
+
+/* ---------- components ---------- */
+
+.btn-cream {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.5rem;
-  background: var(--teal);
-  color: oklch(0.98 0.01 195);
-  font-weight: 600;
-  font-size: 0.9375rem;
+  gap: 0.45rem;
+  padding: 0.9rem 1.6rem;
   border-radius: 999px;
-  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--cream);
+  color: var(--void);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.2s var(--ease);
 }
 
-.btn-primary:hover {
-  background: var(--teal-deep);
+.btn-cream:hover {
+  opacity: 0.9;
 }
 
-.btn-primary:active {
+.btn-cream:active {
   transform: translateY(1px);
 }
 
-.btn-ghost {
+/* large dark lozenge CTA (contact frame) */
+.btn-lozenge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.5rem;
-  color: var(--ink);
-  font-weight: 600;
-  font-size: 0.9375rem;
+  padding: 1.05rem 2.4rem;
   border-radius: 999px;
-  border: 1px solid var(--line);
-  background: transparent;
-  transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: oklch(0.24 0.03 60);
+  color: var(--cream);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: background 0.25s var(--ease);
 }
 
-.btn-ghost:hover {
-  border-color: var(--ink-soft);
-  background: var(--paper-elevated);
+.btn-lozenge:hover {
+  background: oklch(0.3 0.035 60);
 }
 
-.btn-ghost-on-dark {
+.btn-outline-cream {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.5rem;
-  color: var(--on-ink);
-  font-weight: 600;
-  font-size: 0.9375rem;
+  gap: 0.45rem;
+  padding: 0.9rem 1.6rem;
   border-radius: 999px;
-  border: 1px solid oklch(1 0 0 / 0.18);
+  border: 1px solid oklch(0.955 0.026 88 / 0.35);
+  color: var(--cream);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  transition:
+    border-color 0.25s var(--ease),
+    background 0.25s var(--ease);
+}
+
+.btn-outline-cream:hover {
+  border-color: oklch(0.955 0.026 88 / 0.65);
+  background: oklch(0.955 0.026 88 / 0.07);
+}
+
+/* tier selector pill row (product frame) */
+.pill {
+  border-radius: 999px;
+  padding: 0.8rem 1.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: oklch(0.2 0.02 60);
+  color: oklch(0.955 0.026 88 / 0.7);
+  border: 1px solid transparent;
+  transition:
+    background 0.25s var(--ease),
+    color 0.25s var(--ease),
+    border-color 0.25s var(--ease);
+}
+
+.pill:hover {
+  color: var(--cream);
+  background: oklch(0.25 0.025 60);
+}
+
+.pill-active {
+  color: var(--cream);
+  border-color: var(--teal);
+  background: oklch(0.26 0.04 190);
+  box-shadow: 0 0 24px -6px var(--teal);
+}
+
+/* translucent info card, bottom-left of the intro frame */
+.card-film {
+  background: oklch(0.14 0.015 58 / 0.62);
+  backdrop-filter: blur(10px);
+  padding: 1.4rem 1.5rem;
+  border-radius: 2px;
+}
+
+.panel-film {
+  border-radius: 0.9rem;
+  border: 1px solid oklch(0.955 0.026 88 / 0.14);
+  background: oklch(0.12 0.015 58 / 0.62);
+  backdrop-filter: blur(12px);
+}
+
+/* dashed viewfinder — gallery focus frame, info blocks */
+.frame-dashed {
+  border: 1px dashed oklch(0.955 0.026 88 / 0.45);
+}
+
+.rule-dotted {
+  border-top: 1px dotted oklch(0.955 0.026 88 / 0.4);
+}
+
+.input-film {
+  width: 100%;
+  border: none;
+  border-bottom: 1px dotted oklch(0.955 0.026 88 / 0.45);
   background: transparent;
-  transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0.65rem 0.1rem;
+  color: var(--cream);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
-.btn-ghost-on-dark:hover {
-  border-color: oklch(1 0 0 / 0.4);
-  background: oklch(1 0 0 / 0.06);
+.input-film::placeholder {
+  color: oklch(0.955 0.026 88 / 0.35);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
 }
 
-.prose-measure {
-  max-width: var(--measure);
+.input-film:focus {
+  outline: none;
+  border-bottom-color: var(--teal);
 }
 
-/* Subtle entrance for hero only when motion allowed */
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.input-film option {
+  background: #1a1814;
+  color: var(--cream);
 }
 
-.animate-fade-up {
-  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+html.lenis,
+html.lenis body {
+  height: auto;
 }
 
-.animate-fade-up-delay-1 {
-  animation-delay: 0.08s;
-}
-
-.animate-fade-up-delay-2 {
-  animation-delay: 0.16s;
-}
-
-.animate-fade-up-delay-3 {
-  animation-delay: 0.24s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-up,
-  .animate-fade-up-delay-1,
-  .animate-fade-up-delay-2,
-  .animate-fade-up-delay-3 {
-    animation: none;
-  }
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }

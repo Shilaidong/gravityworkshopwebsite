@@ -2,3 +2,12 @@
 **/.DS_Store
 node_modules/
 .next/
+
+# Screen recordings (too large for git)
+*.mov
+*.mp4
+*.MOV
+
+# Local analysis scratch
+.ref-oryzo-frames/
+.claude/

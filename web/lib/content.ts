@@ -10,124 +10,193 @@ export const contact = {
 };
 
 export const nav = {
-  about: { zh: "关于", en: "About" },
-  services: { zh: "服务", en: "Services" },
+  intro: { zh: "开场", en: "Intro" },
+  method: { zh: "方法", en: "Method" },
+  systems: { zh: "系统", en: "Systems" },
   cases: { zh: "案例", en: "Cases" },
   team: { zh: "团队", en: "Team" },
-  contact: { zh: "联系我们", en: "Contact" },
-  start: { zh: "立即规划", en: "Start planning" },
+  contact: { zh: "联系", en: "Contact" },
+  book: { zh: "预约咨询", en: "Book consult" },
   menu: { zh: "菜单", en: "Menu" },
   close: { zh: "关闭", en: "Close" },
+  scroll: { zh: "继续滚动", en: "Scroll to continue" },
+} as const;
+
+export const preloader = {
+  loading: { zh: "进入引力场…", en: "Entering orbit…" },
+  ready: { zh: "就绪", en: "Ready" },
 } as const;
 
 export const hero = {
   kicker: { zh: "引力坊教育 · GRAVITY FANG", en: "GRAVITY FANG EDU" },
-  titleLine1: "GRAVITY",
-  titleLine2: "FANG",
+  titleA: "GRAVITY",
+  titleB: "FANG",
   claim: {
     zh: "名校路径，精确规划。",
-    en: "Elite admissions, planned with precision.",
+    en: "Elite paths. Precision planning.",
   },
   body: {
-    zh: "面向 G5、常春藤与全球顶尖硕博申请。以工程与 AI 背景做决策，用可验证结果建立信任。",
-    en: "For G5, Ivy League, and top global graduate pathways. Engineering and AI literacy guide decisions; verifiable outcomes build trust.",
+    zh: "顶尖申请咨询，配上我们自研的规划系统。顾问负责判断与陪伴，系统负责结构与执行。",
+    en: "Elite admissions counseling, backed by systems we build. Advisors judge and guide; software structures and executes.",
   },
   cta: { zh: "预约咨询", en: "Book a consult" },
-  secondary: { zh: "浏览案例", en: "View cases" },
-} as const;
-
-export const about = {
-  label: { zh: "01 · 创始人", en: "01 · Founder" },
-  name: "Mira Shi",
-  role: { zh: "创始人 & 首席顾问", en: "Founder & Chief Advisor" },
-  body: {
-    zh: "莱斯大学电子工程硕士，八年留学咨询经验。把系统工程的拆解方式带入申请：目标清晰、路径可执行、每一步可复盘。",
-    en: "M.S. in Electrical Engineering (Rice). Eight years in admissions counseling. She brings systems thinking into applications: clear targets, executable paths, and reviewable steps.",
+  secondary: { zh: "了解系统", en: "See systems" },
+  /** translucent card, bottom-left of the intro frame */
+  cardTitle: {
+    zh: "双城服务：北京与杭州，中英双语交付。",
+    en: "DUAL-CITY SERVICE: BEIJING & HANGZHOU, DELIVERED BILINGUALLY.",
   },
-  tags: {
-    zh: ["G5 申请", "工程与 STEM", "AI 教育"],
-    en: ["G5 applications", "Engineering & STEM", "AI in education"],
+  cardNote: {
+    zh: "顾问负责判断，系统负责执行。",
+    en: "Advisors judge. Systems execute.",
   },
 } as const;
 
-export const services = {
-  label: { zh: "02 · 服务", en: "02 · Services" },
+export const manifesto = {
+  label: { zh: "01 · 重新定义", en: "01 · Reframe" },
   heading: {
-    zh: "三件事，做到位。",
-    en: "Three things, done precisely.",
+    zh: "不只是中介。",
+    en: "Not just an agency.",
   },
-  items: [
+  body: {
+    zh: "我们做传统精英咨询该做的事：定位、文书、面试、路径。同时自研 Terra 与三端小程序，让决策可复盘、执行可追踪。软件仍在迭代；能力已经在场。",
+    en: "We do what elite counseling should: positioning, essays, interviews, pathways. We also build Terra and three companion apps so decisions are reviewable and execution is trackable. Software still iterates; the capability is already here.",
+  },
+} as const;
+
+export const method = {
+  label: { zh: "02 · 方法", en: "02 · Method" },
+  heading: {
+    zh: "一条路径，拆到可执行。",
+    en: "One path, broken into executable steps.",
+  },
+  stages: [
     {
       id: "01",
-      title: { zh: "海外升学咨询", en: "Admissions consulting" },
+      title: { zh: "定位", en: "Position" },
       body: {
-        zh: "从定位、选校到文书与面试，全流程精确制导，减少无效试错。",
-        en: "From positioning and school lists to essays and interviews: full-cycle guidance with less wasted motion.",
-      },
-      points: {
-        zh: ["精准选校定位", "文书深度打磨", "面试模拟辅导"],
-        en: ["School list strategy", "Essay craft", "Interview coaching"],
+        zh: "目标校与专业边界先画清楚，再谈材料堆砌。",
+        en: "Draw school and major boundaries before stacking materials.",
       },
     },
     {
       id: "02",
-      title: { zh: "精英教育培训", en: "Profile & academics" },
+      title: { zh: "档案", en: "Profile" },
       body: {
-        zh: "标准化考试、竞赛与科研实习路径协同，简历每一项都有理由。",
-        en: "Tests, competitions, and research paths aligned so every line on the resume has a reason.",
-      },
-      points: {
-        zh: ["标准化考试", "高含金量竞赛", "科研实习内推"],
-        en: ["Standardized tests", "High-signal competitions", "Research referrals"],
+        zh: "竞赛、科研、标化协同，每一项都有叙事理由。",
+        en: "Contests, research, tests aligned—each line earns its place.",
       },
     },
     {
       id: "03",
-      title: { zh: "AI 决策工具", en: "AI decision tools" },
+      title: { zh: "文书", en: "Essays" },
       body: {
-        zh: "用数据辅助选校与职业映射，让判断更冷静，而不是更热闹。",
-        en: "Data-assisted school and career mapping: calmer decisions, not louder dashboards.",
+        zh: "深度打磨声音与结构，拒绝模板腔。",
+        en: "Craft voice and structure. No template tone.",
       },
-      points: {
-        zh: ["智能选校", "职业路径映射", "录取概率参考"],
-        en: ["School matching", "Career path maps", "Admission probability cues"],
+    },
+    {
+      id: "04",
+      title: { zh: "面试", en: "Interview" },
+      body: {
+        zh: "模拟高压场景，把表达校准到招生官逻辑。",
+        en: "Pressure drills calibrated to admissions logic.",
+      },
+    },
+    {
+      id: "05",
+      title: { zh: "录取", en: "Outcome" },
+      body: {
+        zh: "结果可核对；路径可复盘。",
+        en: "Outcomes verifiable; paths reviewable.",
       },
     },
   ],
 } as const;
 
+export const systems = {
+  label: { zh: "03 · 系统", en: "03 · Systems" },
+  heading: {
+    zh: "Terra 总台，三端环绕。",
+    en: "Terra at the core. Three satellites.",
+  },
+  body: {
+    zh: "传统咨询是主线。自研软件证明我们如何规模化「精确」。以下为展示级界面，产品持续迭代；需要演示请预约。",
+    en: "Counseling is the spine. Software shows how we scale precision. Showcase UI only—products iterate. Book a walkthrough for demos.",
+  },
+  hub: {
+    name: "Terra",
+    title: { zh: "申请规划总台", en: "Admissions command deck" },
+    body: {
+      zh: "进度、任务、材料与节点决策集中在一处，顾问与学生同一真相源。",
+      en: "Progress, tasks, materials, and decision points in one place—one source of truth for advisors and students.",
+    },
+  },
+  satellites: [
+    {
+      id: "life-echo",
+      name: { zh: "Life-echo 测评", en: "Life-echo" },
+      body: {
+        zh: "以结构化测评打开自我叙事，为定位与文书提供证据而非空话。",
+        en: "Structured assessment that grounds self-narrative for positioning and essays.",
+      },
+    },
+    {
+      id: "school",
+      name: { zh: "智能选校", en: "School matching" },
+      body: {
+        zh: "多维条件收敛选校清单，减少拍脑袋与信息过载。",
+        en: "Constrain school lists with multi-factor matching—less guesswork, less noise.",
+      },
+    },
+    {
+      id: "mail",
+      name: { zh: "申请邮箱", en: "Admissions mail" },
+      body: {
+        zh: "申请相关通信结构化归档，关键节点不丢、可追踪。",
+        en: "Structure admissions correspondence so critical threads stay traceable.",
+      },
+    },
+  ],
+  infra: {
+    zh: "底层通信与自动化由 mail-agent 等基础设施支撑（持续迭代）。",
+    en: "Comms automation rides on infrastructure like mail-agent (actively evolving).",
+  },
+  cta: { zh: "预约系统演示", en: "Book a systems demo" },
+  badge: { zh: "迭代中 · 展示级", en: "In iteration · Showcase" },
+} as const;
+
 export const cases = {
-  label: { zh: "03 · 案例", en: "03 · Cases" },
+  label: { zh: "04 · 案例", en: "04 · Cases" },
   heading: { zh: "结果说话。", en: "Results speak." },
   body: {
-    zh: "精选录取结果。背景不同，方法一致：定位清楚，执行到位。",
-    en: "Selected outcomes. Different profiles, same method: clear positioning, disciplined execution.",
+    zh: "背景不同，方法一致：定位清楚，执行到位。",
+    en: "Different profiles. Same method: clear position, disciplined execution.",
   },
-  browse: { zh: "查看全部案例", en: "Browse all cases" },
-  archive: { zh: "案例归档", en: "Case archive" },
+  browse: { zh: "全部案例", en: "All cases" },
   featured: [
     {
       school: "Imperial College",
       major: "Mechanical Engineering",
-      level: { zh: "本科", en: "Undergraduate" },
-      note: { zh: "数学优异 · 面试表现突出", en: "Strong maths · Standout interview" },
+      level: { zh: "本科", en: "UG" },
+      note: { zh: "数学优异 · 面试突出", en: "Strong maths · Standout interview" },
     },
     {
       school: "Oxford",
       major: "MPhil Economics",
-      level: { zh: "硕博", en: "Graduate" },
-      note: { zh: "一等荣誉 · 研究轨迹清晰", en: "First-class honours · Clear research arc" },
+      level: { zh: "硕博", en: "Grad" },
+      note: { zh: "一等荣誉 · 研究轨迹", en: "First-class · Clear research arc" },
     },
     {
       school: "Stanford",
       major: "Symbolic Systems",
-      level: { zh: "本科", en: "Undergraduate" },
+      level: { zh: "本科", en: "UG" },
       note: { zh: "跨学科 AI 项目", en: "Interdisciplinary AI work" },
     },
     {
       school: "Cornell",
       major: "Computer Science",
-      level: { zh: "本科", en: "Undergraduate" },
+      level: { zh: "本科", en: "UG" },
       note: { zh: "工程实践与竞赛", en: "Engineering practice & contests" },
     },
   ],
@@ -145,18 +214,13 @@ export const cases = {
     { school: "HKU", major: "Electronic Engineering", background: "4A*, Factory Volunteering" },
     { school: "Johns Hopkins", major: "M.S. Finance", background: "GMAT 740, 3.8 GPA" },
     { school: "Cornell University", major: "Biological Engineering", background: "TOEFL 111, ACT 35, 9 APs" },
-    { school: "McGill University", major: "Political Science", background: "Model UN President, IELTS 8.5" },
     { school: "LSE", major: "MSc Management", background: "2:1 Degree, Relevant Internships" },
-    { school: "CUHK", major: "M.S. FinTech", background: "GRE 328, Big Four Internship" },
-    { school: "HKUST", major: "MSc Financial Technology", background: "GRE 325, 3.7 GPA" },
-    { school: "Pomona College", major: "Sociology", background: "TOEFL 108, SAT 1500, 6 APs" },
     { school: "INSEAD", major: "MBA", background: "GMAT 730, 5 Years WE at FAANG" },
-    { school: "UBC", major: "M.A.Sc. Civil Engineering", background: "3.8 GPA, Co-op Experience" },
   ],
 } as const;
 
 export const team = {
-  label: { zh: "04 · 团队", en: "04 · Team" },
+  label: { zh: "05 · 团队", en: "05 · Team" },
   heading: { zh: "专业，可核对。", en: "Expertise you can verify." },
   members: [
     {
@@ -201,50 +265,148 @@ export const team = {
   ],
 } as const;
 
+/**
+ * Act 6 (精密/材质) — decided: not its own chapter in V3-A.
+ * A close-up beat that rides inside the manifesto stage.
+ * Facts only — no invented admit rates.
+ */
+export const precision = {
+  kicker: { zh: "精密", en: "Precision" },
+  heading: {
+    zh: "精确，来自可复盘的结构。",
+    en: "Precision comes from reviewable structure.",
+  },
+  body: {
+    zh: "每个判断都留下依据，每一步都能回看为什么这样决定。",
+    en: "Every judgment leaves its reasoning behind, so any step can be revisited.",
+  },
+  facts: [
+    { k: { zh: "双城", en: "Two cities" }, v: { zh: "北京 · 杭州", en: "Beijing · Hangzhou" } },
+    { k: { zh: "双语", en: "Bilingual" }, v: { zh: "中文 · English", en: "中文 · English" } },
+    {
+      k: { zh: "背景", en: "Background" },
+      v: { zh: "工程 · 招生", en: "Engineering · Admissions" },
+    },
+  ],
+} as const;
+
 export const voices = {
-  label: { zh: "05 · 学员", en: "05 · Voices" },
+  label: { zh: "06 · 学员", en: "06 · Voices" },
   heading: { zh: "他们怎么说。", en: "In their words." },
   items: [
     {
       name: { zh: "李同学", en: "Li" },
       school: "Cornell",
       quote: {
-        zh: "专业指导让我成功进入梦校，每一步都清楚为什么这样做。",
-        en: "Clear guidance got me into my dream school. Every step had a reason.",
+        zh: "每一步都清楚为什么这样做，不是模板推送。",
+        en: "Every step had a reason—not a template push.",
       },
     },
     {
       name: { zh: "王同学", en: "Wang" },
       school: "Barnard",
       quote: {
-        zh: "拿到了 Offer，还有半额奖学金。沟通效率很高。",
-        en: "Offer plus half scholarship. Communication was efficient.",
+        zh: "拿到 Offer 与半额奖学金，沟通效率很高。",
+        en: "Offer plus half scholarship. Efficient communication.",
       },
     },
     {
       name: { zh: "张同学", en: "Zhang" },
       school: "Imperial",
       quote: {
-        zh: "工程背景给了我最贴切的建议，不是模板话术。",
-        en: "Engineering-aware advice, not template talk.",
+        zh: "工程背景给了我最贴切的建议。",
+        en: "Engineering-aware advice that actually fit.",
       },
     },
   ],
 } as const;
 
+/**
+ * Act 10 — 选配。Tier ids match footer.intents keys so a pill click
+ * prefills the contact form intent.
+ */
+export const services = {
+  label: { zh: "07 · 服务", en: "07 · Services" },
+  heading: { zh: "选择你的路径。", en: "Choose your path." },
+  body: {
+    zh: "三种起点，同一套方法。先选一个，剩下的在对话里定。",
+    en: "Three starting points, one method. Pick one—we settle the rest in conversation.",
+  },
+  tiers: [
+    {
+      id: "ug",
+      name: { zh: "本科申请", en: "Undergraduate" },
+      tagline: {
+        zh: "从高一到录取的完整路径规划。",
+        en: "Full pathway planning, from year one to the offer.",
+      },
+      points: {
+        zh: ["选校与专业定位", "竞赛 · 科研 · 标化协同", "文书与面试打磨"],
+        en: ["School & major positioning", "Contests, research, testing", "Essays & interview craft"],
+      },
+    },
+    {
+      id: "grad",
+      name: { zh: "硕博申请", en: "Graduate" },
+      tagline: {
+        zh: "研究方向、导师匹配与申请材料。",
+        en: "Research direction, advisor fit, and application materials.",
+      },
+      points: {
+        zh: ["研究轨迹梳理", "导师与项目匹配", "PS · CV · 推荐信策略"],
+        en: ["Research arc", "Advisor & program fit", "PS, CV, recommender strategy"],
+      },
+    },
+    {
+      id: "demo",
+      name: { zh: "系统演示", en: "Systems demo" },
+      tagline: {
+        zh: "看 Terra 与三端如何支撑执行。",
+        en: "See how Terra and its satellites carry execution.",
+      },
+      points: {
+        zh: ["Terra 总台走查", "Life-echo 测评样例", "选校与邮箱模块"],
+        en: ["Terra walkthrough", "Life-echo sample", "Matching & mail modules"],
+      },
+    },
+  ],
+  cta: { zh: "以此意向预约", en: "Book with this intent" },
+} as const;
+
 export const footer = {
   heading: { zh: "开始对话。", en: "Start a conversation." },
   sub: {
-    zh: "双城服务，就近咨询。电话或微信均可。",
-    en: "Dual-city service. Phone or WeChat.",
+    zh: "双城服务。电话、微信，或留下信息。",
+    en: "Dual-city service. Phone, WeChat, or leave a note.",
   },
   phoneLabel: { zh: "电话", en: "Phone" },
   wechatLabel: { zh: "微信", en: "WeChat" },
   scan: { zh: "扫码添加顾问", en: "Scan to add advisor" },
   hoursLabel: { zh: "工作时间", en: "Hours" },
-  note: {
-    zh: "工作日与周末均可预约。我们会尽快回复。",
-    en: "Weekdays and weekends. We respond promptly.",
+  formTitle: { zh: "轻量预约", en: "Quick request" },
+  name: { zh: "姓名", en: "Name" },
+  reach: { zh: "电话 / 微信", en: "Phone / WeChat" },
+  intent: { zh: "意向", en: "Intent" },
+  intents: {
+    ug: { zh: "本科申请", en: "Undergraduate" },
+    grad: { zh: "硕博申请", en: "Graduate" },
+    demo: { zh: "系统演示", en: "Systems demo" },
+    other: { zh: "其他", en: "Other" },
+  },
+  message: { zh: "补充说明（可选）", en: "Notes (optional)" },
+  submit: { zh: "提交", en: "Submit" },
+  success: {
+    zh: "已收到。我们会尽快联系你。（当前为前端占位，接口待接入）",
+    en: "Received. We will reach out soon. (Frontend placeholder—API coming next.)",
   },
   copyright: "© GRAVITY FANG",
 } as const;
+
+export const navLinks = [
+  { id: "intro", href: "#intro", key: "intro" as const },
+  { id: "method", href: "#method", key: "method" as const },
+  { id: "systems", href: "#systems", key: "systems" as const },
+  { id: "cases", href: "#cases", key: "cases" as const },
+  { id: "team", href: "#team", key: "team" as const },
+  { id: "contact", href: "#contact", key: "contact" as const },
+] as const;

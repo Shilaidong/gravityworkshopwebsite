@@ -1,60 +1,47 @@
-# Design System — GRAVITY FANG
+# Design System — GRAVITY FANG v2.5
 
 ## Visual Theme
 
-Precision consulting system: warm paper ground, cool charcoal ink, a single restrained teal accent. Pure typography hero, numbered service rows, dark case evidence band. No brutalist borders, no metric walls, no 3D spectacle.
+Cinematic scroll film: **cream type on warm dark stages**, optional **photography backdrops** (`public/scenes/*.jpg`), continuous real-time WebGL **Halo** (dual thin rings, physical metal + teal rim). Consulting-first; Terra as showcase. Photo files are optional slots — gradients until replaced.
 
-## Colors (OKLCH)
+## Color (OKLCH)
 
-| Token | Value | Role |
-|-------|--------|------|
-| paper | `oklch(0.975 0.006 85)` | Page background |
-| paper-elevated | `oklch(0.99 0.004 85)` | Raised surfaces |
-| ink | `oklch(0.22 0.02 250)` | Primary text |
-| ink-soft | `oklch(0.38 0.018 250)` | Body secondary |
-| mute | `oklch(0.58 0.014 240)` | Meta labels |
-| line | `oklch(0.88 0.01 240)` | Hairline dividers |
-| teal | `oklch(0.48 0.09 195)` | Accent ≤10% (CTA, labels) |
-| teal-deep | `oklch(0.4 0.08 195)` | CTA hover |
-| teal-soft | `oklch(0.94 0.025 195)` | Soft fills / tags |
-| ink-band | `oklch(0.2 0.025 250)` | Dark cases section |
-| on-ink | `oklch(0.96 0.008 85)` | Text on dark band |
+| Token | Role |
+|-------|------|
+| `stage` `oklch(0.14 0.02 250)` | Page / canvas ground |
+| `stage-elevated` `oklch(0.18 0.022 250)` | Panels, dialogs |
+| `on-stage` `oklch(0.94 0.01 85)` | Primary text on dark |
+| `teal` `oklch(0.62 0.11 185)` | Accent ≤10% (CTA, nodes, progress) |
+| `teal-deep` | Hover / emphasis |
 
-Strategy: **Restrained**. Never pure `#000` / `#fff`.
+Strategy: **Restrained accent on drenched dark stage**. No pure black/white; no Swiss red/blue.
 
 ## Typography
 
-- **Display (Latin):** Sora — heavy weight contrast, tight tracking on hero
-- **UI / Chinese body:** Noto Sans SC
-- Scale: fluid `clamp()` headings; body ~16–18px; measure ≤65ch
-- Hierarchy via size + weight, not decoration
-
-## Layout
-
-- Max content ~1120px; wide ~1280px
-- Section padding: `clamp(4.5rem, 10vw, 8rem)`
-- Gutter: `clamp(1.25rem, 4vw, 2.5rem)`
-- Services: horizontal numbered list rows (not equal cards)
-- Cases: sticky intro + editorial list on dark band
-- Rhythm: light → elevated → dark band → light
-
-## Components
-
-- **Primary button:** pill, solid teal
-- **Ghost button:** hairline border, paper hover
-- **Modal:** bottom sheet mobile, centered desktop; Escape + backdrop close
-- **Tags:** soft teal fill or hairline chip
-- **Nav:** fixed, blurs after scroll
+- Display (Latin): **Sora**
+- Body / Chinese: **Noto Sans SC**
+- Fluid display type on hero; chapter titles via `clamp()`
 
 ## Motion
 
-- Hero: short fade-up stagger (respects `prefers-reduced-motion`)
-- Easing: `cubic-bezier(0.16, 1, 0.3, 1)`
-- No layout-property animation; no page curtain / marquee / 3D
+- Preloader: ring draw + % counter, curtain lift
+- Lenis smooth scroll (disabled when `prefers-reduced-motion`)
+- Scroll progress 0–1 → ring keyframes (`lib/scroll-story.ts`)
+- Ring morphs: solid → path nodes → Terra satellites → lock → seal
+- Header progress bar scrubbed to scroll
+- Mobile: CSS ring substitute, no WebGL
 
-## Accessibility
+## Layout chapters
 
-- Focus-visible rings on interactive elements
-- Semantic landmarks and headings
-- Keyboard modal dismiss
-- WCAG AA-oriented contrast on paper and dark band
+Intro → Manifesto → Method → Systems (Terra + 3 satellites) → Cases → Team → Voices → Contact (phone / WeChat / light form)
+
+## Components
+
+- `btn-teal` / `btn-ghost-dark`
+- `panel-glass` showcase cards
+- Fixed header + lang toggle
+- Contact form: client success placeholder only
+
+## Stack
+
+Next.js App Router · R3F / Three · GSAP available · Lenis · Tailwind v4
