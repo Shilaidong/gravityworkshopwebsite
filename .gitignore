@@ -11,3 +11,7 @@ node_modules/
 # Local analysis scratch
 .ref-oryzo-frames/
 .claude/
+
+# 出图原始素材（不部署，仅供重新调色）
+art-src/
+_shot.html
