@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>引力坊 GRAVITY FANG — The Gravity Edition</title>
+<meta name="description" content="引力坊（GRAVITY FANG）：面向 G5、常春藤与顶尖硕博申请的精英升学咨询。顾问做判断，自研系统托住执行。北京 · 杭州。">
+<meta name="theme-color" content="#08090C">
+<meta property="og:title" content="引力坊 GRAVITY FANG — The Gravity Edition">
+<meta property="og:description" content="名校路径的新标准。顾问判断 × 系统执行。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2308090C'/><circle cx='16' cy='16' r='4' fill='%23B8873F'/><ellipse cx='16' cy='16' rx='12' ry='5' fill='none' stroke='%23B8873F' stroke-width='1.2' opacity='.7' transform='rotate(-24 16 16)'/></svg>">
+
+<style>
+/* ============================================================
+   引力坊 GRAVITY FANG — The Gravity Edition
+   单文件官网 v3。无外部依赖（除微信二维码图，见 §CONTACT）。
+   结构：顶栏 / 左侧章节导轨 / 七个章节（深浅交替）
+   ============================================================ */
+
+/* ---------- 1. 变量与基础 ---------- */
+:root{
+  --ink:        #08090C;
+  --ink-2:      #0E1117;
+  --ink-3:      #161A21;
+  --paper:      #EDE8DE;
+  --paper-2:    #F7F4ED;
+  --cream:      #E9E4D9;
+  --gold:       #B8873F;
+  --gold-soft:  #C9A15C;
+
+  --on-dark:        #E9E4D9;
+  --on-dark-muted:  rgba(233,228,217,.52);
+  --on-dark-faint:  rgba(233,228,217,.16);
+  --on-light:       #12141A;
+  --on-light-muted: rgba(18,20,26,.56);
+  --on-light-faint: rgba(18,20,26,.14);
+
+  --rail-w: 200px;
+  --top-h:  42px;
+  --gut:    clamp(20px, 4.2vw, 76px);
+
+  --sans: "Helvetica Neue", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "Source Han Serif SC",
+           "Noto Serif SC", Georgia, serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "Roboto Mono", monospace;
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--on-dark);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  /* 底色跟着当前章节明暗翻转，让左侧导轨条与正文同色（Editions 式通栏） */
+  transition:background-color .5s var(--ease), color .5s var(--ease);
+}
+body[data-tone="light"]{ background:var(--paper); color:var(--on-light); }
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+h1,h2,h3,h4,p,figure,ul{ margin:0; padding:0; }
+ul{ list-style:none; }
+::selection{ background:var(--gold); color:var(--ink); }
+
+/* 纸张噪点：给深色区一点颗粒，避免数码平面感 */
+.grain{
+  position:fixed; inset:0; z-index:900; pointer-events:none; opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+
+/* ---------- 2. 通用排版件 ---------- */
+.eyebrow{
+  font-size:10px; letter-spacing:.19em; text-transform:uppercase;
+  font-weight:600; color:var(--on-dark-muted);
+}
+.tone-light .eyebrow{ color:var(--on-light-muted); }
+
+.display{
+  font-size:clamp(3.1rem, 10.5vw, 10.5rem);
+  line-height:.84; letter-spacing:-.038em; font-weight:600;
+  margin:0;
+}
+.h-sec{
+  font-size:clamp(2.4rem, 7.4vw, 6.6rem);
+  line-height:.9; letter-spacing:-.035em; font-weight:600;
+}
+.h-3{
+  font-size:clamp(1.15rem, 1.7vw, 1.5rem);
+  line-height:1.24; letter-spacing:-.018em; font-weight:600;
+}
+.lede{
+  font-family:var(--serif);
+  font-size:clamp(1.15rem, 2.05vw, 1.75rem);
+  line-height:1.42; letter-spacing:-.005em;
+}
+.en{
+  font-size:12.5px; line-height:1.5; letter-spacing:.012em;
+  color:var(--on-dark-muted); font-weight:400;
+}
+.tone-light .en{ color:var(--on-light-muted); }
+.body-s{ font-size:14.5px; line-height:1.62; color:var(--on-dark-muted); }
+.tone-light .body-s{ color:var(--on-light-muted); }
+
+.rule{ height:1px; background:var(--on-dark-faint); border:0; margin:0; }
+.tone-light .rule{ background:var(--on-light-faint); }
+
+.num{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--gold); }
+
+/* ---------- 3. 顶栏 ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; height:var(--top-h); z-index:800;
+  display:flex; align-items:center; gap:22px;
+  padding:0 16px;
+  font-size:12px; letter-spacing:.01em;
+  background:color-mix(in srgb, var(--ink) 78%, transparent);
+  backdrop-filter:saturate(1.4) blur(14px);
+  -webkit-backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid var(--on-dark-faint);
+  color:var(--on-dark);
+  transition:background .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease);
+}
+body[data-tone="light"] .topbar{
+  background:color-mix(in srgb, var(--paper) 80%, transparent);
+  color:var(--on-light);
+  border-bottom-color:var(--on-light-faint);
+}
+.topbar .mark{ display:flex; align-items:center; gap:9px; font-weight:600; letter-spacing:-.01em; }
+.topbar .mark svg{ width:15px; height:15px; flex:none; }
+.topbar .edition-tag{ opacity:.5; font-weight:400; }
+.topbar .spacer{ margin-left:auto; }
+.topbar .tb-link{ opacity:.62; transition:opacity .2s; }
+.topbar .tb-link:hover{ opacity:1; }
+.cta-pill{
+  padding:5px 13px; border-radius:100px; font-size:11.5px; font-weight:600;
+  background:var(--cream); color:var(--ink);
+  transition:transform .25s var(--ease), background .25s;
+}
+.cta-pill:hover{ transform:translateY(-1px); background:#fff; }
+body[data-tone="light"] .cta-pill{ background:var(--ink); color:var(--paper); }
+
+.toc-toggle{ display:none; font-size:11.5px; letter-spacing:.11em; text-transform:uppercase; font-weight:600; }
+
+/* ---------- 4. 左侧章节导轨 ---------- */
+.rail{
+  position:fixed; top:var(--top-h); bottom:0; left:0; width:var(--rail-w); z-index:790;
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:18px 14px 16px;
+  color:var(--on-dark); pointer-events:none;
+  transition:color .5s var(--ease);
+}
+body[data-tone="light"] .rail{ color:var(--on-light); }
+.rail > *{ pointer-events:auto; }
+
+.rail-title{
+  font-size:15.5px; font-weight:600; line-height:1.06; letter-spacing:-.022em;
+}
+.rail-title span{ display:block; }
+.rail-title .zh{ font-size:11px; font-weight:500; letter-spacing:.16em; opacity:.45; margin-top:7px; }
+
+.toc{ font-size:13px; line-height:1.16; }
+.toc li{ position:relative; }
+.toc a{
+  display:flex; align-items:baseline; gap:8px; padding:1.5px 0;
+  opacity:.42; transition:opacity .3s var(--ease);
+}
+.toc a:hover{ opacity:.85; }
+.toc a .lbl{ font-weight:600; letter-spacing:-.012em; }
+.toc a .rn{
+  margin-left:auto; font-family:var(--mono); font-size:9.5px; opacity:.7; letter-spacing:.04em;
+}
+.toc a .dots{
+  flex:1; height:1px; margin:0 2px 3px;
+  background-image:radial-gradient(currentColor .7px, transparent .8px);
+  background-size:3.5px 1px; background-repeat:repeat-x;
+  opacity:0; transition:opacity .3s;
+}
+.toc li[aria-current="true"] a{ opacity:1; }
+.toc li[aria-current="true"] a .dots{ opacity:.55; }
+
+.rail-foot{ font-size:9.5px; line-height:1.55; opacity:.38; }
+.rail-foot a{ display:block; }
+.rail-foot a:hover{ opacity:.8; }
+
+/* ---------- 5. 文档主体 ---------- */
+.doc{ margin-left:var(--rail-w); padding-top:var(--top-h); }
+.chapter{ position:relative; }
+.chapter.tone-dark{ background:var(--ink); color:var(--on-dark); }
+.chapter.tone-light{ background:var(--paper); color:var(--on-light); }
+.pad{ padding:clamp(72px,9vw,140px) var(--gut); }
+.pad-t0{ padding-top:0; }
+
+/* 章节题头：罗马数字 + 章名，Editions 式压在内容顶部 */
+.chap-head{
+  display:flex; align-items:baseline; gap:14px;
+  padding:16px var(--gut); border-bottom:1px solid var(--on-dark-faint);
+}
+.tone-light .chap-head{ border-bottom-color:var(--on-light-faint); }
+.chap-head .rn{ font-family:var(--mono); font-size:11px; color:var(--gold); letter-spacing:.08em; }
+.chap-head .name{ font-size:11px; letter-spacing:.19em; text-transform:uppercase; font-weight:600; }
+.chap-head .name-en{ font-size:11px; letter-spacing:.09em; opacity:.42; margin-left:auto; }
+
+/* 入场动画 */
+.rise{ opacity:0; transform:translateY(22px); transition:opacity .85s var(--ease), transform .85s var(--ease); }
+.rise.in{ opacity:1; transform:none; }
+.rise.d1{ transition-delay:.07s } .rise.d2{ transition-delay:.14s }
+.rise.d3{ transition-delay:.21s } .rise.d4{ transition-delay:.28s }
+.rise.d5{ transition-delay:.35s }
+
+/* ============================================================
+   I · 引言 INTRO
+   ============================================================ */
+#intro{ min-height:100svh; display:flex; flex-direction:column; overflow:hidden; }
+#orbit{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
+#intro::after{ /* 中心到边缘的暗角，让文字压得住 */
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(120% 90% at 62% 46%, transparent 0%, transparent 38%, rgba(8,9,12,.72) 100%);
+}
+.hero{
+  position:relative; z-index:2; flex:1;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:clamp(40px,7vh,90px) var(--gut) clamp(28px,5vh,54px);
+  gap:clamp(22px,4vh,44px);
+}
+.hero-top{ display:flex; align-items:flex-start; gap:18px; flex-wrap:wrap; }
+.hero-top .edition{
+  font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+  padding:4px 10px; border:1px solid var(--on-dark-faint); border-radius:100px;
+}
+.wordmark{ letter-spacing:-.045em; }
+.wordmark .l2{ display:block; padding-left:.06em; }
+.hero-grid{
+  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:clamp(24px,4vw,72px); align-items:end;
+}
+.hero-claim{ font-family:var(--serif); font-size:clamp(1.35rem,2.6vw,2.3rem); line-height:1.32; letter-spacing:-.01em; }
+.hero-claim em{ font-style:italic; color:var(--gold-soft); }
+.hero-meta{ display:flex; flex-direction:column; gap:14px; }
+.hero-line{
+  display:flex; flex-wrap:wrap; gap:7px 0; align-items:center;
+  font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--on-dark-muted);
+}
+.hero-line span:not(:last-child)::after{ content:"·"; margin:0 9px; opacity:.5; }
+.hero-actions{ display:flex; flex-wrap:wrap; gap:10px; }
+.btn{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:11px 20px; border-radius:100px; font-size:13.5px; font-weight:600;
+  border:1px solid transparent; transition:transform .3s var(--ease), background .3s, border-color .3s;
+}
+.btn:hover{ transform:translateY(-2px); }
+.btn-solid{ background:var(--cream); color:var(--ink); }
+.btn-solid:hover{ background:#fff; }
+.btn-ghost{ border-color:var(--on-dark-faint); color:var(--on-dark); }
+.btn-ghost:hover{ border-color:var(--on-dark-muted); }
+.tone-light .btn-solid{ background:var(--ink); color:var(--paper); }
+.tone-light .btn-ghost{ border-color:var(--on-light-faint); color:var(--on-light); }
+.btn .arw{ font-size:15px; line-height:1; transition:transform .3s var(--ease); }
+.btn:hover .arw{ transform:translateX(3px); }
+
+.scroll-cue{
+  position:relative; z-index:2;
+  display:flex; align-items:center; gap:10px; justify-content:center;
+  padding-bottom:clamp(18px,3.4vh,34px);
+  font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--on-dark-muted);
+}
+.scroll-cue .dot{
+  width:19px; height:19px; border:1px solid var(--on-dark-faint); border-radius:50%;
+  display:grid; place-items:center; font-size:9px;
+  animation:bob 2.6s var(--ease) infinite;
+}
+@keyframes bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(3px) } }
+
+/* ============================================================
+   II · 顾问 COUNSEL
+   ============================================================ */
+.stack-lead{ max-width:44ch; display:flex; flex-direction:column; gap:16px; }
+.big-quote{
+  font-size:clamp(1.9rem,4.6vw,4rem); line-height:1.02; letter-spacing:-.035em; font-weight:600;
+  max-width:17ch;
+}
+.big-quote .dim{ opacity:.34; }
+
+.cards-3{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px; background:var(--on-light-faint);
+  border-top:1px solid var(--on-light-faint); border-bottom:1px solid var(--on-light-faint);
+}
+.card{
+  background:var(--paper); padding:clamp(24px,2.6vw,38px) clamp(20px,2vw,30px);
+  display:flex; flex-direction:column; gap:14px; min-height:clamp(260px,30vw,360px);
+  transition:background .4s var(--ease);
+}
+.card:hover{ background:var(--paper-2); }
+.card .card-n{ display:flex; align-items:baseline; gap:10px; }
+.card .card-n .kicker{ font-size:10px; letter-spacing:.17em; text-transform:uppercase; opacity:.5; font-weight:600; }
+.card .plate{ margin-top:auto; }
+.card svg{ width:100%; height:auto; overflow:visible; }
+
+/* ============================================================
+   III · 方法 METHOD
+   ============================================================ */
+.steps{ border-top:1px solid var(--on-dark-faint); }
+.step{
+  display:grid; grid-template-columns:78px minmax(0,1.15fr) minmax(0,1.35fr);
+  gap:clamp(16px,3vw,48px); align-items:baseline;
+  padding:clamp(22px,2.6vw,34px) 0;
+  border-bottom:1px solid var(--on-dark-faint);
+  transition:padding-left .5s var(--ease), color .4s;
+}
+.step:hover{ padding-left:12px; }
+.step .st-n{ font-family:var(--mono); font-size:12px; color:var(--gold); letter-spacing:.06em; }
+.step .st-t{ font-size:clamp(1.5rem,3.1vw,2.5rem); line-height:1.02; letter-spacing:-.03em; font-weight:600; }
+.step .st-t small{ display:block; font-size:11.5px; font-weight:400; letter-spacing:.1em; text-transform:uppercase; opacity:.4; margin-top:9px; }
+.step .st-d{ font-size:15px; line-height:1.6; color:var(--on-dark-muted); max-width:46ch; }
+.method-track{ padding:0 var(--gut) clamp(48px,6vw,86px); }
+.method-track svg{ width:100%; height:auto; overflow:visible; }
+
+/* ============================================================
+   IV · 系统 SYSTEMS
+   ============================================================ */
+.sys-hero{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(28px,4vw,72px); align-items:center; }
+.sys-diagram{ position:relative; }
+.sys-diagram svg{ width:100%; height:auto; overflow:visible; }
+.sys-diagram .node-hit{ cursor:default; }
+.terra-card{
+  background:var(--ink); color:var(--on-dark);
+  border-radius:3px; padding:clamp(26px,3vw,42px);
+  display:flex; flex-direction:column; gap:18px;
+}
+.terra-card .en{ color:var(--on-dark-muted); }
+/* 深色卡片嵌在浅色章节里，按钮要按深底重新着色 */
+.tone-light .terra-card .btn-solid{ background:var(--cream); color:var(--ink); }
+.tone-light .terra-card .btn-solid:hover{ background:#fff; }
+.tone-light .terra-card .btn-ghost{ border-color:var(--on-dark-faint); color:var(--on-dark); }
+.tone-light .terra-card .btn-ghost:hover{ border-color:var(--on-dark-muted); }
+.badge{
+  align-self:flex-start; font-size:10px; letter-spacing:.16em; text-transform:uppercase; font-weight:600;
+  padding:4px 9px; border:1px solid var(--on-dark-faint); border-radius:100px; color:var(--on-dark-muted);
+}
+.apps{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px; background:var(--on-light-faint); border-top:1px solid var(--on-light-faint);
+}
+.app{ background:var(--paper); padding:clamp(22px,2.4vw,34px) clamp(18px,1.8vw,28px); display:flex; flex-direction:column; gap:11px; }
+.app .app-t{ display:flex; align-items:baseline; gap:9px; }
+.app .st{ font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; padding:2px 7px; border-radius:100px; border:1px solid var(--on-light-faint); opacity:.55; }
+.app a.more{ margin-top:auto; font-size:12.5px; font-weight:600; border-bottom:1px solid currentColor; align-self:flex-start; padding-bottom:1px; opacity:.75; transition:opacity .25s; }
+.app a.more:hover{ opacity:1; }
+.infra-note{ padding:16px var(--gut); font-size:12px; letter-spacing:.02em; opacity:.5; border-top:1px solid var(--on-light-faint); }
+
+/* ============================================================
+   V · 结果 OUTCOMES
+   ============================================================ */
+.star-map{ position:relative; padding:0 var(--gut); }
+.star-map svg{ width:100%; height:auto; overflow:visible; }
+.table{ width:100%; border-collapse:collapse; font-size:15px; }
+.table th{
+  text-align:left; font-size:10px; letter-spacing:.17em; text-transform:uppercase;
+  font-weight:600; color:var(--on-dark-muted); padding:0 12px 11px 0;
+  border-bottom:1px solid var(--on-dark-faint);
+}
+.table td{ padding:15px 12px 15px 0; border-bottom:1px solid var(--on-dark-faint); vertical-align:top; }
+.table tr{ transition:background .3s; }
+.table tbody tr:hover{ background:rgba(233,228,217,.035); }
+.table .sch{ font-weight:600; letter-spacing:-.012em; font-size:16px; }
+.table .maj{ color:var(--on-dark-muted); }
+.table .tier{ font-family:var(--mono); font-size:10.5px; color:var(--gold); letter-spacing:.06em; white-space:nowrap; }
+.table .note{ color:var(--on-dark-muted); font-size:13.5px; }
+.table tr.extra{ display:none; }
+.table.open tr.extra{ display:table-row; }
+.more-row{ display:flex; align-items:center; gap:14px; padding-top:22px; }
+.link-btn{
+  font-size:12.5px; letter-spacing:.09em; text-transform:uppercase; font-weight:600;
+  border-bottom:1px solid currentColor; padding-bottom:2px; opacity:.7; transition:opacity .25s;
+}
+.link-btn:hover{ opacity:1; }
+
+/* ============================================================
+   VI · 团队 TEAM
+   ============================================================ */
+.people{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--on-light-faint); border-top:1px solid var(--on-light-faint); border-bottom:1px solid var(--on-light-faint); }
+.person{ background:var(--paper); padding:clamp(24px,2.6vw,38px) clamp(20px,2vw,30px); display:flex; flex-direction:column; gap:13px; }
+.person .nm{ font-size:clamp(1.4rem,2.4vw,2rem); line-height:1.02; letter-spacing:-.03em; font-weight:600; }
+.person .rl{ font-size:11px; letter-spacing:.15em; text-transform:uppercase; font-weight:600; opacity:.5; }
+.tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:10px; }
+.tag{ font-size:11px; letter-spacing:.03em; padding:3px 9px; border:1px solid var(--on-light-faint); border-radius:100px; opacity:.66; }
+
+/* ============================================================
+   VII · 联系 CONTACT
+   ============================================================ */
+.contact-grid{ display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:clamp(30px,4.5vw,80px); align-items:start; }
+.dl{ display:grid; grid-template-columns:88px 1fr; gap:12px 18px; font-size:15px; align-items:baseline; }
+.dl dt{ font-size:10px; letter-spacing:.17em; text-transform:uppercase; color:var(--on-dark-muted); font-weight:600; padding-top:5px; }
+.dl dd{ margin:0; }
+.tel{ font-size:clamp(1.5rem,3vw,2.4rem); letter-spacing:-.02em; font-weight:600; line-height:1; }
+.tel:hover{ color:var(--gold-soft); }
+.qr{ width:118px; border:1px solid var(--on-dark-faint); border-radius:2px; padding:6px; background:#fff; }
+
+.form{ display:flex; flex-direction:column; gap:13px; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-size:10px; letter-spacing:.17em; text-transform:uppercase; color:var(--on-dark-muted); font-weight:600; }
+.field input, .field select, .field textarea{
+  font:inherit; font-size:15px; color:var(--on-dark);
+  background:transparent; border:0; border-bottom:1px solid var(--on-dark-faint);
+  padding:9px 0; border-radius:0; transition:border-color .3s;
+}
+.field textarea{ resize:vertical; min-height:64px; }
+.field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-bottom-color:var(--gold); }
+.field select{ appearance:none; cursor:pointer; }
+.field select option{ background:var(--ink-2); color:var(--on-dark); }
+.form .fine{ font-size:11.5px; line-height:1.5; color:var(--on-dark-muted); }
+.form-note{ font-size:13px; color:var(--gold-soft); min-height:1.2em; }
+
+.colophon{
+  border-top:1px solid var(--on-dark-faint);
+  padding:26px var(--gut) 34px;
+  display:flex; flex-wrap:wrap; gap:14px 30px; align-items:baseline;
+  font-size:11.5px; color:var(--on-dark-muted);
+}
+.colophon .cw{ margin-left:auto; }
+
+/* ---------- 6. 移动端目录抽屉 ---------- */
+.toc-sheet{
+  position:fixed; inset:0; z-index:850; background:var(--ink); color:var(--on-dark);
+  padding:calc(var(--top-h) + 26px) 24px 30px;
+  display:flex; flex-direction:column; gap:2px;
+  opacity:0; visibility:hidden; transform:translateY(-8px);
+  transition:opacity .35s var(--ease), transform .35s var(--ease), visibility .35s;
+}
+.toc-sheet.open{ opacity:1; visibility:visible; transform:none; }
+.toc-sheet a{
+  display:flex; align-items:baseline; gap:12px; padding:13px 0;
+  border-bottom:1px solid var(--on-dark-faint);
+  font-size:22px; font-weight:600; letter-spacing:-.025em;
+}
+.toc-sheet a .rn{ margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--gold); }
+.toc-sheet a .en2{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; opacity:.4; font-weight:500; }
+
+/* ---------- 7. 响应式 ---------- */
+@media (max-width:1180px){
+  .hero-grid{ grid-template-columns:1fr; align-items:start; gap:26px; }
+  .sys-hero{ grid-template-columns:1fr; }
+  .contact-grid{ grid-template-columns:1fr; }
+}
+@media (max-width:1024px){
+  :root{ --rail-w:0px; }
+  .rail{ display:none; }
+  .doc{ margin-left:0; }
+  .toc-toggle{ display:block; }
+  .cards-3, .apps, .people{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .step{ grid-template-columns:46px minmax(0,1fr); }
+  .step .st-d{ grid-column:2; max-width:none; }
+}
+@media (max-width:760px){
+  /* 暗角跟着引力场一起下移 */
+  #intro::after{ background:radial-gradient(130% 62% at 52% 74%, transparent 0%, transparent 30%, rgba(8,9,12,.74) 100%); }
+  .hero{ justify-content:flex-start; padding-top:clamp(56px,12vh,110px); }
+}
+@media (max-width:720px){
+  body{ font-size:15.5px; }
+  .cards-3, .apps, .people{ grid-template-columns:1fr; }
+  .card, .app, .person{ min-height:0; }
+  .topbar .edition-tag, .topbar .tb-link.hide-s{ display:none; }
+  .chap-head .name-en{ display:none; }
+  .table th:nth-child(4), .table td:nth-child(4){ display:none; }
+  .dl{ grid-template-columns:1fr; gap:4px 0; }
+  .dl dt{ padding-top:14px; }
+}
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  .rise{ opacity:1 !important; transform:none !important; }
+}
+</style>
+</head>
+
+<body data-tone="dark">
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ========== 顶栏 ========== -->
+<header class="topbar">
+  <a href="#intro" class="mark" aria-label="引力坊 首页">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="3.4" fill="currentColor"/>
+      <ellipse cx="16" cy="16" rx="13" ry="5.4" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".55" transform="rotate(-24 16 16)"/>
+      <ellipse cx="16" cy="16" rx="13" ry="5.4" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".28" transform="rotate(38 16 16)"/>
+    </svg>
+    引力坊
+  </a>
+  <span class="edition-tag">The Gravity Edition &nbsp;’26</span>
+  <button class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="tocSheet">目录</button>
+  <span class="spacer"></span>
+  <a href="#outcomes" class="tb-link hide-s">录取结果</a>
+  <a href="#systems" class="tb-link hide-s">自研系统</a>
+  <a href="#contact" class="cta-pill">预约咨询</a>
+</header>
+
+<!-- ========== 移动端目录 ========== -->
+<nav class="toc-sheet" id="tocSheet" aria-label="章节目录（移动端）">
+  <a href="#intro">引言 <span class="en2">Intro</span><span class="rn">I</span></a>
+  <a href="#counsel">顾问 <span class="en2">Counsel</span><span class="rn">II</span></a>
+  <a href="#method">方法 <span class="en2">Method</span><span class="rn">III</span></a>
+  <a href="#systems">系统 <span class="en2">Systems</span><span class="rn">IV</span></a>
+  <a href="#outcomes">结果 <span class="en2">Outcomes</span><span class="rn">V</span></a>
+  <a href="#team">团队 <span class="en2">Team</span><span class="rn">VI</span></a>
+  <a href="#contact">联系 <span class="en2">Contact</span><span class="rn">VII</span></a>
+</nav>
+
+<!-- ========== 左侧章节导轨 ========== -->
+<aside class="rail" aria-label="章节目录">
+  <div class="rail-title">
+    <span>The</span><span>Gravity</span><span>Edition</span>
+    <span class="zh">引力年刊 ’26</span>
+  </div>
+
+  <nav>
+    <ul class="toc" id="toc">
+      <li data-for="intro"><a href="#intro"><span class="lbl">引言</span><span class="dots"></span><span class="rn">I</span></a></li>
+      <li data-for="counsel"><a href="#counsel"><span class="lbl">顾问</span><span class="dots"></span><span class="rn">II</span></a></li>
+      <li data-for="method"><a href="#method"><span class="lbl">方法</span><span class="dots"></span><span class="rn">III</span></a></li>
+      <li data-for="systems"><a href="#systems"><span class="lbl">系统</span><span class="dots"></span><span class="rn">IV</span></a></li>
+      <li data-for="outcomes"><a href="#outcomes"><span class="lbl">结果</span><span class="dots"></span><span class="rn">V</span></a></li>
+      <li data-for="team"><a href="#team"><span class="lbl">团队</span><span class="dots"></span><span class="rn">VI</span></a></li>
+      <li data-for="contact"><a href="#contact"><span class="lbl">联系</span><span class="dots"></span><span class="rn">VII</span></a></li>
+    </ul>
+  </nav>
+
+  <div class="rail-foot">
+    <span>© 引力坊 GRAVITY FANG</span>
+    <span>北京 · 杭州</span>
+    <a href="tel:18519739539">185 1973 9539</a>
+  </div>
+</aside>
+
+<!-- ========== 正文 ========== -->
+<main class="doc">
+
+<!-- ============ I · 引言 ============ -->
+<section class="chapter tone-dark" id="intro" data-tone="dark">
+  <canvas id="orbit" aria-hidden="true"></canvas>
+
+  <div class="hero">
+    <div class="hero-top rise">
+      <span class="edition">The Gravity Edition</span>
+      <span class="eyebrow" style="padding-top:5px">G5 · Ivy · Top Graduate</span>
+    </div>
+
+    <h1 class="display wordmark rise d1">GRAVITY<span class="l2">FANG</span></h1>
+
+    <div class="hero-grid">
+      <div class="rise d2">
+        <p class="hero-claim">名校路径的<em>新标准</em>。<br>顾问做判断，系统托住执行。</p>
+        <p class="en" style="margin-top:14px;max-width:46ch">A new standard for elite admissions. Human judgment, carried by systems built in-house.</p>
+      </div>
+
+      <div class="hero-meta rise d3">
+        <div class="hero-line">
+          <span>本科 G5</span><span>常春藤</span><span>顶尖硕博</span><span>北京 / 杭州</span>
+        </div>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-solid">预约咨询 <span class="arw">→</span></a>
+          <a href="#outcomes" class="btn btn-ghost">看录取结果 <span class="arw">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue"><span class="dot">↓</span> 向下滚动 · Scroll to continue</div>
+</section>
+
+<!-- ============ II · 顾问 ============ -->
+<section class="chapter tone-light" id="counsel" data-tone="light">
+  <div class="chap-head">
+    <span class="rn">II</span><span class="name">顾问</span><span class="name-en">Counsel</span>
+  </div>
+
+  <div class="pad">
+    <div class="stack-lead rise">
+      <p class="eyebrow">Chapter II</p>
+      <h2 class="big-quote">不只是中介。<span class="dim">是最难决策时的搭档。</span></h2>
+      <p class="lede" style="max-width:34ch">面向顶尖申请的学生与家庭。人做判断，系统托住执行。</p>
+      <p class="en">For students and families aiming at the most selective outcomes. People decide; systems carry the load.</p>
+    </div>
+  </div>
+
+  <div class="cards-3">
+    <article class="card rise">
+      <div class="card-n"><span class="num">01</span><span class="kicker">路径，主动拆解</span></div>
+      <h3 class="h-3">定位与选校</h3>
+      <p class="body-s">先画清目标校与专业的边界，再堆材料。把无效试错压到最低。</p>
+      <p class="en">Draw the boundary first, then build the file. Less wasted motion.</p>
+      <div class="plate" aria-hidden="true">
+        <!-- 三条路径收敛到一点 -->
+        <svg viewBox="0 0 240 96">
+          <g fill="none" stroke="currentColor" stroke-width="1" opacity=".3">
+            <path d="M2 12 C 90 12, 130 48, 232 48"/>
+            <path d="M2 48 C 90 48, 130 48, 232 48"/>
+            <path d="M2 84 C 90 84, 130 48, 232 48"/>
+          </g>
+          <circle cx="232" cy="48" r="4" fill="#B8873F"/>
+          <circle cx="232" cy="48" r="10" fill="none" stroke="#B8873F" stroke-width="1" opacity=".4"/>
+        </svg>
+      </div>
+    </article>
+
+    <article class="card rise d1">
+      <div class="card-n"><span class="num">02</span><span class="kicker">复杂度，交给结构</span></div>
+      <h3 class="h-3">节点与材料</h3>
+      <p class="body-s">时间线、材料与任务收束进一套可追踪的结构——由自研总台 Terra 协助。</p>
+      <p class="en">Timelines, documents and tasks converge into one trackable structure.</p>
+      <div class="plate" aria-hidden="true">
+        <svg viewBox="0 0 240 96">
+          <line x1="2" y1="48" x2="238" y2="48" stroke="currentColor" stroke-width="1" opacity=".22"/>
+          <g fill="#B8873F">
+            <circle cx="26" cy="48" r="3.4"/><circle cx="82" cy="48" r="3.4"/>
+            <circle cx="138" cy="48" r="3.4"/><circle cx="194" cy="48" r="3.4"/>
+          </g>
+          <g stroke="currentColor" stroke-width="1" opacity=".28">
+            <line x1="26" y1="48" x2="26" y2="22"/><line x1="82" y1="48" x2="82" y2="70"/>
+            <line x1="138" y1="48" x2="138" y2="26"/><line x1="194" y1="48" x2="194" y2="66"/>
+          </g>
+        </svg>
+      </div>
+    </article>
+
+    <article class="card rise d2">
+      <div class="card-n"><span class="num">03</span><span class="kicker">叙事，被打磨</span></div>
+      <h3 class="h-3">文书与面试</h3>
+      <p class="body-s">声音与结构深度打磨；高压模拟对齐招生官的判断逻辑。</p>
+      <p class="en">Voice and structure, worked hard. Pressure rehearsals tuned to how admissions actually reads.</p>
+      <div class="plate" aria-hidden="true">
+        <svg viewBox="0 0 240 96">
+          <g stroke="currentColor" stroke-width="1" opacity=".25">
+            <line x1="2" y1="20" x2="176" y2="20"/><line x1="2" y1="36" x2="208" y2="36"/>
+            <line x1="2" y1="52" x2="140" y2="52"/><line x1="2" y1="68" x2="192" y2="68"/>
+          </g>
+          <rect x="2" y="46" width="140" height="12" fill="#B8873F" opacity=".16"/>
+          <line x1="2" y1="52" x2="140" y2="52" stroke="#B8873F" stroke-width="1.4"/>
+          <circle cx="140" cy="52" r="3.2" fill="#B8873F"/>
+        </svg>
+      </div>
+    </article>
+  </div>
+
+  <div class="pad" style="padding-top:clamp(40px,4.5vw,64px)">
+    <div class="rise" style="display:flex;flex-wrap:wrap;gap:16px 40px;align-items:baseline">
+      <p class="eyebrow">三条服务线</p>
+      <p class="body-s" style="max-width:62ch">
+        海外升学咨询 · 精英教育培训 · AI 驱动教育科技。
+        从选校定位到文书打磨全流程精确制导；背景提升与学术强化同步推进；数据与工具赋能决策。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ III · 方法 ============ -->
+<section class="chapter tone-dark" id="method" data-tone="dark">
+  <div class="chap-head">
+    <span class="rn">III</span><span class="name">方法</span><span class="name-en">Method</span>
+  </div>
+
+  <div class="pad" style="padding-bottom:clamp(34px,4vw,54px)">
+    <div class="stack-lead rise">
+      <p class="eyebrow">Chapter III</p>
+      <h2 class="h-sec">一条路径，<br>拆到可执行。</h2>
+      <p class="en" style="margin-top:6px">One path, broken into executable steps.</p>
+    </div>
+  </div>
+
+  <div class="method-track rise" aria-hidden="true">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+      <line x1="0" y1="30" x2="1200" y2="30" stroke="#E9E4D9" stroke-width="1" opacity=".14"/>
+      <line x1="0" y1="30" x2="1200" y2="30" stroke="#B8873F" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" class="track-line"/>
+      <g fill="#08090C" stroke="#B8873F" stroke-width="1.4">
+        <circle cx="60" cy="30" r="5"/><circle cx="330" cy="30" r="5"/><circle cx="600" cy="30" r="5"/>
+        <circle cx="870" cy="30" r="5"/><circle cx="1140" cy="30" r="5"/>
+      </g>
+    </svg>
+  </div>
+
+  <div style="padding:0 var(--gut) clamp(72px,9vw,140px)">
+    <div class="steps">
+      <div class="step rise">
+        <span class="st-n">01</span>
+        <h3 class="st-t">定位<small>Position</small></h3>
+        <p class="st-d">目标与边界先清楚。学校、专业、路径三件事对齐之后，后面每一步才有判断依据。</p>
+      </div>
+      <div class="step rise">
+        <span class="st-n">02</span>
+        <h3 class="st-t">档案<small>Profile</small></h3>
+        <p class="st-d">竞赛、科研、实习、标化协同推进——每一项都要说得出为什么做，而不是为了填满一页纸。</p>
+      </div>
+      <div class="step rise">
+        <span class="st-n">03</span>
+        <h3 class="st-t">文书<small>Essays</small></h3>
+        <p class="st-d">拒绝模板腔。保留学生真实的声音，同时把结构改到能承受招生官的快速阅读。</p>
+      </div>
+      <div class="step rise">
+        <span class="st-n">04</span>
+        <h3 class="st-t">面试<small>Interview</small></h3>
+        <p class="st-d">模拟高压场景，校准表达节奏与内容密度。到了真实面试，紧张不再是变量。</p>
+      </div>
+      <div class="step rise">
+        <span class="st-n">05</span>
+        <h3 class="st-t">结果<small>Outcome</small></h3>
+        <p class="st-d">可核对、可复盘。每个决策留下记录，不论结果如何，都能回头看清是哪一步起了作用。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ IV · 系统 ============ -->
+<section class="chapter tone-light" id="systems" data-tone="light">
+  <div class="chap-head">
+    <span class="rn">IV</span><span class="name">系统</span><span class="name-en">Systems</span>
+  </div>
+
+  <div class="pad" style="padding-bottom:clamp(40px,4.5vw,64px)">
+    <div class="stack-lead rise" style="max-width:52ch">
+      <p class="eyebrow">Chapter IV · 自研软件矩阵</p>
+      <h2 class="h-sec">咨询是主业。<br>系统是证据。</h2>
+      <p class="body-s" style="margin-top:8px;max-width:52ch">
+        工程背景不是简历上的一行字。我们把申请季里最重的执行——进度、材料、通信、选校、测评——做成了自己的软件。
+        产品持续迭代中，官网只做展示与预约演示。
+      </p>
+      <p class="en">Consulting is the product. The software is the proof. Still shipping; demos on request.</p>
+    </div>
+  </div>
+
+  <div class="pad pad-t0" style="padding-bottom:clamp(48px,5.5vw,80px)">
+    <div class="sys-hero">
+      <div class="sys-diagram rise" aria-hidden="true">
+        <svg viewBox="0 0 460 330">
+          <defs>
+            <marker id="ar" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
+              <path d="M0 0 L6 3 L0 6 z" fill="#12141A" opacity=".38"/>
+            </marker>
+          </defs>
+          <!-- 轨道 -->
+          <ellipse cx="230" cy="168" rx="168" ry="112" fill="none" stroke="#12141A" stroke-width="1" opacity=".13"/>
+          <ellipse cx="230" cy="168" rx="118" ry="150" fill="none" stroke="#12141A" stroke-width="1" opacity=".09"/>
+          <!-- 连线 -->
+          <g stroke="#12141A" stroke-width="1" opacity=".34" marker-end="url(#ar)">
+            <line x1="230" y1="86" x2="230" y2="132"/>
+            <line x1="118" y1="168" x2="176" y2="168"/>
+            <line x1="342" y1="168" x2="284" y2="168"/>
+            <line x1="230" y1="250" x2="230" y2="206"/>
+          </g>
+          <!-- 中心 Terra -->
+          <circle cx="230" cy="168" r="54" fill="#08090C"/>
+          <circle cx="230" cy="168" r="62" fill="none" stroke="#B8873F" stroke-width="1" opacity=".55"/>
+          <text x="230" y="164" text-anchor="middle" fill="#E9E4D9" font-family="Helvetica Neue, sans-serif" font-size="15" font-weight="600" letter-spacing="-.3">Terra</text>
+          <text x="230" y="181" text-anchor="middle" fill="#B8873F" font-family="ui-monospace, monospace" font-size="8.5" letter-spacing=".8">TOTAL DESK</text>
+          <!-- 卫星 -->
+          <g font-family="Helvetica Neue, sans-serif" font-size="11.5" font-weight="600" fill="#12141A" text-anchor="middle">
+            <circle cx="230" cy="66" r="20" fill="none" stroke="#12141A" stroke-width="1" opacity=".3"/>
+            <text x="230" y="46">Life-Echo</text><text x="230" y="70" font-size="9" opacity=".5" font-weight="400">测评</text>
+            <circle cx="86" cy="168" r="20" fill="none" stroke="#12141A" stroke-width="1" opacity=".3"/>
+            <text x="86" y="140">智能选校</text><text x="86" y="172" font-size="9" opacity=".5" font-weight="400">Schoolist</text>
+            <circle cx="374" cy="168" r="20" fill="none" stroke="#12141A" stroke-width="1" opacity=".3"/>
+            <text x="374" y="140">申请邮箱</text><text x="374" y="172" font-size="9" opacity=".5" font-weight="400">MailHub</text>
+            <circle cx="230" cy="272" r="20" fill="none" stroke="#12141A" stroke-width="1" opacity=".3"/>
+            <text x="230" y="276" font-size="9" opacity=".5" font-weight="400">基建</text>
+            <text x="230" y="312" font-size="11.5">mail-agent</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="terra-card rise d1">
+        <span class="badge">Terra-EDU · 中枢总台</span>
+        <h3 class="h-sec" style="font-size:clamp(1.9rem,3.4vw,3rem)">一个真相源，<br>撑起整个申请季。</h3>
+        <p class="body-s" style="color:var(--on-dark-muted)">
+          进度、任务、材料与决策节点集中在一处。顾问、学生与家长看到的是同一套结构，不再靠微信群对齐信息。
+          多角色门户、时间线、打卡与探索模块，配带调用链路记录的接口与 AI 推荐摘要。
+        </p>
+        <p class="en">One source of truth for the whole season. Advisor, student and parent see the same structure.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+          <a href="#contact" class="btn btn-solid">预约系统演示 <span class="arw">→</span></a>
+          <a href="https://terra-edu.vercel.app" target="_blank" rel="noopener" class="btn btn-ghost">查看演示站 <span class="arw">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pad pad-t0" style="padding-bottom:0">
+    <p class="eyebrow rise" style="margin-bottom:18px">三端环绕总台，各管一块难事 · Three companions, one desk</p>
+  </div>
+
+  <div class="apps">
+    <article class="app rise">
+      <div class="app-t"><h3 class="h-3">Life-Echo</h3><span class="st">公开体验</span></div>
+      <p class="body-s">结构化测评，为定位与文书提供证据。基于人生故事访谈与大五人格，输出可用的心理画像，而不是一句星座式结论。</p>
+      <p class="en">Structured assessment that grounds positioning and essays.</p>
+      <a class="more" href="https://life-echo.vercel.app" target="_blank" rel="noopener">前往体验 ↗</a>
+    </article>
+
+    <article class="app rise d1">
+      <div class="app-t"><h3 class="h-3">智能选校</h3><span class="st">顾问端</span></div>
+      <p class="body-s">多维条件收敛出清单，少拍脑袋。美本 / 英本 / 双轨三套沙盘，冲刺·匹配·稳健分层，每所学校配一张决策卡。</p>
+      <p class="en">Multi-factor lists. Less guesswork.</p>
+      <a class="more" href="#contact">预约演示 →</a>
+    </article>
+
+    <article class="app rise d2">
+      <div class="app-t"><h3 class="h-3">申请邮箱</h3><span class="st">迭代中</span></div>
+      <p class="body-s">通信归档，关键节点可追踪。申请季所有往来邮件集中托管，重要节点不会淹没在收件箱里。</p>
+      <p class="en">Threaded correspondence that stays traceable.</p>
+      <a class="more" href="#contact">预约演示 →</a>
+    </article>
+  </div>
+  <p class="infra-note">底层含 mail-agent 等自动化基建，持续演进中。 / Backed by in-house automation infrastructure, still evolving.</p>
+</section>
+
+<!-- ============ V · 结果 ============ -->
+<section class="chapter tone-dark" id="outcomes" data-tone="dark">
+  <div class="chap-head">
+    <span class="rn">V</span><span class="name">结果</span><span class="name-en">Outcomes</span>
+  </div>
+
+  <div class="pad" style="padding-bottom:clamp(28px,3.4vw,46px)">
+    <div class="stack-lead rise">
+      <p class="eyebrow">Chapter V</p>
+      <h2 class="h-sec">结果说话。<br>背景不同，方法一致。</h2>
+      <p class="en" style="margin-top:6px">Outcomes speak. Different profiles, one method.</p>
+    </div>
+  </div>
+
+  <div class="star-map rise" aria-hidden="true">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <g fill="#E9E4D9" opacity=".22">
+        <circle cx="70" cy="82" r="1.6"/><circle cx="180" cy="34" r="1.2"/><circle cx="262" cy="96" r="1.4"/>
+        <circle cx="358" cy="52" r="1.1"/><circle cx="470" cy="88" r="1.5"/><circle cx="556" cy="28" r="1.2"/>
+        <circle cx="648" cy="74" r="1.3"/><circle cx="742" cy="42" r="1.1"/><circle cx="836" cy="92" r="1.5"/>
+        <circle cx="944" cy="36" r="1.2"/><circle cx="1042" cy="80" r="1.4"/><circle cx="1146" cy="48" r="1.2"/>
+      </g>
+      <g fill="#B8873F">
+        <circle cx="130" cy="60" r="3"/><circle cx="410" cy="66" r="3"/><circle cx="700" cy="58" r="3"/><circle cx="990" cy="64" r="3"/>
+      </g>
+      <path d="M130 60 L410 66 L700 58 L990 64" fill="none" stroke="#B8873F" stroke-width="1" opacity=".3"/>
+    </svg>
+  </div>
+
+  <div style="padding:clamp(30px,3.6vw,52px) var(--gut) clamp(72px,9vw,140px)">
+    <table class="table" id="caseTable">
+      <caption class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">录取结果归档</caption>
+      <thead>
+        <tr><th style="width:30%">学校</th><th style="width:28%">专业</th><th style="width:10%">层次</th><th>背景要点</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="sch">Imperial College London</td><td class="maj">Mechanical Engineering</td><td class="tier">UG</td><td class="note">4A*，STEP II；面试表现突出</td></tr>
+        <tr><td class="sch">University of Oxford</td><td class="maj">MPhil Economics</td><td class="tier">PG</td><td class="note">一等荣誉，IELTS 8.0；研究轨迹连贯</td></tr>
+        <tr><td class="sch">Stanford University</td><td class="maj">Symbolic Systems</td><td class="tier">UG</td><td class="note">SAT 1570，已发表研究；跨学科 AI 方向</td></tr>
+        <tr><td class="sch">University of Cambridge</td><td class="maj">Chemistry</td><td class="tier">UG</td><td class="note">3A*1A，IELTS 7.5</td></tr>
+        <tr><td class="sch">ETH Zürich</td><td class="maj">M.S. Robotics, Systems &amp; Control</td><td class="tier">PG</td><td class="note">机械工程本科，GPA 3.95</td></tr>
+        <tr><td class="sch">Columbia University</td><td class="maj">M.S. Data Science</td><td class="tier">PG</td><td class="note">GRE 330，GPA 3.9；学术路径连续</td></tr>
+
+        <tr class="extra"><td class="sch">Cornell University</td><td class="maj">Biological Engineering</td><td class="tier">UG</td><td class="note">TOEFL 111，ACT 35，9 门 AP</td></tr>
+        <tr class="extra"><td class="sch">UCLA</td><td class="maj">Computer Science</td><td class="tier">UG</td><td class="note">SAT 1550，GPA 4.0，10 门 AP</td></tr>
+        <tr class="extra"><td class="sch">National University of Singapore</td><td class="maj">Business Administration</td><td class="tier">UG</td><td class="note">IB 44/45，领导型课外活动</td></tr>
+        <tr class="extra"><td class="sch">University of Toronto</td><td class="maj">Rotman Commerce</td><td class="tier">UG</td><td class="note">IB 43/45，公益组织创办人</td></tr>
+        <tr class="extra"><td class="sch">Johns Hopkins University</td><td class="maj">M.S. Finance</td><td class="tier">PG</td><td class="note">GMAT 740，GPA 3.8</td></tr>
+        <tr class="extra"><td class="sch">London School of Economics</td><td class="maj">MSc Management</td><td class="tier">PG</td><td class="note">2:1 学位，对口实习</td></tr>
+        <tr class="extra"><td class="sch">Nanyang Technological University</td><td class="maj">M.Eng Aerospace</td><td class="tier">PG</td><td class="note">B.Eng with High Honours</td></tr>
+        <tr class="extra"><td class="sch">University of Hong Kong</td><td class="maj">Electronic Engineering</td><td class="tier">UG</td><td class="note">4A*，长期工厂志愿服务</td></tr>
+        <tr class="extra"><td class="sch">McGill University</td><td class="maj">Political Science</td><td class="tier">UG</td><td class="note">模联主席，IELTS 8.5</td></tr>
+        <tr class="extra"><td class="sch">Pomona College</td><td class="maj">Sociology</td><td class="tier">UG</td><td class="note">TOEFL 108，SAT 1500，6 门 AP</td></tr>
+        <tr class="extra"><td class="sch">Chinese University of Hong Kong</td><td class="maj">M.S. FinTech</td><td class="tier">PG</td><td class="note">GRE 328，四大实习</td></tr>
+        <tr class="extra"><td class="sch">HKUST</td><td class="maj">MSc Financial Technology</td><td class="tier">PG</td><td class="note">GRE 325，GPA 3.7</td></tr>
+        <tr class="extra"><td class="sch">University of British Columbia</td><td class="maj">M.A.Sc. Civil Engineering</td><td class="tier">PG</td><td class="note">GPA 3.8，Co-op 经历</td></tr>
+        <tr class="extra"><td class="sch">EHL Hospitality Business School</td><td class="maj">B.Sc. Hospitality Management</td><td class="tier">UG</td><td class="note">三语，五星级酒店实习</td></tr>
+        <tr class="extra"><td class="sch">INSEAD</td><td class="maj">MBA</td><td class="tier">PG</td><td class="note">GMAT 730，五年头部科技公司经验</td></tr>
+      </tbody>
+    </table>
+
+    <div class="more-row">
+      <button class="link-btn" id="moreCases" aria-expanded="false" aria-controls="caseTable">展开全部 21 例 · Show all</button>
+      <span class="body-s">案例为往期学员真实录取，背景要点已做匿名化处理。</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VI · 团队 ============ -->
+<section class="chapter tone-light" id="team" data-tone="light">
+  <div class="chap-head">
+    <span class="rn">VI</span><span class="name">团队</span><span class="name-en">Team</span>
+  </div>
+
+  <div class="pad" style="padding-bottom:clamp(34px,4vw,54px)">
+    <div class="stack-lead rise">
+      <p class="eyebrow">Chapter VI</p>
+      <h2 class="h-sec">专业，<br>可核对。</h2>
+      <p class="en" style="margin-top:6px">Expertise you can verify.</p>
+    </div>
+  </div>
+
+  <div class="people">
+    <article class="person rise">
+      <p class="rl">创始人 &amp; 首席顾问</p>
+      <h3 class="nm">Mira Shi</h3>
+      <p class="body-s">莱斯大学电子工程本硕（Rice University, EE MS/BS），约八年留学咨询经验。硬核技术背景与精英教育理解的交叉点——拒绝流水线作业，坚持数据驱动的定制化申请策略。</p>
+      <p class="en">M.S./B.S. Electrical Engineering, Rice University. Eight years in admissions consulting.</p>
+      <div class="tags"><span class="tag">G5 申请</span><span class="tag">工程专业</span><span class="tag">AI 教育</span></div>
+    </article>
+
+    <article class="person rise d1">
+      <p class="rl">学术总监</p>
+      <h3 class="nm">Dr. Wilson</h3>
+      <p class="body-s">宾夕法尼亚大学教育学博士，前招生官，十五年从业经验。熟悉招生政策的实际运作方式，负责文书方向把关与长线学术规划。</p>
+      <p class="en">Ed.D., University of Pennsylvania. Former admissions officer, 15 years.</p>
+      <div class="tags"><span class="tag">招生政策</span><span class="tag">文书指导</span><span class="tag">学术规划</span></div>
+    </article>
+
+    <article class="person rise d2">
+      <p class="rl">资深顾问</p>
+      <h3 class="nm">Sarah Chen</h3>
+      <p class="body-s">伯克利 MBA，长期负责商科与 STEM 方向的申请。擅长把职业目标倒推成可执行的本科/研究生路径。</p>
+      <p class="en">MBA, UC Berkeley. Business and STEM admissions.</p>
+      <div class="tags"><span class="tag">商科申请</span><span class="tag">STEM</span><span class="tag">MBA 咨询</span></div>
+    </article>
+  </div>
+
+  <div class="pad" style="padding-top:clamp(40px,4.5vw,64px)">
+    <div class="rise" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:26px 40px">
+      <div><p class="eyebrow" style="margin-bottom:8px">我们不做什么</p><p class="body-s">不贩卖焦虑，不做数字墙，不承诺录取率。所有案例可核对，所有判断说得出依据。</p></div>
+      <div><p class="eyebrow" style="margin-bottom:8px">服务城市</p><p class="body-s">北京 · 杭州。双城面谈，其余环节线上同步进行。</p></div>
+      <div><p class="eyebrow" style="margin-bottom:8px">主赛道</p><p class="body-s">本科 G5 与常春藤；顶尖硕博项目。中英双语全流程。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VII · 联系 ============ -->
+<section class="chapter tone-dark" id="contact" data-tone="dark">
+  <div class="chap-head">
+    <span class="rn">VII</span><span class="name">联系</span><span class="name-en">Contact</span>
+  </div>
+
+  <div class="pad" style="padding-bottom:clamp(48px,5.5vw,80px)">
+    <div class="stack-lead rise" style="margin-bottom:clamp(38px,4.4vw,62px)">
+      <p class="eyebrow">Chapter VII</p>
+      <h2 class="h-sec">下一步，<br>先聊三十分钟。</h2>
+      <p class="body-s" style="max-width:46ch;margin-top:8px">
+        先判断你的情况值不值得做、怎么做。不合适我们会直说。
+      </p>
+      <p class="en">A thirty-minute conversation first. If we are not the right fit, we will say so.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="rise">
+        <dl class="dl">
+          <dt>电话</dt>
+          <dd><a href="tel:18519739539" class="tel">185 1973 9539</a><br><span class="body-s">工作时间 9:00 – 21:00</span></dd>
+
+          <dt>微信</dt>
+          <dd>
+            <img class="qr" src="https://s2.loli.net/2025/10/17/MT5Pt7jcHoylQWh.jpg" alt="添加顾问微信的二维码" loading="lazy" width="118" height="118">
+            <span class="body-s" style="display:block;margin-top:8px">扫码添加顾问</span>
+          </dd>
+
+          <dt>城市</dt>
+          <dd>北京 · 杭州<br><span class="body-s">Beijing · Hangzhou</span></dd>
+
+          <dt>系统</dt>
+          <dd>
+            <a href="https://terra-edu.vercel.app" target="_blank" rel="noopener" class="link-btn">Terra 演示站 ↗</a>
+            &nbsp;&nbsp;
+            <a href="https://life-echo.vercel.app" target="_blank" rel="noopener" class="link-btn">Life-Echo ↗</a>
+          </dd>
+        </dl>
+      </div>
+
+      <form class="form rise d1" id="consultForm" novalidate>
+        <p class="eyebrow" style="margin-bottom:4px">留下信息，顾问会在一个工作日内回复</p>
+
+        <div class="field">
+          <label for="f-name">称呼</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required placeholder="怎么称呼您">
+        </div>
+        <div class="field">
+          <label for="f-contact">电话 / 微信</label>
+          <input id="f-contact" name="contact" type="text" required placeholder="方便联系到您的方式">
+        </div>
+        <div class="field">
+          <label for="f-intent">意向</label>
+          <select id="f-intent" name="intent">
+            <option>本科申请</option>
+            <option>硕博申请</option>
+            <option>系统演示</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-note">补充</label>
+          <textarea id="f-note" name="note" rows="2" placeholder="年级、目标国家、当前进度……（选填）"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-solid" style="align-self:flex-start;margin-top:4px">提交 <span class="arw">→</span></button>
+        <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+        <p class="fine">提交即表示同意我们通过所留方式与您联系。信息仅用于本次咨询，不会对外提供。</p>
+      </form>
+    </div>
+  </div>
+
+  <div class="colophon">
+    <span>© <span id="yr">2026</span> 引力坊 GRAVITY FANG</span>
+    <span>北京 · 杭州</span>
+    <span>精英留学咨询 &amp; 教育科技</span>
+    <span class="cw">The Gravity Edition ’26</span>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 1. 章节高亮 + 明暗翻转 ---------- */
+  var chapters = Array.prototype.slice.call(document.querySelectorAll(".chapter"));
+  var tocItems = {};
+  Array.prototype.forEach.call(document.querySelectorAll("#toc li"), function(li){
+    tocItems[li.getAttribute("data-for")] = li;
+  });
+
+  var toneObserver = new IntersectionObserver(function(entries){
+    // 取交叉面积最大的章节作为“当前章”
+    var best = null;
+    entries.forEach(function(e){ if(e.isIntersecting && (!best || e.intersectionRatio > best.intersectionRatio)) best = e; });
+    if(!best) return;
+    var id = best.target.id;
+    document.body.setAttribute("data-tone", best.target.getAttribute("data-tone"));
+    for(var k in tocItems) tocItems[k].setAttribute("aria-current", k === id ? "true" : "false");
+  }, { rootMargin: "-45% 0px -45% 0px", threshold: [0, .25, .5, 1] });
+  chapters.forEach(function(c){ toneObserver.observe(c); });
+
+  /* ---------- 2. 元素入场 ---------- */
+  var riseObserver = new IntersectionObserver(function(entries, obs){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add("in");
+      if(e.target.classList.contains("method-track")){
+        var ln = e.target.querySelector(".track-line");
+        if(ln && !reduce){
+          ln.style.transition = "stroke-dashoffset 1.8s cubic-bezier(.22,.61,.36,1)";
+          ln.style.strokeDashoffset = "0";
+        } else if(ln){ ln.style.strokeDashoffset = "0"; }
+      }
+      obs.unobserve(e.target);
+    });
+  }, { rootMargin: "0px 0px -12% 0px", threshold: .12 });
+  Array.prototype.forEach.call(document.querySelectorAll(".rise"), function(el){ riseObserver.observe(el); });
+
+  /* ---------- 3. 移动端目录 ---------- */
+  var toggle = document.getElementById("tocToggle");
+  var sheet  = document.getElementById("tocSheet");
+  function setSheet(open){
+    sheet.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.textContent = open ? "关闭" : "目录";
+    document.documentElement.style.overflow = open ? "hidden" : "";
+  }
+  toggle.addEventListener("click", function(){ setSheet(!sheet.classList.contains("open")); });
+  sheet.addEventListener("click", function(e){ if(e.target.closest("a")) setSheet(false); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") setSheet(false); });
+
+  /* ---------- 4. 案例展开 ---------- */
+  var moreBtn = document.getElementById("moreCases");
+  var table   = document.getElementById("caseTable");
+  moreBtn.addEventListener("click", function(){
+    var open = table.classList.toggle("open");
+    moreBtn.setAttribute("aria-expanded", String(open));
+    moreBtn.textContent = open ? "收起 · Show less" : "展开全部 21 例 · Show all";
+  });
+
+  /* ---------- 5. 表单（前端占位，尚未接后端） ---------- */
+  var form = document.getElementById("consultForm");
+  var note = document.getElementById("formNote");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = form.name.value.trim(), contact = form.contact.value.trim();
+    if(!name || !contact){ note.textContent = "请填写称呼与联系方式。"; return; }
+    note.textContent = "已记录。顾问会在一个工作日内联系您；急事请直接致电 185 1973 9539。";
+    form.querySelector("button[type=submit]").disabled = true;
+  });
+
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  /* ---------- 6. 首屏引力场 ---------- */
+  var cv = document.getElementById("orbit"), ctx = cv.getContext("2d");
+  var W = 0, H = 0, dpr = 1, cx = 0, cy = 0, R = 0, stars = [], raf = null;
+
+  var ORBITS = [
+    { rx:1.00, ry:0.30, tilt:-0.34, speed: 0.055, r:2.6, alpha:.85 },
+    { rx:0.74, ry:0.50, tilt: 0.62, speed:-0.078, r:2.0, alpha:.65 },
+    { rx:1.34, ry:0.42, tilt: 0.16, speed: 0.036, r:2.2, alpha:.55 },
+    { rx:0.46, ry:0.24, tilt:-0.88, speed: 0.105, r:1.7, alpha:.50 }
+  ];
+
+  function seedStars(){
+    stars = [];
+    var n = Math.round((W * H) / 16000);
+    for(var i = 0; i < n; i++){
+      stars.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.1 + .25,
+                   a:Math.random()*.4 + .08, tw:Math.random()*Math.PI*2 });
+    }
+  }
+
+  function resize(){
+    var box = cv.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = box.width; H = box.height;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // 窄屏把引力场沉到下半屏的留白里，避开字标；宽屏放在右侧
+    var narrow = W < 760;
+    cx = W * (narrow ? 0.52 : 0.66);
+    cy = H * (narrow ? 0.74 : 0.50);
+    R  = Math.min(W, H) * (narrow ? 0.30 : 0.34);
+    seedStars();
+  }
+
+  function ellipse(rx, ry, tilt){
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, tilt, 0, Math.PI * 2);
+  }
+
+  function draw(t){
+    ctx.clearRect(0, 0, W, H);
+
+    // 星点
+    for(var i = 0; i < stars.length; i++){
+      var s = stars[i];
+      var a = s.a * (0.65 + 0.35 * Math.sin(t * 0.0007 + s.tw));
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(233,228,217," + a.toFixed(3) + ")";
+      ctx.fill();
+    }
+
+    // 中心引力核
+    var core = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.62);
+    core.addColorStop(0,   "rgba(201,161,92,.30)");
+    core.addColorStop(.35, "rgba(184,135,63,.10)");
+    core.addColorStop(1,   "rgba(184,135,63,0)");
+    ctx.beginPath(); ctx.arc(cx, cy, R * 0.62, 0, Math.PI * 2);
+    ctx.fillStyle = core; ctx.fill();
+
+    ctx.beginPath(); ctx.arc(cx, cy, 3.4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(233,228,217,.9)"; ctx.fill();
+
+    // 轨道与行星
+    for(var j = 0; j < ORBITS.length; j++){
+      var o = ORBITS[j], rx = R * o.rx, ry = R * o.ry;
+
+      ctx.save();
+      ellipse(rx, ry, o.tilt);
+      ctx.strokeStyle = "rgba(233,228,217,.14)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+
+      var ang = t * 0.001 * o.speed * Math.PI * 2 + j * 1.7;
+      var px = Math.cos(ang) * rx, py = Math.sin(ang) * ry;
+      var X = cx + px * Math.cos(o.tilt) - py * Math.sin(o.tilt);
+      var Y = cy + px * Math.sin(o.tilt) + py * Math.cos(o.tilt);
+
+      var glow = ctx.createRadialGradient(X, Y, 0, X, Y, o.r * 6);
+      glow.addColorStop(0, "rgba(201,161,92," + o.alpha + ")");
+      glow.addColorStop(1, "rgba(201,161,92,0)");
+      ctx.beginPath(); ctx.arc(X, Y, o.r * 6, 0, Math.PI * 2);
+      ctx.fillStyle = glow; ctx.fill();
+
+      ctx.beginPath(); ctx.arc(X, Y, o.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(240,232,214,.95)"; ctx.fill();
+    }
+  }
+
+  var running = true;
+  function loop(t){ if(running) draw(t); raf = requestAnimationFrame(loop); }
+
+  function start(){
+    resize();
+    if(reduce){ draw(0); return; }
+    raf = requestAnimationFrame(loop);
+  }
+
+  var ro = ("ResizeObserver" in window) ? new ResizeObserver(function(){
+    resize(); if(reduce) draw(0);
+  }) : null;
+  if(ro) ro.observe(cv); else window.addEventListener("resize", function(){ resize(); if(reduce) draw(0); });
+
+  // 首屏滚出视野后暂停，省电
+  if(!reduce){
+    new IntersectionObserver(function(es){ running = es[0].isIntersecting; }, { threshold: 0 })
+      .observe(document.getElementById("intro"));
+  }
+
+  start();
+})();
+</script>
+</body>
+</html>
