@@ -842,6 +842,21 @@ ul{ list-style:none; }
   .field input, .field select, .field textarea, .btn{ min-height:48px; }
 }
 
+
+.ip-trust{
+  font-size:11px; letter-spacing:.09em; color:var(--on-dark-muted);
+  margin:0 0 14px; line-height:1.7;
+}
+.ip-cta{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+.ip-cta .tel-lnk{
+  display:inline-flex; align-items:center; padding:9px 16px; border-radius:100px;
+  border:1px solid var(--on-dark-faint); color:var(--on-dark);
+  font-size:13px; font-weight:700; min-height:44px;
+}
+.ip-cta .tel-lnk:hover{ border-color:var(--on-dark-muted); }
+/* 面板飞散时这两块跟着淡出，不然会孤零零留在画面中央 */
+.intro-panel .ip-trust, .intro-panel .ip-cta{ opacity:var(--fly); }
+
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
   position:fixed; inset:0; z-index:850; background:var(--ink-deep); color:var(--on-dark);
@@ -1005,6 +1020,14 @@ ul{ list-style:none; }
         名校路径的新标准。八年，一套可核对的方法。
         <span class="en2">A new standard for elite admissions. Eight years, one verifiable method.</span>
       </p>
+
+      <!-- 开场原本只有顶栏那一个入口。读者最有兴趣的一刻就在这里，
+           不给出口等于把人推去滚两万像素。同时把可核对的事实前置。 -->
+      <p class="ip-trust">G5 · 常春藤 · 顶尖硕博　|　21 例可核对录取　|　北京 · 杭州</p>
+      <div class="ip-cta">
+        <a href="#contact" class="pill" data-ev="intro-book">预约咨询 ↗</a>
+        <a href="tel:18519739539" class="tel-lnk" data-ev="intro-tel">185 1973 9539</a>
+      </div>
 
       <div class="ip-slot" data-slot="toc">
         <ul class="toc">
@@ -2473,6 +2496,55 @@ ul{ list-style:none; }
 
   var yr = document.getElementById("yr");
   if(yr) yr.textContent = new Date().getFullYear();
+
+
+  /* ============================================================
+     9. 转化埋点（第一方，可关）
+     没有测量就没有优化——"多少人留了咨询"目前是个不可见的数字。
+     这段只记四类事件：滚动深度、CTA 点击、拨号、表单完成。
+     不放 cookie、不用第三方脚本、不记任何个人信息；
+     尊重 Do Not Track；ANALYTICS_ENDPOINT 为空时只在控制台留痕，不发请求。
+     ============================================================ */
+  var ANALYTICS_ENDPOINT = "";   // ← 想收数据就填一个自己的接收地址
+  (function(){
+    if(navigator.doNotTrack === "1" || window.doNotTrack === "1") return;
+    var sent = {};
+    function ev(name, extra){
+      if(sent[name]) return;              // 每种事件每次会话只记一次
+      sent[name] = 1;
+      var body = { e:name, t:Date.now(), w:innerWidth, ref:document.referrer || "" };
+      if(extra) body.v = extra;
+      if(!ANALYTICS_ENDPOINT){ if(window.console) console.debug("[ev]", body); return; }
+      try{
+        navigator.sendBeacon(ANALYTICS_ENDPOINT,
+          new Blob([JSON.stringify(body)], { type:"application/json" }));
+      }catch(_){}
+    }
+    // 滚动深度：读到第几章
+    var marks = [["read-25",.25],["read-50",.5],["read-75",.75],["read-end",.95]];
+    (function tick(){
+      var h = document.documentElement.scrollHeight - innerHeight;
+      if(h > 0){
+        var p = scrollY / h;
+        marks.forEach(function(m){ if(p >= m[1]) ev(m[0]); });
+      }
+      requestAnimationFrame(tick);
+    })();
+    // 点击：预约、拨号
+    document.addEventListener("click", function(e){
+      var a = e.target.closest("a"); if(!a) return;
+      if(a.getAttribute("href") === "#contact") ev("cta-book", a.dataset.ev || "");
+      if((a.getAttribute("href") || "").indexOf("tel:") === 0) ev("cta-tel", a.dataset.ev || "");
+    }, true);
+    // 表单：开始填 / 走到交接
+    var form = document.getElementById("consultForm");
+    if(form){
+      form.addEventListener("input", function(){ ev("form-start"); }, { once:true });
+      form.addEventListener("submit", function(){
+        if(form.name.value.trim() && form.contact.value.trim()) ev("form-done");
+      });
+    }
+  })();
 
   /* ============================================================
      6. 尺寸变化
