@@ -50,12 +50,31 @@ CURVE_R = lut([(0, 0), (40, 30), (128, 132), (210, 224), (255, 255)])
 CURVE_G = lut([(0, 0), (40, 30), (128, 126), (210, 212), (255, 250)])
 CURVE_B = lut([(0, 8), (40, 40), (128, 118), (210, 196), (255, 240)])
 
+# 明亮背景用的曲线：同样的暖高光/冷暗部倾向，但整体抬起来。
+# 拼贴构造要求背景明亮通透（平均亮度 ≥70），旧的压暗曲线与之相反——
+# 亮抠图压在近黑糊底上正是"突兀"的根因。
+CURVE_BG_R = lut([(0, 10), (40, 62), (128, 158), (210, 232), (255, 255)])
+CURVE_BG_G = lut([(0, 10), (40, 60), (128, 152), (210, 224), (255, 252)])
+CURVE_BG_B = lut([(0, 18), (40, 66), (128, 146), (210, 208), (255, 244)])
 
-def grade(im):
-    im = im.convert("RGB").point(CURVE_R + CURVE_G + CURVE_B)
+
+def grade(im, preset="dark"):
+    """preset:
+    dark — 压暗，暗部沉到 #0B0E14。留给需要重压的旧素材。
+    bg   — 明亮背景：提亮通透，给巨型标题留出可读的安静底。
+    fg   — 抠图前景：只统一色温，不压暗不降饱和。压暗会让抠图变成脏污一团，
+           拼贴元素必须保持全亮度（参考站的人物就是全亮度高饱和的）。
+    """
+    im = im.convert("RGB")
+    if preset == "bg":
+        im = im.point(CURVE_BG_R + CURVE_BG_G + CURVE_BG_B)
+        return ImageEnhance.Contrast(im).enhance(0.96)
+    if preset == "fg":
+        im = im.point(CURVE_R + CURVE_G + CURVE_B)
+        return ImageEnhance.Contrast(im).enhance(1.02)
+    im = im.point(CURVE_R + CURVE_G + CURVE_B)
     im = ImageEnhance.Color(im).enhance(0.93)
-    im = ImageEnhance.Contrast(im).enhance(1.06)
-    return im
+    return ImageEnhance.Contrast(im).enhance(1.06)
 
 
 # 最左那条的高光压缩曲线。
@@ -120,6 +139,9 @@ def main():
                     help="输出宽度，默认 1920（章节大图要铺满视口）。"
                          "嵌板配图按显示尺寸的 2 倍给就够了，比如画廊卡片显示 286px "
                          "就给 640——竖图套用 1920 会得到 1920x2400，白涨一百多 KB")
+    ap.add_argument("--preset", choices=("dark","bg","fg"), default="dark",
+                    help="调色预设。bg=明亮背景（平均亮度推到 70+），"
+                         "fg=抠图前景（不压暗不降饱和），dark=旧的压暗预设")
     ap.add_argument("--quality", type=int, default=72)
     args = ap.parse_args()
 
@@ -132,8 +154,8 @@ def main():
         im = im.crop((0, 0, im.width, int(im.height * (1 - args.crop_bottom))))
     if args.flip:
         im = im.transpose(Image.FLIP_LEFT_RIGHT)
-    im = grade(im)
-    if not args.no_left_rolloff:
+    im = grade(im, args.preset)
+    if args.preset != "fg" and not args.no_left_rolloff:
         im = left_rolloff(im)
 
     w = args.out_width

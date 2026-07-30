@@ -272,9 +272,8 @@ ul{ list-style:none; }
   position:absolute; display:block; width:auto; height:auto;
   /* 与背景图共用 --art-scale（JS 挂在 .chapter 上），两层才不会脱开 */
   transform:scale(var(--art-scale,1.06)); transform-origin:52% 46%;
-  /* 压成前景剪影。参考站那根遮住 Marketing 的广告牌立柱是近黑的，
-     只提供纵深，不跟标题抢主角；不压暗的话道具会变成画面主体。 */
-  filter:brightness(.42) contrast(1.12) saturate(.8);
+  /* 不做压暗。参考站的抠图人物是全亮度高饱和的——压暗会让抠图变成脏污一团，
+     那正是上一版"突兀"的原因之一。拼贴感靠背景变亮来拉开，不靠把前景压下去。 */
 }
 /* 首屏排版浮在 backdrop 的占位空间上；它随页面滚走，画面留下 */
 .chap-hero{
@@ -292,6 +291,18 @@ ul{ list-style:none; }
   background:linear-gradient(100deg, rgba(11,14,20,.88) 0%, rgba(11,14,20,.70) 24%,
                                      rgba(11,14,20,.22) 50%, rgba(11,14,20,0) 68%);
 }
+
+/* ---------- 明亮背景的章节 ----------
+   拼贴构造把背景提到了平均亮度 171、标题带 p90 229。奶白字压上去只有 1.1:1。
+   不能靠加重暗床压回来——那等于把刚提亮的背景又压暗，提亮就白做了。
+   正确做法是把巨型标题翻成深墨，并把暗床换成极淡的提亮层（让浅色字块仍可读）。 */
+.chapter[data-hero="light"] .chap-hero{ --display:#12161F; }
+.chapter[data-hero="light"] .chap-hero::before{
+  background:linear-gradient(100deg, rgba(246,248,235,.78) 0%, rgba(246,248,235,.46) 26%,
+                                     rgba(246,248,235,.12) 52%, rgba(246,248,235,0) 70%);
+}
+.chapter[data-hero="light"] .chap-sub .cjk-lede{ color:rgba(18,22,31,.80); }
+.chapter[data-hero="light"] .chap-zh{ opacity:.9; }
 
 .panel{
   position:relative; z-index:4;   /* 嵌板压在前景层之上 */
@@ -881,22 +892,25 @@ ul{ list-style:none; }
 </section>
 
 <!-- ============ I · 定位 ============ -->
-<section class="chapter" id="position" data-chapter="position">
+<section class="chapter" id="position" data-chapter="position" data-hero="light">
 
   <!-- 前景抠图层：压在巨型标题之上，只盖词尾，词首完整露出。
        必须排在 .chap-backdrop 之前 —— 见 .chap-foreground 的注释。 -->
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
-      <img class="fg-prop" src="assets/art/fg-position.webp" alt=""
-           style="right:21.5%; top:3vh; height:72vh" loading="lazy" width="800" height="1276">
+      <img class="fg-prop" src="assets/art/fg-student.webp" alt=""
+           style="right:44%; bottom:0; height:50vh" loading="lazy" width="640" height="1184">
+      <img class="fg-prop" src="assets/art/fg-scholar.webp" alt=""
+           style="right:12%; bottom:-10vh; height:96vh" loading="lazy" width="820" height="1070">
     </div>
   </div>
 
-  <!-- 常驻画面：整章钉住不动，左侧 270px 始终看得见 -->
-  <div class="chap-backdrop" data-tone="dark" aria-hidden="true">
+  <!-- 常驻画面：整章钉住不动，左侧 270px 始终看得见。
+       明亮风景 → data-tone="light"，左栏与顶栏自动翻成深色墨 -->
+  <div class="chap-backdrop" data-tone="light" aria-hidden="true">
     <div class="art-wrap">
-      <img class="art-base" src="assets/art/position.webp" alt="" loading="lazy">
-      <img class="art-line" src="assets/art/position-line.webp" alt="" loading="lazy">
+      <img class="art-base" src="assets/art/bg-position.webp" alt="" loading="lazy">
+      <img class="art-line" src="assets/art/bg-position-line.webp" alt="" loading="lazy">
     </div>
     <div class="art-veil"></div>
   </div>
