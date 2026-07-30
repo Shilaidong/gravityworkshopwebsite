@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--
+  夹层定位量具 —— 开发工具，不部署。
+
+  一次报出每章标题的「墨迹」范围、前景道具的矩形、真实交叠比例，
+  以及要达到目标覆盖率时道具左缘应落在哪个 x。
+
+  为什么必须量墨迹而不是元素盒：.chap-display 是块级元素，盒子撑满整列宽
+  （x 270..1362），而字的墨迹只到 x≈903。按元素盒算会得出虚假的 35%，
+  实际交叠可能是 0——道具压根没碰到字。见 HANDOFF 4.13。
+
+  用法：复制到项目根目录后
+      http://localhost:4321/_ink.html?target=33
+  配合 tools/ink.sh 使用。
+-->
+<html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:#0b0b0b;color:#cfc;font:12.5px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace}
+iframe{width:1384px;height:868px;border:0;position:fixed;top:0;left:0}
+pre{position:relative;z-index:9;padding:14px 16px;background:#0b0b0b;min-height:100vh;margin:0}
+.b{color:#fff}.w{color:#ffb86b}.g{color:#8f8}
+</style></head><body>
+<iframe id="f" src="index.html"></iframe>
+<pre id="o">measuring…</pre>
+<script>
+var TARGET = +(new URLSearchParams(location.search).get('target') || 33);
+
+document.getElementById('f').onload = function(){
+  var d = this.contentDocument, w = this.contentWindow, L = [];
+  // scroll-behavior:smooth 下 scrollTo 走动画，虚拟时间里推不完，量到的是半路位置
+  d.documentElement.style.scrollBehavior = 'auto';
+
+  L.push('=== 夹层定位量具  目标覆盖率 ' + TARGET + '% ===');
+  L.push('');
+
+  d.querySelectorAll('.chapter').forEach(function(ch){
+    var title = ch.querySelector('.chap-display');
+    var prop  = ch.querySelector('.fg-prop');
+    if(!title) return;
+
+    // 滚到该章首屏「静止」位置：章节顶端对齐视口顶端
+    var top = ch.getBoundingClientRect().top + w.scrollY;
+    w.scrollTo(0, Math.round(top));
+
+    var rg = d.createRange(); rg.selectNodeContents(title);
+    var ink = rg.getBoundingClientRect();
+
+    L.push('── ' + ch.id + '  「' + title.textContent.trim() + '」');
+    L.push('   墨迹  x ' + Math.round(ink.left) + '..' + Math.round(ink.right)
+           + '   y ' + Math.round(ink.top) + '..' + Math.round(ink.bottom)
+           + '   宽 ' + Math.round(ink.width));
+
+    if(!prop){
+      L.push('   <span class="w">前景道具：无 —— 本章还是两层平铺</span>');
+      L.push('');
+      return;
+    }
+
+    var pr = prop.getBoundingClientRect();
+    var ov = Math.max(0, Math.min(pr.right, ink.right) - Math.max(pr.left, ink.left));
+    var pct = ov / ink.width * 100;
+    var wantLeft = ink.right - TARGET/100 * ink.width;
+
+    L.push('   道具  x ' + Math.round(pr.left) + '..' + Math.round(pr.right)
+           + '   y ' + Math.round(pr.top) + '..' + Math.round(pr.bottom)
+           + '   宽 ' + Math.round(pr.width)
+           + '   比例 ' + (pr.width/pr.height).toFixed(3));
+    var cls = (pct >= TARGET-6 && pct <= TARGET+8) ? 'g' : 'w';
+    L.push('   交叠  <span class="'+cls+'">' + pct.toFixed(0) + '%</span>'
+           + '   （目标 ' + TARGET + '%）');
+    if(Math.abs(pr.left - wantLeft) > 12){
+      var dx = Math.round(pr.left - wantLeft);
+      L.push('   <span class="w">道具左缘应在 x=' + Math.round(wantLeft)
+             + '，当前 ' + Math.round(pr.left)
+             + '，需' + (dx>0?'左':'右') + '移 ' + Math.abs(dx) + 'px'
+             + '  → right 改 ' + (Math.round((w.innerWidth - pr.right + dx) / w.innerWidth * 1000)/10) + '%</span>');
+    }
+    // 词首必须完整露出
+    if(pr.left < ink.left + ink.width*0.42){
+      L.push('   <span class="w">!! 道具伸到词首区了，会认不出是哪个词</span>');
+    }
+    L.push('');
+  });
+
+  document.getElementById('o').innerHTML = L.join('\n');
+};
+</script>
+</body></html>

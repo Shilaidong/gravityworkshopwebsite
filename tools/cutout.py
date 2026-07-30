@@ -47,11 +47,47 @@ def estimate_bg(im):
 
 
 def build_alpha(im, thresh, feather):
-    """浅底 → alpha：亮于阈值的判为背景。"""
+    """浅底 → alpha：从画框边缘泛洪求背景，未被淹到的即主体。
+
+    为什么不用全局阈值：主体同时含极浅（纸张高光 ~200）和极深（轮廓 ~80）部分，
+    又落在浅底（~247）上。阈值调紧会在浅色区打洞，调松会把 AI 画的投影
+    （~200-235）一起吃进来。实测两种失败都出现过。
+
+    泛洪利用了一个事实：主体轮廓一圈是暗的。从边框放水、只走亮于 gate 的像素，
+    水进不到主体内部（被暗轮廓挡住），于是浅色区自动保住；而投影与边框连通
+    且比轮廓浅，会被一并淹掉。
+    """
     g = im.convert("L")
-    # 亮度低于阈值 = 主体（255），高于 = 背景（0）
-    a = g.point(lambda v: 255 if v < thresh else 0)
-    # 先做一次中值滤波去掉键出的孤立噪点，再羽化边缘
+    W, H = g.size
+    # 半分辨率跑 BFS，够用且快得多；边缘反正要羽化
+    sw, sh = W // 2, H // 2
+    small = g.resize((sw, sh), Image.BILINEAR)
+    px = small.load()
+    gate = thresh          # 亮于此值才算“可淹的背景”
+
+    reached = bytearray(sw * sh)
+    from collections import deque
+    q = deque()
+    for x in range(sw):
+        for y in (0, sh - 1):
+            if px[x, y] >= gate and not reached[y * sw + x]:
+                reached[y * sw + x] = 1; q.append((x, y))
+    for y in range(sh):
+        for x in (0, sw - 1):
+            if px[x, y] >= gate and not reached[y * sw + x]:
+                reached[y * sw + x] = 1; q.append((x, y))
+    while q:
+        x, y = q.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < sw and 0 <= ny < sh:
+                i = ny * sw + nx
+                if not reached[i] and px[nx, ny] >= gate:
+                    reached[i] = 1; q.append((nx, ny))
+
+    mask = Image.frombytes("L", (sw, sh), bytes(255 if v else 0 for v in reached))
+    a = mask.resize((W, H), Image.BILINEAR).point(lambda v: 0 if v > 127 else 255)
+    # 中值滤波清掉泛洪留下的孤立小点，再羽化边缘
     a = a.filter(ImageFilter.MedianFilter(3))
     if feather > 0:
         a = a.filter(ImageFilter.GaussianBlur(feather))
@@ -75,6 +111,22 @@ def despill(im, alpha, bg_lum):
                 r, g, b = pp[x, y]
                 pp[x, y] = (int(r * k), int(g * k), int(b * k))
     return px
+
+
+def trim_transparent(rgb, alpha, keep=2):
+    """裁掉四周的透明边距，让元素盒 == 道具本体。
+
+    不裁的话画布上那圈空气也算进 getBoundingClientRect()，
+    定位时"交叠 33%"里有一部分其实是透明区，遮挡量会虚高；
+    顺带白占体积。keep 留几像素余量，避免削到羽化带。
+    """
+    bbox = alpha.getbbox()
+    if not bbox:
+        return rgb, alpha
+    l, t, r, b = bbox
+    l = max(0, l - keep); t = max(0, t - keep)
+    r = min(alpha.width, r + keep); b = min(alpha.height, b + keep)
+    return rgb.crop((l, t, r, b)), alpha.crop((l, t, r, b))
 
 
 def edge_report(alpha, rgb, bg_lum, name):
@@ -130,6 +182,13 @@ def main():
     ap.add_argument("--thresh", type=int, default=None,
                     help="亮于此值判为背景。默认按四角平底色自动取 平底-38")
     ap.add_argument("--feather", type=float, default=1.5)
+    ap.add_argument("--inset", type=float, default=0.02,
+                    help="键出前先内缩裁掉边框一圈（比例）。出图常带暗角，"
+                         "那一圈会暗于阈值而被判成主体，把主体和画框连通，"
+                         "透明边距就裁不掉了。默认 0.02，暗角重的图给 0.05")
+    ap.add_argument("--no-trim", action="store_true",
+                    help="不裁透明边距。默认会裁——否则画布上那圈空气也算进元素盒，"
+                         "定位时遮挡量会虚高")
     ap.add_argument("--out-width", type=int, default=1200)
     ap.add_argument("--quality", type=int, default=82)
     ap.add_argument("--report", action="store_true")
@@ -140,12 +199,19 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
 
     im = Image.open(args.src).convert("RGB")
+    if args.inset > 0:
+        ix, iy = int(im.width * args.inset), int(im.height * args.inset)
+        im = im.crop((ix, iy, im.width - ix, im.height - iy))
     bg = estimate_bg(im)
     thresh = args.thresh if args.thresh is not None else max(60, bg - 38)
     print("%s  平底亮度 %d  阈值 %d" % (args.name, bg, thresh))
 
     alpha = build_alpha(im, thresh, args.feather)
     rgb = despill(im, alpha, bg)
+    if not args.no_trim:
+        before = rgb.size
+        rgb, alpha = trim_transparent(rgb, alpha)
+        print("  裁透明边距  %dx%d -> %dx%d" % (before + rgb.size))
 
     out = Image.merge("RGBA", (*rgb.split(), alpha))
     w = args.out_width
