@@ -2055,9 +2055,9 @@ ul{ list-style:none; }
             <label for="f-note">补充</label>
             <textarea id="f-note" name="note" rows="2" placeholder="年级、目标国家、当前进度……（选填）"></textarea>
           </div>
-          <button type="submit" class="btn" style="align-self:flex-start;margin-top:4px">提交 <span class="arw">→</span></button>
+          <button type="submit" class="btn" style="align-self:flex-start;margin-top:4px">整理好，去加顾问 <span class="arw">→</span></button>
           <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
-          <p class="fine">提交即表示同意我们通过所留方式与您联系。信息仅用于本次咨询，不会对外提供。</p>
+          <p class="fine">点击后信息会复制到剪贴板，扫码加顾问粘贴即可，一句话说清情况。信息仅用于本次咨询，不会对外提供。</p>
         </form>
       </div>
     </div>
@@ -2410,32 +2410,64 @@ ul{ list-style:none; }
      8. 咨询表单
      端点未配置时不发请求、也不给"提交成功"的假象——直接引导致电。
      ============================================================ */
-  var FORM_ENDPOINT = "";   // ← 注册第三方表单服务后把端点填在这里
+  /* 咨询表单。
+     没有后端也必须是一条走得通的路：提交后把信息格式化复制到剪贴板，
+     并把微信二维码顶到眼前，用户扫码粘贴即可。这比留一个死表单诚实，
+     也比 mailto 成功率高（手机上多数人没配邮件客户端，微信人人都有）。
+     以后填了 FORM_ENDPOINT，就自动改走端点提交。 */
+  var FORM_ENDPOINT = "";   // ← 接了第三方表单服务后把端点填这里，无需改其它代码
   (function(){
     var form = document.getElementById("consultForm");
     var note = document.getElementById("formNote");
     if(!form) return;
+
+    function summary(){
+      return ["姓名：" + form.name.value.trim(),
+              "联系方式：" + form.contact.value.trim(),
+              "意向：" + form.intent.value,
+              "补充：" + (form.note.value.trim() || "（无）")].join("\n");
+    }
+    function highlightQR(){
+      var qr = document.querySelector(".qr");
+      if(!qr) return;
+      qr.scrollIntoView({ block:"center", behavior: reduce ? "auto" : "smooth" });
+      qr.style.transition = "outline-color .4s";
+      qr.style.outline = "3px solid var(--brass-ink)";
+      qr.style.outlineOffset = "4px";
+      setTimeout(function(){ qr.style.outlineColor = "transparent"; }, 2600);
+    }
+
     form.addEventListener("submit", function(e){
       e.preventDefault();
-      var name = form.name.value.trim(), contact = form.contact.value.trim();
-      if(!name || !contact){ note.textContent = "请填写称呼与联系方式。"; return; }
+      var nm = form.name.value.trim(), ct = form.contact.value.trim();
+      if(!nm || !ct){ note.textContent = "请填写称呼与联系方式。"; return; }
       var btn = form.querySelector("button[type=submit]");
 
-      if(!FORM_ENDPOINT){
-        note.textContent = "表单尚未接入后端。请直接致电 185 1973 9539 或扫码加微信，我们会更快回复。";
+      if(FORM_ENDPOINT){
+        btn.disabled = true; note.textContent = "提交中……";
+        fetch(FORM_ENDPOINT, { method:"POST", headers:{ Accept:"application/json" }, body:new FormData(form) })
+          .then(function(r){ if(!r.ok) throw new Error(r.status);
+            note.textContent = "已收到。顾问会在一个工作日内联系您。";
+            form.querySelectorAll("input,textarea").forEach(function(el){ el.value = ""; }); })
+          .catch(function(){ btn.disabled = false;
+            note.textContent = "提交没成功。请直接致电 185 1973 9539，或扫右侧二维码。"; });
         return;
       }
-      btn.disabled = true; note.textContent = "提交中……";
-      fetch(FORM_ENDPOINT, {
-        method:"POST", headers:{ "Accept":"application/json" }, body:new FormData(form)
-      }).then(function(r){
-        if(!r.ok) throw new Error(r.status);
-        note.textContent = "已收到。顾问会在一个工作日内联系您。";
-        form.querySelectorAll("input,select,textarea").forEach(function(el){ el.value=""; });
-      }).catch(function(){
-        btn.disabled = false;
-        note.textContent = "提交没成功。请直接致电 185 1973 9539，或稍后再试。";
-      });
+
+      var text = summary();
+      function done(){
+        note.textContent = "信息已复制。扫下方二维码加顾问后粘贴发送，或直接致电 185 1973 9539。";
+        highlightQR();
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          note.textContent = "请直接致电 185 1973 9539，或扫下方二维码加顾问。";
+          highlightQR();
+        });
+      } else {
+        note.textContent = "请直接致电 185 1973 9539，或扫下方二维码加顾问。";
+        highlightQR();
+      }
     });
   })();
 
