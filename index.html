@@ -811,6 +811,37 @@ ul{ list-style:none; }
   .dl dt{ padding-top:14px; }
 }
 
+
+/* 章末行动条。之前只有第一、五章末尾有入口，其余章读完就是一道接缝——
+   看得再投入也没有下一步可走。每章都给一条，电话与预约并列：
+   移动端一键拨号往往比填表更快成交。 */
+.endcta{
+  display:flex; flex-wrap:wrap; align-items:center; gap:14px 22px;
+  margin-top:clamp(30px,3.6vw,58px); padding-top:clamp(20px,2.2vw,32px);
+  border-top:1px solid var(--on-light-faint);
+}
+.endcta .ec-t{ font-size:15px; font-weight:700; letter-spacing:-.015em; }
+.endcta .ec-s{ font-size:13px; color:var(--on-light-muted); }
+.endcta .ec-go{ margin-left:auto; display:flex; gap:10px; flex-wrap:wrap; }
+.endcta a.tel-lnk{
+  display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:100px;
+  border:1px solid var(--on-light-faint); font-size:13px; font-weight:700; min-height:44px;
+}
+.endcta a.tel-lnk:hover{ border-color:var(--brass-ink); color:var(--brass-ink); }
+@media (max-width:720px){ .endcta .ec-go{ margin-left:0; width:100%; } }
+
+
+/* 触摸目标。实测有 14 个可点元素高度不足 44px——手指点不准，
+   移动端每一次点空都是一次流失。用 padding 撑高而不是改字号，
+   免得动到已经调好的版式。指针设备上不需要，所以限定 coarse。 */
+@media (pointer:coarse){
+  .pill, .link-btn, .more, .tel-lnk, .caselist a, .app a.more{
+    min-height:44px; display:inline-flex; align-items:center;
+  }
+  .toc-sheet a{ min-height:48px; }
+  .field input, .field select, .field textarea, .btn{ min-height:48px; }
+}
+
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
   position:fixed; inset:0; z-index:850; background:var(--ink-deep); color:var(--on-dark);
@@ -1415,6 +1446,17 @@ ul{ list-style:none; }
       </div>
     </div>
 
+
+      <div class="endcta rise">
+        <div>
+          <p class="ec-t">档案该怎么排，先看你手上已经有什么</p>
+          <p class="ec-s">先聊三十分钟，判断值不值得做、怎么做。不合适我们会直说。</p>
+        </div>
+        <div class="ec-go">
+          <a href="tel:18519739539" class="tel-lnk">185 1973 9539</a>
+          <a href="#contact" class="pill">预约咨询 ↗</a>
+        </div>
+      </div>
     <div class="torn" data-torn="bottom" data-seam="arc" data-seed="57" aria-hidden="true"></div>
   </div>
 
@@ -1518,6 +1560,17 @@ ul{ list-style:none; }
       </div>
     </div>
 
+
+      <div class="endcta rise">
+        <div>
+          <p class="ec-t">文书从哪句开始写，聊过才知道</p>
+          <p class="ec-s">先聊三十分钟，判断值不值得做、怎么做。不合适我们会直说。</p>
+        </div>
+        <div class="ec-go">
+          <a href="tel:18519739539" class="tel-lnk">185 1973 9539</a>
+          <a href="#contact" class="pill">预约咨询 ↗</a>
+        </div>
+      </div>
     <div class="torn" data-torn="bottom" data-seam="step" data-seed="64" aria-hidden="true"></div>
   </div>
 
@@ -1619,6 +1672,17 @@ ul{ list-style:none; }
       </div>
     </div>
 
+
+      <div class="endcta rise">
+        <div>
+          <p class="ec-t">面试的第一次追问，别留到正式场合</p>
+          <p class="ec-s">先聊三十分钟，判断值不值得做、怎么做。不合适我们会直说。</p>
+        </div>
+        <div class="ec-go">
+          <a href="tel:18519739539" class="tel-lnk">185 1973 9539</a>
+          <a href="#contact" class="pill">预约咨询 ↗</a>
+        </div>
+      </div>
     <div class="torn" data-torn="bottom" data-seam="rule" data-seed="71" aria-hidden="true"></div>
   </div>
 
@@ -1823,6 +1887,17 @@ ul{ list-style:none; }
           <li data-i="19" data-reg="CA"><span class="ci-s">McGill University</span><span class="ci-m">Political Science</span><span class="ci-t">UG</span><span class="ci-n">模联主席，IELTS 8.5</span></li>
           <li data-i="20" data-reg="CA"><span class="ci-s">University of British Columbia</span><span class="ci-m">M.A.Sc. Civil Engineering</span><span class="ci-t">PG</span><span class="ci-n">GPA 3.8，Co-op 经历</span></li>
       </ol>
+
+      <div class="endcta rise">
+        <div>
+          <p class="ec-t">你的背景对得上哪一档，我们可以直接说</p>
+          <p class="ec-s">先聊三十分钟，判断值不值得做、怎么做。不合适我们会直说。</p>
+        </div>
+        <div class="ec-go">
+          <a href="tel:18519739539" class="tel-lnk">185 1973 9539</a>
+          <a href="#contact" class="pill">预约咨询 ↗</a>
+        </div>
+      </div>
     </div>
     <div class="torn" data-torn="bottom" data-seed="67" aria-hidden="true"></div>
   </div>
@@ -1889,6 +1964,17 @@ ul{ list-style:none; }
         <div class="spec-row"><div class="spec-k">服务城市</div><div class="spec-v">北京 · 杭州。双城面谈，其余环节线上同步进行。<span class="en">Beijing and Hangzhou, with the rest online.</span></div></div>
         <div class="spec-row"><div class="spec-k">主赛道</div><div class="spec-v">本科 G5 与常春藤；顶尖硕博项目。中英双语全流程。<span class="en">G5 and Ivy undergraduate; top graduate programmes.</span></div></div>
         <div class="spec-row"><div class="spec-k">团队口径</div><div class="spec-v">顾问做判断，自研系统托住执行。<span class="en">People decide; systems carry the load.</span></div></div>
+      </div>
+
+      <div class="endcta rise">
+        <div>
+          <p class="ec-t">想聊聊，直接找顾问</p>
+          <p class="ec-s">先聊三十分钟，判断值不值得做、怎么做。不合适我们会直说。</p>
+        </div>
+        <div class="ec-go">
+          <a href="tel:18519739539" class="tel-lnk">185 1973 9539</a>
+          <a href="#contact" class="pill">预约咨询 ↗</a>
+        </div>
       </div>
     </div>
     <div class="torn" data-torn="bottom" data-seam="step" data-seed="79" aria-hidden="true"></div>
