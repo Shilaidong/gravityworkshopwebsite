@@ -237,7 +237,8 @@ ul{ list-style:none; }
    每章一个饱和色，绑在「黄昏 → 夜 → 黎明」这条叙事弧线的时刻上。
    全部压到亮度 ≤0.11，保证 #F6F8EB 白字落上去 ≥8:1。
    用途：data-surface="accent" 的嵌板、图卡底、色块面板。 */
-.chapter{ position:relative; --accent:#24215E; }
+/* z-index:0 让每章自成层叠上下文，夹层顺序在章内自洽，不与固定左栏/顶栏（z790/800）打架 */
+.chapter{ position:relative; z-index:0; --accent:#24215E; }
 #position  { --accent:#24215E; }  /* 深夜 · 深靛 */
 #profile   { --accent:#6B3A18; }  /* 烛光 · 焦褐 */
 #essays    { --accent:#33203F; }  /* 凌晨 · 深紫 */
@@ -247,14 +248,39 @@ ul{ list-style:none; }
 #team      { --accent:#38452A; }  /* 天光 · 苔绿 */
 #contact   { --accent:#6B2A33; }  /* 晨白 · 玫红 */
 
+/* ---------- 章内夹层 ----------
+   参考站把巨型标题夹在画面的背景层与前景层之间（原生帧 r014：广告牌立柱
+   从 Marketing 的字母中间穿过去）。两层平铺时再大的字也只是贴在图上。
+   层序：背景 1 → 标题 2 → 前景 3 → 嵌板 4 */
 .chap-backdrop{
-  position:sticky; top:0; height:100vh; z-index:0; overflow:hidden;
+  position:sticky; top:0; height:100vh; z-index:1; overflow:hidden;
   background:var(--ink-deep);
+}
+/* 前景层必须与背景层同步钉住，且不能占流空间——否则每章凭空高出 100vh。
+   做法：height:0 的 sticky，内部用绝对定位撑出一屏。
+   DOM 里要排在 .chap-backdrop 之前，这样它的静态位置才是 y=0；
+   排在后面静态位置会变成 100vh，得多滚一屏道具才出现。绘制顺序由 z-index 定，
+   与 DOM 顺序无关。 */
+.chap-foreground{
+  position:sticky; top:0; height:0; z-index:3; pointer-events:none;
+}
+.fg-inner{ position:absolute; top:0; left:0; right:0; height:100vh; overflow:hidden; }
+.fg-prop{
+  /* width:auto 必须显式写：<img width="1200"> 那个属性是呈现提示，
+     在没有任何 CSS 规则设 width 时它会生效，把宽钉死在 1200px，
+     配上 inline 的 height 就把道具横向拉扁（实测比例 3.006，原图 0.667）。 */
+  position:absolute; display:block; width:auto; height:auto;
+  /* 与背景图共用 --art-scale（JS 挂在 .chapter 上），两层才不会脱开 */
+  transform:scale(var(--art-scale,1.06)); transform-origin:52% 46%;
+  /* 压成前景剪影。参考站那根遮住 Marketing 的广告牌立柱是近黑的，
+     只提供纵深，不跟标题抢主角；不压暗的话道具会变成画面主体。 */
+  filter:brightness(.42) contrast(1.12) saturate(.8);
 }
 /* 首屏排版浮在 backdrop 的占位空间上；它随页面滚走，画面留下 */
 .chap-hero{
   position:absolute; top:0; left:0; right:0; height:100vh; min-height:560px; z-index:2;
   display:flex; flex-direction:column; justify-content:center;
+  /* 标题在背景之上、前景之下 */
   padding:0 var(--edge-r) 0 max(var(--panel-x), var(--edge-r));
   pointer-events:none;
 }
@@ -268,7 +294,7 @@ ul{ list-style:none; }
 }
 
 .panel{
-  position:relative; z-index:2;
+  position:relative; z-index:4;   /* 嵌板压在前景层之上 */
   margin-left:var(--panel-x);
   padding:clamp(46px,5.2vw,88px) var(--panel-pad) clamp(52px,5.8vw,98px);
   background:var(--display); color:var(--on-light);
@@ -516,6 +542,30 @@ ul{ list-style:none; }
 }
 /* 画面区是深底，序号要用深底那支黄铜色，不能用嵌板的 --brass-ink */
 .card-face .num{ color:var(--brass-lt); }
+
+/* ---------- 制图卡 ----------
+   这三张讲的是判断逻辑而不是物件，所以不用静物照（那也会跟第二章的
+   天鹅绒静物撞车）。改成古典星图制图风的矢量图版：体积近乎为零、
+   任意尺寸都锐利、线条颜色跟着章节色走。 */
+.card-plate{
+  background:color-mix(in srgb, var(--accent, #1C1C1C) 78%, #000);
+  border:1px solid color-mix(in srgb, var(--brass-lt) 26%, transparent);
+  align-items:stretch; padding:0;
+}
+.card-plate::after{ display:none; }   /* 图版不需要照片用的压暗渐变 */
+.card-plate svg{ position:absolute; inset:0; width:100%; height:100%; }
+.card-plate .plate-n{
+  position:absolute; left:clamp(11px,1.1vw,16px); top:clamp(9px,.9vw,14px);
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.06em;
+  color:var(--brass-lt);
+}
+/* 图版线条：主线用黄铜，辅助线与网格压到很淡 */
+.plate .ln{ fill:none; stroke:var(--brass-lt); stroke-width:1.1; }
+.plate .ln-2{ fill:none; stroke:#F6F8EB; stroke-width:1; opacity:.30; }
+.plate .grid{ fill:none; stroke:#F6F8EB; stroke-width:.6; opacity:.13; }
+.plate .dot{ fill:var(--brass-lt); }
+.plate .dot-out{ fill:none; stroke:#F6F8EB; stroke-width:.8; opacity:.34; }
+.plate .fillsoft{ fill:var(--brass-lt); opacity:.11; stroke:none; }
 .card-face .face-note{
   position:relative; font-size:11px; line-height:1.45; font-weight:600;
   color:rgba(246,248,235,.82); max-width:22ch;
@@ -633,6 +683,17 @@ ul{ list-style:none; }
   display:grid; grid-template-columns:minmax(120px,33%) 1fr;
   column-gap:clamp(12px,1.2vw,20px);
 }
+/* 每行补一个极小的制图记号，与制图卡同一套线条语言：
+   六条平铺在一大片纯色上没有视觉锚点，加了记号就从"清单"变成"图例"。 */
+.spec-k{ position:relative; padding-left:16px; }
+.spec-k::before{
+  content:""; position:absolute; left:0; top:.42em;
+  width:8px; height:8px;
+  border-left:1px solid var(--brass-ink);
+  border-bottom:1px solid var(--brass-ink);
+  opacity:.85;
+}
+.spec-row:nth-child(2n) .spec-k::before{ border-bottom:0; border-top:1px solid var(--brass-ink); top:.5em; }
 .spec-k{ font-size:12.5px; font-weight:700; line-height:1.3; letter-spacing:-.012em; }
 .spec-v{ font-size:12.5px; line-height:1.52; color:var(--on-light-muted); }
 .spec-v .en{ display:block; margin-top:3px; font-size:11px; }
@@ -680,6 +741,8 @@ ul{ list-style:none; }
   .rail{ display:none; }
   .toc-toggle{ display:block; font-size:11px; letter-spacing:.11em; text-transform:uppercase; font-weight:700; }
   .chap-display{ font-size:clamp(3.2rem, 16vw, 9rem); }
+  /* 窄屏标题只有 60–123px，大件道具会把它整个吞掉 */
+  .chap-foreground{ display:none; }
   .cloud{ height:auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
   .cloud-card{ position:static; width:auto; filter:none; opacity:1; transform:none; }
 }
@@ -820,6 +883,15 @@ ul{ list-style:none; }
 <!-- ============ I · 定位 ============ -->
 <section class="chapter" id="position" data-chapter="position">
 
+  <!-- 前景抠图层：压在巨型标题之上，只盖词尾，词首完整露出。
+       必须排在 .chap-backdrop 之前 —— 见 .chap-foreground 的注释。 -->
+  <div class="chap-foreground" aria-hidden="true">
+    <div class="fg-inner">
+      <img class="fg-prop" src="assets/art/fg-position.webp" alt=""
+           style="right:19%; top:3vh; height:72vh" loading="lazy" width="1200" height="1800">
+    </div>
+  </div>
+
   <!-- 常驻画面：整章钉住不动，左侧 270px 始终看得见 -->
   <div class="chap-backdrop" data-tone="dark" aria-hidden="true">
     <div class="art-wrap">
@@ -935,32 +1007,118 @@ ul{ list-style:none; }
       <!-- 组件：图卡网格 -->
       <div class="cardgrid">
         <article class="card rise">
-          <div class="card-face" style="--face-bg:#1E2A33; --face:4/5">
-            <p class="face-note"><span class="num">01</span><br>目标校与专业的边界不清楚时，<br>任何材料准备都是赌博。</p>
+          <div class="card-face card-plate" style="--face:4/5">
+            <!-- 图版一：先画边界。界内的点实心，界外的点空心灰掉 -->
+            <svg class="plate" viewBox="0 0 300 375" aria-hidden="true">
+              <g class="grid">
+                <path d="M0 94h300M0 188h300M0 282h300M75 0v375M150 0v375M225 0v375"/>
+              </g>
+              <!-- 从左下角发散的扇形辅助线 -->
+              <g class="ln-2" stroke-dasharray="3 4">
+                <path d="M40 340 L104 44M40 340 L166 58M40 340 L226 104M40 340 L272 176M40 340 L286 258"/>
+              </g>
+              <!-- 闭合边界 -->
+              <path class="fillsoft" d="M40 340 C 86 196, 150 132, 258 118 L 272 268 C 196 288, 108 312, 40 340 Z"/>
+              <path class="ln" d="M40 340 C 86 196, 150 132, 258 118"/>
+              <path class="ln" d="M258 118 L 272 268" stroke-dasharray="5 4"/>
+              <path class="ln" d="M272 268 C 196 288, 108 312, 40 340" stroke-dasharray="5 4"/>
+              <!-- 界内：实心 -->
+              <g class="dot">
+                <circle cx="118" cy="256" r="3.4"/><circle cx="164" cy="222" r="3.4"/>
+                <circle cx="206" cy="196" r="3.4"/><circle cx="96" cy="298" r="3.4"/>
+                <circle cx="238" cy="168" r="3.4"/>
+              </g>
+              <!-- 界外：空心灰掉 -->
+              <g class="dot-out">
+                <circle cx="128" cy="120" r="3.4"/><circle cx="196" cy="76" r="3.4"/>
+                <circle cx="252" cy="52" r="3.4"/><circle cx="72" cy="150" r="3.4"/>
+                <circle cx="286" cy="326" r="3.4"/><circle cx="216" cy="344" r="3.4"/>
+              </g>
+              <!-- 边界上的刻度 -->
+              <g class="ln" stroke-width=".9">
+                <path d="M76 268l-9-4M112 224l-9-4M154 186l-8-5M204 154l-7-6M250 130l-6-7"/>
+              </g>
+            </svg>
+            <span class="plate-n">01</span>
           </div>
           <div class="card-body">
             <h3 class="card-t">先边界，后材料</h3>
-            <p class="card-b">定位阶段的产出是一份能解释的名单，不是一份愿望清单。</p>
+            <p class="card-b">目标校与专业的边界不清楚时，任何材料准备都是赌博。定位阶段的产出是一份能解释的名单，不是一份愿望清单。</p>
             <p class="en">Boundary first. A shortlist you can defend, not a wish list.</p>
           </div>
         </article>
+
         <article class="card rise d1">
-          <div class="card-face" style="--face-bg:#33291B; --face:3/4">
-            <p class="face-note"><span class="num">02</span><br>同一所学校，不同系所的<br>录取偏好可以差很远。</p>
+          <div class="card-face card-plate" style="--face:3/4">
+            <!-- 图版二：一所学校分叉成数个系所，线宽与节点大小代表权重不同 -->
+            <svg class="plate" viewBox="0 0 300 400" aria-hidden="true">
+              <g class="grid"><path d="M0 100h300M0 200h300M0 300h300M150 0v400"/></g>
+              <!-- 校级节点 -->
+              <circle class="ln" cx="150" cy="64" r="21"/>
+              <circle class="dot" cx="150" cy="64" r="5"/>
+              <circle class="ln-2" cx="150" cy="64" r="32" stroke-dasharray="2 5"/>
+              <!-- 分叉：粗细各异 -->
+              <path class="ln" d="M150 85 C 150 150, 62 178, 52 250" stroke-width="2.2"/>
+              <path class="ln" d="M150 85 C 150 152, 116 190, 112 250" stroke-width="1.5"/>
+              <path class="ln" d="M150 85 C 150 152, 184 190, 188 250" stroke-width="1"/>
+              <path class="ln" d="M150 85 C 150 150, 238 178, 248 250" stroke-width=".7" opacity=".7"/>
+              <!-- 系所节点：权重不同 -->
+              <g class="dot">
+                <circle cx="52" cy="262" r="9"/><circle cx="112" cy="262" r="6.4"/>
+                <circle cx="188" cy="262" r="4.6"/><circle cx="248" cy="262" r="3.2"/>
+              </g>
+              <!-- 各系所之下的录取分布刻度，长度对应权重 -->
+              <g class="ln" stroke-width=".9">
+                <path d="M52 286v58M112 286v44M188 286v30M248 286v18"/>
+                <path d="M44 344h16M106 330h12M183 316h10M244 302h8"/>
+              </g>
+            </svg>
+            <span class="plate-n">02</span>
           </div>
           <div class="card-body">
             <h3 class="card-t">拆到系所，不看综排</h3>
-            <p class="card-b">按专业方向读招生逻辑，而不是拿一张综合排名表往上套。</p>
+            <p class="card-b">同一所学校，不同系所的录取偏好可以差很远。按专业方向读招生逻辑，而不是拿一张综合排名表往上套。</p>
             <p class="en">Read departments, not league tables.</p>
           </div>
         </article>
+
         <article class="card rise d2">
-          <div class="card-face" style="--face-bg:#1F2B26; --face:5/6">
-            <p class="face-note"><span class="num">03</span><br>名单要有梯度，<br>比例按真实概率分布来定。</p>
+          <div class="card-face card-plate" style="--face:5/6">
+            <!-- 图版三：三段概率梯度带，点密度递减 -->
+            <svg class="plate" viewBox="0 0 300 360" aria-hidden="true">
+              <g class="grid"><path d="M28 0v360M300 96H0M300 216H0"/></g>
+              <!-- 冲刺：密 -->
+              <path class="fillsoft" d="M28 22h248v58H28z"/>
+              <path class="ln" d="M28 22h248v58H28z" stroke-width=".9"/>
+              <g class="dot">
+                <circle cx="52" cy="38" r="2.4"/><circle cx="78" cy="60" r="2.4"/><circle cx="104" cy="34" r="2.4"/>
+                <circle cx="130" cy="58" r="2.4"/><circle cx="156" cy="40" r="2.4"/><circle cx="182" cy="64" r="2.4"/>
+                <circle cx="208" cy="36" r="2.4"/><circle cx="234" cy="58" r="2.4"/><circle cx="258" cy="44" r="2.4"/>
+                <circle cx="66" cy="70" r="2.4"/><circle cx="118" cy="70" r="2.4"/><circle cx="170" cy="28" r="2.4"/>
+              </g>
+              <!-- 匹配：中 -->
+              <path class="fillsoft" d="M28 142h248v58H28z"/>
+              <path class="ln" d="M28 142h248v58H28z" stroke-width=".9"/>
+              <g class="dot">
+                <circle cx="62" cy="160" r="2.4"/><circle cx="106" cy="182" r="2.4"/><circle cx="150" cy="158" r="2.4"/>
+                <circle cx="194" cy="180" r="2.4"/><circle cx="238" cy="162" r="2.4"/><circle cx="128" cy="192" r="2.4"/>
+              </g>
+              <!-- 稳健：疏 -->
+              <path class="fillsoft" d="M28 262h248v58H28z"/>
+              <path class="ln" d="M28 262h248v58H28z" stroke-width=".9"/>
+              <g class="dot">
+                <circle cx="76" cy="284" r="2.4"/><circle cx="164" cy="300" r="2.4"/><circle cx="246" cy="282" r="2.4"/>
+              </g>
+              <!-- 左侧标尺：刻度数对应三档比例 -->
+              <g class="ln" stroke-width=".9">
+                <path d="M28 22h-12M28 51h-8M28 80h-12M28 142h-12M28 171h-8M28 200h-12M28 262h-12M28 291h-8M28 320h-12"/>
+              </g>
+            </svg>
+            <span class="plate-n">03</span>
           </div>
           <div class="card-body">
             <h3 class="card-t">冲刺 · 匹配 · 稳健</h3>
-            <p class="card-b">多维条件收敛成清单，少拍脑袋；拿不准的单独留一档待复核。</p>
+            <p class="card-b">名单要有梯度，比例按真实概率分布来定。多维条件收敛成清单，少拍脑袋；拿不准的单独留一档待复核。</p>
             <p class="en">Reach, match, safety — proportioned to real odds.</p>
           </div>
         </article>
@@ -1424,7 +1582,9 @@ ul{ list-style:none; }
       var out = Math.min(1, Math.max(0, -r.top / (r.height * 0.72)));
       var line = w.querySelector(".art-line");
       if(line) line.style.opacity = (out * out).toFixed(3);
-      w.style.setProperty("--art-scale", (1.06 + out * 0.09).toFixed(3));
+      // 挂到章节而不是 art-wrap：前景抠图层要读同一个值，否则滚动时两层会脱开
+      (w.closest(".chapter") || w.closest("#intro") || w).style
+        .setProperty("--art-scale", (1.06 + out * 0.09).toFixed(3));
     });
 
     // 悬浮卡片群视差
