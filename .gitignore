@@ -14,4 +14,13 @@ node_modules/
 
 # 出图原始素材（不部署，仅供重新调色）
 art-src/
-_shot.html
+
+# 根目录的测试夹具：必须与 index.html 同源才能跑，用完可删，
+# 随时从 tools/ 再复制一份。前导斜杠是必须的——不加的话
+# tools/ 里的夹具母本也会被一起忽略掉。
+/_shot.html
+/_probe.html
+
+# 截图与探针输出
+.shots/
+__pycache__/

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--
+  截图夹具 —— 开发工具，不属于站点内容，不要部署。
+
+  作用：把 index.html 装进同源 iframe 并滚到指定位置，好让无头 Chrome
+  能对任意滚动位置截图（Chrome 的 --screenshot 只能拍页面顶部）。
+
+  用法：把本文件复制到项目根目录后访问
+      http://localhost:4321/_shot.html?y=1980&w=1384&h=868
+  配合 tools/shoot.sh 使用。
+
+  注意：根目录的 _shot.html 已在 .gitignore 里，用完可删，随时从这里再复制。
+-->
+<html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:#000;overflow:hidden}
+iframe{border:0;display:block}
+</style></head><body>
+<iframe id="f"></iframe>
+<script>
+var q = new URLSearchParams(location.search);
+var w = +q.get('w') || 1384, h = +q.get('h') || 868, y = +q.get('y') || 0;
+var f = document.getElementById('f');
+f.style.width = w + 'px'; f.style.height = h + 'px';
+f.src = 'index.html';
+f.onload = function(){
+  var cw = f.contentWindow;
+  // 站点 html 上有 scroll-behavior:smooth，scrollTo 会走动画；虚拟时间下这段
+  // 动画常推不完，截图就停在半路的滚动位置上。先把它关掉，滚动才是瞬时的。
+  f.contentDocument.documentElement.style.scrollBehavior = 'auto';
+  // 站点的滚动动画由 rAF 轮询驱动，所以要连续按住滚动位置若干帧，
+  // 让 --fly、线描透明度、视差这些值都落到位再截图。
+  var n = 0;
+  (function tick(){ cw.scrollTo(0, y); if(++n < 40) cw.requestAnimationFrame(tick); })();
+};
+</script>
+</body></html>

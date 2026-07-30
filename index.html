@@ -46,13 +46,24 @@
   --on-dark-muted:  rgba(246,248,235,.56);
   --on-dark-faint:  rgba(246,248,235,.17);
   --on-light:       #16181A;
-  --on-light-muted: rgba(22,24,26,.60);
+  /* .60 只有 4.11:1，压在灰绿嵌板 #D8D9CB 上不过 AA（奶白面上 4.55:1 是勉强过）。
+     实算最低要 .64，取 .68 留余量 → 灰绿 5.2:1 / 奶白 6.0:1，
+     与正文 12.5:1 的层级差还在。 */
+  --on-light-muted: rgba(22,24,26,.68);
   --on-light-faint: rgba(22,24,26,.16);
 
   --rail-w:  250px;       /* 实测栏宽 */
   --gut:     20px;        /* 左栏到正文的槽 */
-  --edge-r:  22px;        /* 实测右边距 */
+  --edge-r:  22px;        /* 实测右边距（顶栏与章节首屏用） */
   --top-h:   36px;
+
+  /* 悬浮嵌板几何 —— 全部取自 1384×868 原始录屏（不是 880 缩略帧）：
+     嵌板左缘实测 x=272±1（= 左栏 250 + 槽 20），右缘 x=1370 与内容区右边界齐平。
+     1371 起那条深色竖带是浏览器滚动条（缩略图里 13px 宽、有 17px 高的亮滑块
+     随滚动位置单调下移），不是背景画——所以右侧不留槽。
+     内缘留白：文字起点 286 − 272 = 14，卡片右缘 1370 − 1356 = 14。 */
+  --panel-x:   calc(var(--rail-w) + var(--gut));   /* 嵌板左缘 = 270px */
+  --panel-pad: 14px;                                /* 嵌板内缘留白 */
 
   --sans:  "Inter Tight", "Helvetica Neue", Inter, -apple-system, BlinkMacSystemFont,
            "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
@@ -115,12 +126,12 @@ ul{ list-style:none; }
 .h-blk{ font-size:clamp(1.6rem,2.9vw,2.6rem); line-height:1.06; letter-spacing:-.032em; font-weight:700; }
 .h-3{ font-size:clamp(1.05rem,1.45vw,1.3rem); line-height:1.24; letter-spacing:-.016em; font-weight:700; }
 .body{ font-size:15.5px; line-height:1.64; }
+/* 默认按深底取色；浅底的覆盖规则挂在 .panel 上（见第 5 节），
+   不再跟随 body[data-tone] —— 嵌板结构下 body 已经变浅时，画面上的
+   首屏文字还得按深底走，跟着 body 走必然有一头看不见。 */
 .muted{ color:var(--on-dark-muted); }
-[data-tone="light"] .muted, .tone-light .muted{ color:var(--on-light-muted); }
 .en{ font-size:12.5px; line-height:1.5; color:var(--on-dark-muted); }
-.tone-light .en{ color:var(--on-light-muted); }
 .num{ font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--brass); }
-.tone-light .num, .tone-light .cc-tag{ color:var(--brass-ink); }
 
 /* 胶囊按钮 */
 .pill{
@@ -174,6 +185,11 @@ ul{ list-style:none; }
    所以逐块按各自背后的实际底色着色，而不是整栏跟随 body。 */
 .rail [data-lt="dark"]{  color:var(--on-dark); }
 .rail [data-lt="light"]{ color:var(--on-light); }
+/* 左栏文字压在章节画面上。这里**不要**加局部暗底垫片：试过，软边方块在浅色
+   画面上一眼就是贴上去的补丁。左栏可读性靠出图流水线保证 —— grade.py 给最左
+   那条做高光压缩（--left-rolloff），把它压进参考站同一个亮度区间
+   （μ35–45 / p90≤70），既还看得见画，也压得住小字。见 grade.py 与
+   PLAN-v4.md A 批复盘第 2 条。 */
 .rail > *{ pointer-events:auto; }
 /* 碎裂动画：--dx/--dy 由 JS 量出（面板位置 − 左栏位置），乘以 --fly */
 .rail-title, .rail nav, .rail-foot{
@@ -204,14 +220,124 @@ ul{ list-style:none; }
 .rail-foot{ font-size:9px; line-height:1.6; opacity:.4; }
 .rail-foot a:hover{ opacity:.85; }
 
-/* ---------- 5. 文档 ---------- */
-.doc{ margin-left:var(--rail-w); padding-top:var(--top-h); }
-.block{ position:relative; }
-.block.tone-dark{ background:var(--ink-deep); color:var(--on-dark); }
-.block.tone-light{ background:var(--paper); color:var(--on-light); }
-/* 区块一律通栏铺满视口，内容列各自让开左栏。
-   否则浅色区在左栏那一段会漏出 body 底色，切出一道硬边。 */
-.wrap{ padding:clamp(56px,6.4vw,110px) var(--edge-r) clamp(64px,7.4vw,124px) calc(var(--rail-w) + var(--gut)); }
+/* ---------- 5. 文档骨架 ----------
+   一切都通栏铺满视口，左栏浮在画面上（参考站正是如此，所以左栏没有独立底色）。
+   内容列由 --panel-x 自己让开左栏，不再靠 .doc 的负 margin 反向拉回。 */
+.doc{ position:relative; }
+
+/* ============================================================
+   章节骨架 —— 一个常驻画面背景 + 若干悬浮浅色嵌板
+   .chapter          定位上下文
+     .chap-backdrop  sticky 100vh：大图 + 线描层 + 暗角，整章钉住不动
+     .chap-hero      透明浮层，只放 13.5vw 标题与花体句
+     .panel          悬浮嵌板：左让 270px，右与内容区齐平，自带浅色底
+   左侧那条 270px 始终漏出画面——这是电影感的来源，别再做成通栏。
+   ============================================================ */
+/* ---------- 章节色 ----------
+   每章一个饱和色，绑在「黄昏 → 夜 → 黎明」这条叙事弧线的时刻上。
+   全部压到亮度 ≤0.11，保证 #F6F8EB 白字落上去 ≥8:1。
+   用途：data-surface="accent" 的嵌板、图卡底、色块面板。 */
+.chapter{ position:relative; --accent:#24215E; }
+#position  { --accent:#24215E; }  /* 深夜 · 深靛 */
+#profile   { --accent:#6B3A18; }  /* 烛光 · 焦褐 */
+#essays    { --accent:#33203F; }  /* 凌晨 · 深紫 */
+#interview { --accent:#1E4A42; }  /* 破晓 · 深青 */
+#systems   { --accent:#163B4F; }  /* 蓝铜 · 钢蓝 */
+#outcomes  { --accent:#6B4410; }  /* 晨光 · 赭金 */
+#team      { --accent:#38452A; }  /* 天光 · 苔绿 */
+#contact   { --accent:#6B2A33; }  /* 晨白 · 玫红 */
+
+.chap-backdrop{
+  position:sticky; top:0; height:100vh; z-index:0; overflow:hidden;
+  background:var(--ink-deep);
+}
+/* 首屏排版浮在 backdrop 的占位空间上；它随页面滚走，画面留下 */
+.chap-hero{
+  position:absolute; top:0; left:0; right:0; height:100vh; min-height:560px; z-index:2;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:0 var(--edge-r) 0 max(var(--panel-x), var(--edge-r));
+  pointer-events:none;
+}
+.chap-hero > *{ pointer-events:auto; }
+/* 13.5vw 标题压在画面上，必须有自己的暗床。挂在首屏浮层上而不是画面上：
+   标题滚走，暗床跟着走，左边那条随即恢复成看得见的画面。 */
+.chap-hero::before{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(100deg, rgba(11,14,20,.88) 0%, rgba(11,14,20,.70) 24%,
+                                     rgba(11,14,20,.22) 50%, rgba(11,14,20,0) 68%);
+}
+
+.panel{
+  position:relative; z-index:2;
+  margin-left:var(--panel-x);
+  padding:clamp(46px,5.2vw,88px) var(--panel-pad) clamp(52px,5.8vw,98px);
+  background:var(--display); color:var(--on-light);
+  --torn-fill:var(--display);
+}
+.panel[data-surface="sage"]{ background:var(--paper); --torn-fill:var(--paper); }
+
+/* 第三种表面：章节饱和色。
+   参考站的图卡背景实测有深靛 (45,34,112)、玫红 (159,78,87)、青绿 (53,99,89)——
+   它靠饱和色把每章区分开。只用奶白+灰绿两种浅表面，八块嵌板必然长成一个样。
+   每章的色见 §章节色，绑在黄昏→黎明的时刻上。 */
+.panel[data-surface="accent"]{
+  background:var(--accent); color:var(--display); --torn-fill:var(--accent);
+  /* 关键：把"浅底"那三个令牌在这块作用域里整体重定义成深底版本。
+     任何用 --on-light* / --brass-ink 的后代自动跟着翻色，不必逐个补类名——
+     第一版就是逐个补的，结果漏了 .card-b / .compare .line / .compare .why，
+     AFTER 那一整栏字直接看不见。 */
+  --on-light:       #F6F8EB;
+  --on-light-muted: rgba(246,248,235,.70);
+  --on-light-faint: rgba(246,248,235,.20);
+  --brass-ink:      var(--brass-lt);
+}
+/* 分栏嵌板：左文右图。参考站 d024 的彩色面板右侧就压着实物图，
+   不然一整块饱和色上只有一段文字，右边那 45% 是空的，读起来像没做完。 */
+.panel[data-split]{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.72fr);
+  gap:clamp(24px,3.4vw,64px); align-items:center;
+  padding-right:0; overflow:hidden;
+}
+.panel[data-split] > .torn{ grid-column:1 / -1; }
+.split-fig{ position:relative; align-self:stretch; min-height:clamp(320px,42vw,620px); }
+.split-fig img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center 32%;
+}
+/* 图与饱和底之间做一道同色渐隐，避免硬切边 */
+.split-fig::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg, var(--accent) 0%, rgba(0,0,0,0) 34%);
+}
+
+/* 自带盒子的组件在饱和底上保留浅色底（参考站 d024 就是洋红面板上放白卡），
+   盒子内部把令牌还原成浅底版本，里面的密集文字照旧按深字排。 */
+.panel[data-surface="accent"] .compare .col,
+.panel[data-surface="accent"] .qa-card,
+.panel[data-surface="accent"] .cloud-card,
+.panel[data-surface="accent"] .reticle .r-lab{
+  background:var(--display);
+  --on-light:       #16181A;
+  --on-light-muted: rgba(22,24,26,.68);
+  --on-light-faint: rgba(22,24,26,.16);
+  --brass-ink:      #6B4B1A;
+  color:var(--on-light);
+}
+
+/* 嵌板内的浅底取色：不依赖 body[data-tone]，嵌板永远是浅表面 */
+.panel .muted{ color:var(--on-light-muted); }
+.panel .en{ color:var(--on-light-muted); }
+.panel .num, .panel .cc-tag{ color:var(--brass-ink); }   /* 浅底禁用 --brass，2.2:1 不可读 */
+.panel .swash-line{ color:var(--on-light); }
+
+/* 上面那次令牌重定义已经带走绝大部分后代；这里只补少数写死颜色的地方 */
+.panel[data-surface="accent"] .swash-line{ color:var(--display); }
+.panel[data-surface="accent"] .pill{
+  background:var(--display); color:var(--ink); border-color:transparent;
+}
+/* 浅底上实心奶白胶囊等于隐形，补一道发丝边把形状勾出来 */
+.panel .pill{ background:var(--display); color:var(--ink); border:1px solid var(--on-light-faint); }
+.panel .pill:hover{ background:#fff; }
 
 .rise{ opacity:0; transform:translateY(26px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
 .rise.in{ opacity:1; transform:none; }
@@ -220,27 +346,23 @@ ul{ list-style:none; }
 /* ============================================================
    开场 INTRO —— 碎裂面板
    ============================================================ */
-#intro{ height:210vh; }
+#intro{ height:210vh; position:relative; background:var(--ink-deep); }
 #intro .stage{
   position:sticky; top:0; height:100vh; overflow:hidden;
   display:grid; place-items:center;
 }
-/* 通栏容器：.doc 被左栏推右了，这里吃回来铺满整个视口。
-   左栏文字浮在图上——参考站正是这么做的，所以左栏没有独立底色。 */
-.bleed{ margin-left:calc(-1 * var(--rail-w)); width:calc(100% + var(--rail-w)); }
 .art-wrap{ position:absolute; inset:0; }
 .art-wrap img{
   position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
   transform:scale(var(--art-scale,1.06)); transform-origin:52% 46%;
 }
 .art-wrap .art-line{ opacity:0; }          /* 线描负片层，滚动驱动 */
+/* 画面自己只压一层暗角。竖向的压暗不能留在这里：左边那 270px 是整章唯一
+   看得见画的地方，再叠一层就只剩一条黑边，漏的不是画面。
+   标题需要的暗床改挂在 .chap-hero 上，跟标题一起滚走。 */
 .art-veil{
   position:absolute; inset:0;
-  /* 左侧压暗给排版让路（大标题所在的一栏必须压得住），叠加整体暗角 */
-  background:
-    linear-gradient(100deg, rgba(11,14,20,.88) 0%, rgba(11,14,20,.70) 24%,
-                            rgba(11,14,20,.22) 50%, rgba(11,14,20,0) 68%),
-    radial-gradient(122% 92% at 64% 46%, transparent 0%, transparent 34%, rgba(11,14,20,.74) 100%);
+  background:radial-gradient(124% 94% at 62% 46%, transparent 0%, transparent 38%, rgba(11,14,20,.66) 100%);
 }
 /* 开场那屏文字在正中，不需要左压暗 */
 #intro .art-veil{
@@ -280,13 +402,7 @@ ul{ list-style:none; }
 /* ============================================================
    章节首屏 CHAPTER HERO
    ============================================================ */
-.chap-hero{ position:relative; height:100vh; min-height:560px; overflow:hidden; }
-.chap-type{
-  position:absolute; inset:0; z-index:3;
-  display:flex; flex-direction:column; justify-content:center;
-  /* 容器已通栏，正文列要重新让开左栏 */
-  padding:0 var(--edge-r) 0 calc(var(--rail-w) + var(--gut));
-}
+.chap-type{ position:relative; z-index:3; }
 .chap-zh{
   font-size:clamp(.95rem,2.1vw,1.6rem); font-weight:600; letter-spacing:.34em;
   color:var(--display); opacity:.8; margin-bottom:.55em; padding-left:.14em;
@@ -294,19 +410,51 @@ ul{ list-style:none; }
 .chap-sub{ margin-top:clamp(18px,2.6vw,38px); max-width:24ch; color:var(--display); }
 .chap-sub .cjk-lede{ margin-top:14px; color:rgba(246,248,235,.72); max-width:30ch; }
 
-/* 撕纸毛边：压在深色图与浅色区的接缝上 */
+/* 撕纸毛边：嵌板自己的上/下缘。
+   必须挂在 .panel 上而不是通栏容器上——通栏的毛边会把纸色刷进左边那 270px，
+   正好抹掉要漏出来的画面。 */
 .torn{
-  position:absolute; left:0; right:0; bottom:-1px; z-index:4;
-  height:clamp(48px,7vw,104px); pointer-events:none;
+  position:absolute; left:0; right:0; z-index:4;
+  height:clamp(44px,6vw,92px); pointer-events:none;
 }
 .torn svg{ display:block; width:100%; height:100%; }
-.torn.flip{ top:-1px; bottom:auto; transform:scaleY(-1); }
+.panel > .torn[data-torn="top"]{ bottom:100%; margin-bottom:-1px; }
+.panel > .torn[data-torn="bottom"]{ top:100%; margin-top:-1px; transform:scaleY(-1); }
 
 /* ============================================================
    浅色内容区
    ============================================================ */
+/* 嵌板抬头有三种形态，同一种不要连着用两块板。
+   参考站有的嵌板压根没有抬头（d033 直接就是图卡网格），有的只有一行小标签
+   （d016），花体大句反而常常压在画面上、落在嵌板外（d055）。
+   一律套「小标签 + 花体句 + 中文段」这个三行堆，八块板就成了复印件。 */
 .lead-block{ max-width:52ch; display:flex; flex-direction:column; gap:14px; }
 .lead-block .swash-line{ color:var(--on-light); }
+
+/* 形态二：只留一行小标签 + 中文段，不上花体句 */
+.lead-block[data-lead="label"]{ max-width:46ch; gap:11px; }
+.lead-block[data-lead="label"] .swash-line{ display:none; }
+
+/* 形态三：抬头整块省掉，内容直接顶到嵌板顶部（图卡网格用） */
+.panel[data-lead="none"] > :first-child{ margin-top:0; }
+
+/* 花体大句移到嵌板外、压在章节画面上 —— 参考站 d055 的做法。
+   画面是暗的，所以这里要用浅色字，且自带一层暗床保证压得住。 */
+.over-art{
+  position:relative; z-index:2;
+  margin-left:var(--panel-x); padding:clamp(30px,3.4vw,58px) var(--panel-pad);
+  color:var(--display);
+}
+.over-art .swash-line{ color:var(--display); max-width:26ch; }
+.over-art .kicker{ color:rgba(246,248,235,.62); margin-bottom:.5em; }
+/* 左侧故意探到左栏底下（那条要压住小字），右侧必须收在 0：
+   .over-art 宽约 1114px，往右探 6% 就是 67px，会把 documentElement.scrollWidth
+   顶到 1451，整站多出一条横向滚动。 */
+.over-art::before{
+  content:""; position:absolute; inset:-10% 0 -14% -14%; z-index:-1;
+  background:radial-gradient(72% 120% at 22% 50%,
+              rgba(11,14,20,.86) 0%, rgba(11,14,20,.62) 46%, rgba(11,14,20,0) 100%);
+}
 
 /* 悬浮卡片群（景深） */
 .cloud{
@@ -346,15 +494,148 @@ ul{ list-style:none; }
   background:var(--paper); padding:3px 8px; border-radius:100px; border:1px solid var(--on-light-faint);
 }
 
-/* 三栏说明 */
-.trio{
+/* ---------- 组件：图卡网格（参考帧 07） ----------
+   2–3 列，每张卡一个自带底色的画面区，下面接标签 + 正文 + 胶囊按钮。
+   参考帧里三张卡的画面区高度刻意不齐，底边对齐靠正文块自然错落。 */
+.cardgrid{
   display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:1px; background:var(--on-light-faint);
-  border-top:1px solid var(--on-light-faint); border-bottom:1px solid var(--on-light-faint);
-  margin:clamp(40px,5vw,76px) var(--edge-r) 0 calc(var(--rail-w) + var(--gut));
+  gap:clamp(8px,.9vw,13px); margin-top:clamp(34px,4vw,62px);
 }
-.trio .cell{ background:var(--paper); padding:clamp(20px,2.2vw,32px) clamp(16px,1.7vw,26px); display:flex; flex-direction:column; gap:11px; }
-.trio .cell:hover{ background:var(--paper-2); }
+.cardgrid.two-up{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+.card{ display:flex; flex-direction:column; }
+.card-face{
+  position:relative; overflow:hidden; border-radius:2px;
+  aspect-ratio:var(--face, 3/4); background:var(--face-bg, #2A3038);
+  display:flex; align-items:flex-end; padding:clamp(13px,1.3vw,19px);
+}
+.card-face img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+/* B 批往画面区放配图后，底部这行小字仍要压得住 */
+.card-face::after{
+  content:""; position:absolute; inset:auto 0 0 0; height:58%;
+  background:linear-gradient(to top, rgba(11,14,20,.62), rgba(11,14,20,0));
+}
+/* 画面区是深底，序号要用深底那支黄铜色，不能用嵌板的 --brass-ink */
+.card-face .num{ color:var(--brass-lt); }
+.card-face .face-note{
+  position:relative; font-size:11px; line-height:1.45; font-weight:600;
+  color:rgba(246,248,235,.82); max-width:22ch;
+}
+.card-body{ padding:12px 1px 0; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+.card-t{ font-size:13px; font-weight:700; letter-spacing:-.014em; }
+.card-b{ font-size:12px; line-height:1.5; color:var(--on-light-muted); }
+.card-body .pill{ margin-top:5px; }
+
+/* ---------- 组件：水平滚动画廊（II 档案） ----------
+   scroll-snap 横向一排。用原生滚动而不是 JS 轮播：触控板/触屏手感是系统给的，
+   键盘 Tab 到卡片也会自动滚到位，不用额外写焦点管理。 */
+.gallery{
+  display:grid; grid-auto-flow:column; grid-auto-columns:clamp(210px,20vw,286px);
+  gap:clamp(8px,.9vw,13px);
+  margin-top:clamp(34px,4vw,62px);
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory; scroll-padding-left:0;
+  /* 右侧留一点，最后一张不要贴死内容区边缘 */
+  padding-bottom:14px; padding-right:var(--panel-pad);
+  scrollbar-width:thin; scrollbar-color:var(--on-light-faint) transparent;
+  overscroll-behavior-x:contain;
+}
+.gallery::-webkit-scrollbar{ height:6px; }
+.gallery::-webkit-scrollbar-thumb{ background:var(--on-light-faint); border-radius:100px; }
+.gallery > *{ scroll-snap-align:start; }
+.g-item .card-face{ aspect-ratio:4/5; }
+.g-cue{
+  display:flex; align-items:center; gap:8px; margin-top:10px;
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--on-light-muted);
+}
+.g-cue .bar{ flex:1; height:1px; background:var(--on-light-faint); max-width:120px; }
+
+/* ---------- 组件：草稿 → 定稿 双栏对照（III 文书） ---------- */
+.compare{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1px; background:var(--on-light-faint);
+  border:1px solid var(--on-light-faint);
+  margin-top:clamp(28px,3.2vw,50px);
+}
+.compare .col{ background:var(--display); padding:clamp(16px,1.8vw,26px); }
+.panel[data-surface="sage"] .compare .col{ background:var(--paper); }
+.compare .col-h{
+  display:flex; align-items:baseline; gap:8px; margin-bottom:14px;
+  font-size:10.5px; font-weight:700; letter-spacing:.15em; text-transform:uppercase;
+}
+.compare .col-before .col-h{ color:var(--on-light-muted); }
+.compare .col-after  .col-h{ color:var(--brass-ink); }
+.compare .line{
+  font-family:var(--cjk-serif); font-size:14px; line-height:1.7;
+  padding:9px 0; border-top:1px solid var(--on-light-faint);
+}
+.compare .line:first-of-type{ border-top:0; }
+.compare .col-before .line{ color:var(--on-light-muted); text-decoration:line-through;
+  text-decoration-color:rgba(22,24,26,.32); text-decoration-thickness:1px; }
+.compare .why{ font-size:11.5px; line-height:1.5; color:var(--on-light-muted); margin-top:14px; }
+
+/* 花体大引文 */
+.pullquote{
+  font-family:var(--serif); font-style:italic; font-weight:400;
+  font-size:clamp(1.7rem,4.4vw,3.9rem); line-height:1.12; letter-spacing:-.012em;
+  color:var(--on-light); margin:clamp(38px,4.6vw,74px) 0 0; max-width:26ch;
+}
+.pullquote .sw{ font-size:1.7em; line-height:0; vertical-align:-.14em; display:inline-block; }
+.pullquote cite{ display:block; margin-top:16px; font:600 10.5px/1.5 var(--sans);
+  font-style:normal; letter-spacing:.17em; text-transform:uppercase; color:var(--brass-ink); }
+
+/* ---------- 组件：色块面板上滑（IV 面试） ----------
+   自己钉住一屏，让后面那块嵌板压着它滚上来盖掉。
+   高度必须 ≤100vh，否则底部内容永远滚不出来。 */
+.panel[data-stack]{
+  position:sticky; top:0; height:100vh; min-height:520px;
+  display:flex; flex-direction:column; justify-content:center;
+  overflow:hidden;
+}
+.panel[data-stack] .stack-inner{ max-width:44ch; }
+/* 钉屏 + 分栏并存：上面那条 flex 与 [data-split] 的 grid 特异性相同，
+   且排在后面会赢，所以要显式给一条二者并存的规则，否则图会掉到文字下面通栏。 */
+.panel[data-stack][data-split]{
+  display:grid; align-items:center;
+  grid-template-columns:minmax(0,1fr) minmax(0,.72fr);
+}
+.qa{ display:grid; gap:clamp(8px,.9vw,13px); margin-top:clamp(30px,3.6vw,54px);
+  grid-template-columns:repeat(2,minmax(0,1fr)); }
+.qa-card{
+  background:var(--display); border:1px solid var(--on-light-faint); border-radius:3px;
+  padding:clamp(15px,1.6vw,22px);
+}
+.panel[data-surface="sage"] .qa-card{ background:var(--paper-2); }
+.qa-q{
+  font-family:var(--cjk-serif); font-size:14.5px; line-height:1.6; margin-bottom:9px;
+}
+.qa-q::before{
+  content:"Q"; display:inline-block; margin-right:8px;
+  font:700 10px/1 var(--mono); letter-spacing:.1em;
+  color:var(--brass-ink); vertical-align:.15em;
+}
+.qa-a{ font-size:12px; line-height:1.55; color:var(--on-light-muted); }
+.qa-tag{
+  display:inline-block; margin-top:10px; font-size:9.5px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--brass-ink);
+}
+
+/* ---------- 组件：两栏规格列表（参考帧 08） ----------
+   实测：两组「标签 / 说明」并排，标签列约 179px，组间距与嵌板内缘同宽。 */
+.spec{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:clamp(20px,2.6vw,48px); row-gap:clamp(18px,2vw,30px);
+  margin-top:clamp(28px,3.2vw,50px);
+}
+/* 行与行之间不画线：实测参考帧那些"横线"方差 σ≈60、只有五成像素暗于底色，
+   是文字基线不是分隔线。真分隔线会是 σ≈0 的满行。 */
+.spec-row{
+  display:grid; grid-template-columns:minmax(120px,33%) 1fr;
+  column-gap:clamp(12px,1.2vw,20px);
+}
+.spec-k{ font-size:12.5px; font-weight:700; line-height:1.3; letter-spacing:-.012em; }
+.spec-v{ font-size:12.5px; line-height:1.52; color:var(--on-light-muted); }
+.spec-v .en{ display:block; margin-top:3px; font-size:11px; }
 
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
@@ -372,19 +653,42 @@ ul{ list-style:none; }
 .toc-sheet .rn{ margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--brass); }
 
 /* ---------- 7. 响应式 ---------- */
-@media (max-width:1180px){ .trio{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:1180px){
+  .cardgrid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .spec{ grid-template-columns:1fr; }
+}
+@media (max-width:860px){
+  .compare{ grid-template-columns:1fr; }
+  .qa{ grid-template-columns:1fr; }
+  /* 窄屏钉一屏会把内容挤爆，退回普通嵌板 */
+  /* 必须用 relative 而不是 static：z-index 只对定位元素生效，
+     一改 static，.panel 的 z-index:2 就失效，背后 sticky 的章节大图
+     （z-index:0）会盖到面板上面，整块底色和文字一起消失。 */
+  .panel[data-stack]{ position:relative; height:auto;
+    padding:clamp(46px,5.2vw,88px) var(--panel-pad) clamp(52px,5.8vw,98px); }
+  /* 分栏也要收成一列，否则右图把文字挤成窄条 */
+  .panel[data-split], .panel[data-stack][data-split]{
+    grid-template-columns:1fr; padding-right:var(--panel-pad);
+  }
+  .split-fig{ min-height:clamp(240px,58vw,420px); margin-top:8px; }
+  .split-fig::after{ background:linear-gradient(0deg, var(--accent) 0%, rgba(0,0,0,0) 34%); }
+}
 @media (max-width:1024px){
-  :root{ --rail-w:0px; --gut:22px; --edge-r:22px; }
+  /* 左栏收起后那 270px 让位没有意义了，但留一条窄边继续漏出画面，
+     章节的电影感在平板上也保得住 */
+  :root{ --rail-w:0px; --gut:22px; --edge-r:22px; --panel-x:30px; --panel-pad:20px; }
   .rail{ display:none; }
-  .doc{ margin-left:0; }
   .toc-toggle{ display:block; font-size:11px; letter-spacing:.11em; text-transform:uppercase; font-weight:700; }
   .chap-display{ font-size:clamp(3.2rem, 16vw, 9rem); }
   .cloud{ height:auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
   .cloud-card{ position:static; width:auto; filter:none; opacity:1; transform:none; }
 }
 @media (max-width:720px){
+  /* 手机上阅读宽度优先，嵌板通栏 */
+  :root{ --panel-x:0px; --panel-pad:20px; }
   body{ font-size:15.5px; }
-  .trio{ grid-template-columns:1fr; }
+  .cardgrid{ grid-template-columns:1fr; }
+  .card-face{ aspect-ratio:16/10; }
   .cloud{ grid-template-columns:1fr; }
   .topbar .edtag, .topbar .tb-link{ display:none; }
   .chap-sub{ max-width:none; }
@@ -398,6 +702,15 @@ ul{ list-style:none; }
   /* 面板要留着——副题只在这里出现，隐藏它等于对降级用户丢内容 */
   .intro-panel{ opacity:1 !important; }
   .cloud-card{ filter:none !important; opacity:1 !important; }
+  /* 钉屏覆盖是纯装饰，降级下摊平成普通嵌板；内容一条不少 */
+  /* 必须用 relative 而不是 static：z-index 只对定位元素生效，
+     一改 static，.panel 的 z-index:2 就失效，背后 sticky 的章节大图
+     （z-index:0）会盖到面板上面，整块底色和文字一起消失。 */
+  .panel[data-stack]{ position:relative; height:auto;
+    padding:clamp(46px,5.2vw,88px) var(--panel-pad) clamp(52px,5.8vw,98px); }
+  /* 摊平后高度不再是 100vh，右图那一栏得跟着给出确定高度 */
+  .split-fig{ min-height:clamp(280px,34vw,460px); }
+  .gallery{ scroll-snap-type:none; }
 }
 </style>
 </head>
@@ -465,8 +778,8 @@ ul{ list-style:none; }
 <main class="doc">
 
 <!-- ============ 开场 ============ -->
-<section class="block tone-dark" id="intro" data-tone="dark" data-chapter="">
-  <div class="stage bleed">
+<section id="intro" data-tone="dark" data-chapter="">
+  <div class="stage">
     <div class="art-wrap">
       <img class="art-base" src="assets/art/intro.webp" alt="夜空下两个身影相向伸手，指尖之间燃起一点星光" fetchpriority="high">
       <img class="art-line" src="assets/art/intro-line.webp" alt="" aria-hidden="true">
@@ -505,16 +818,19 @@ ul{ list-style:none; }
 </section>
 
 <!-- ============ I · 定位 ============ -->
-<section id="position" data-chapter="position">
+<section class="chapter" id="position" data-chapter="position">
 
-  <!-- 首屏：整屏图 + 巨型标题 -->
-  <div class="block tone-dark chap-hero bleed" data-tone="dark">
-    <div class="art-wrap" aria-hidden="true">
+  <!-- 常驻画面：整章钉住不动，左侧 270px 始终看得见 -->
+  <div class="chap-backdrop" data-tone="dark" aria-hidden="true">
+    <div class="art-wrap">
       <img class="art-base" src="assets/art/position.webp" alt="" loading="lazy">
       <img class="art-line" src="assets/art/position-line.webp" alt="" loading="lazy">
     </div>
-    <div class="art-veil" aria-hidden="true"></div>
+    <div class="art-veil"></div>
+  </div>
 
+  <!-- 首屏排版：透明浮层，随页面滚走 -->
+  <div class="chap-hero">
     <div class="chap-type">
       <p class="chap-zh rise">定&nbsp;位</p>
       <h2 class="chap-display rise d1">Position</h2>
@@ -523,14 +839,12 @@ ul{ list-style:none; }
         <p class="cjk-lede">先画清目标校与专业的边界，再堆材料。<br>把无效试错压到最低。</p>
       </div>
     </div>
-
-    <!-- 撕纸毛边（JS 生成路径） -->
-    <div class="torn" data-torn data-seed="17" aria-hidden="true"></div>
   </div>
 
-  <!-- 浅色内容区 -->
-  <div class="block tone-light bleed" data-tone="light">
-    <div class="wrap">
+  <!-- 嵌板 1 · 奶白 -->
+  <div class="panel" data-tone="light" data-surface="cream">
+    <div class="torn" data-torn="top" data-seed="17" aria-hidden="true"></div>
+
       <div class="lead-block rise">
         <p class="kicker muted">Chapter I · 定位与选校</p>
         <p class="swash-line"><span class="sw">T</span>he shortlist is a decision,<br>not a wish list.</p>
@@ -574,9 +888,11 @@ ul{ list-style:none; }
           <span class="cc-tag">Constraints</span>
         </div>
       </div>
+  </div>
 
-      <!-- 大图 + 准星标注 -->
-      <div class="lead-block rise" style="margin-top:clamp(40px,5vw,76px)">
+  <!-- 嵌板 2 · 灰绿（两种表面交替，实测参考站就是这两种） -->
+  <div class="panel" data-tone="light" data-surface="accent">
+      <div class="lead-block rise">
         <p class="kicker muted">选校沙盘 · Strategy Room</p>
         <p class="swash-line"><span class="sw">E</span>very school on the list<br>answers one question.</p>
         <p class="cjk-lede">自研的选校沙盘把画像、信号与规则收敛成一张可对话的名单。每所学校配一张决策卡，写清它凭什么在名单上。</p>
@@ -615,34 +931,384 @@ ul{ list-style:none; }
           <span class="r-lab">录取现实</span>
         </div>
       </figure>
-    </div>
 
-    <!-- 三栏 -->
-    <div class="trio">
-      <div class="cell rise">
-        <span class="num">01</span>
-        <h3 class="h-3">先边界，后材料</h3>
-        <p class="body muted">目标校与专业的边界不清楚时，任何材料准备都是赌博。定位阶段的产出是一份能解释的名单，不是一份愿望清单。</p>
-        <p class="en">Boundary first. A shortlist you can defend, not a wish list.</p>
+      <!-- 组件：图卡网格 -->
+      <div class="cardgrid">
+        <article class="card rise">
+          <div class="card-face" style="--face-bg:#1E2A33; --face:4/5">
+            <p class="face-note"><span class="num">01</span><br>目标校与专业的边界不清楚时，<br>任何材料准备都是赌博。</p>
+          </div>
+          <div class="card-body">
+            <h3 class="card-t">先边界，后材料</h3>
+            <p class="card-b">定位阶段的产出是一份能解释的名单，不是一份愿望清单。</p>
+            <p class="en">Boundary first. A shortlist you can defend, not a wish list.</p>
+          </div>
+        </article>
+        <article class="card rise d1">
+          <div class="card-face" style="--face-bg:#33291B; --face:3/4">
+            <p class="face-note"><span class="num">02</span><br>同一所学校，不同系所的<br>录取偏好可以差很远。</p>
+          </div>
+          <div class="card-body">
+            <h3 class="card-t">拆到系所，不看综排</h3>
+            <p class="card-b">按专业方向读招生逻辑，而不是拿一张综合排名表往上套。</p>
+            <p class="en">Read departments, not league tables.</p>
+          </div>
+        </article>
+        <article class="card rise d2">
+          <div class="card-face" style="--face-bg:#1F2B26; --face:5/6">
+            <p class="face-note"><span class="num">03</span><br>名单要有梯度，<br>比例按真实概率分布来定。</p>
+          </div>
+          <div class="card-body">
+            <h3 class="card-t">冲刺 · 匹配 · 稳健</h3>
+            <p class="card-b">多维条件收敛成清单，少拍脑袋；拿不准的单独留一档待复核。</p>
+            <p class="en">Reach, match, safety — proportioned to real odds.</p>
+          </div>
+        </article>
       </div>
-      <div class="cell rise d1">
-        <span class="num">02</span>
-        <h3 class="h-3">拆到系所，不看综排</h3>
-        <p class="body muted">同一所学校，不同系所的录取偏好可以差很远。我们按专业方向读招生逻辑，而不是拿一张综合排名表往上套。</p>
-        <p class="en">Read departments, not league tables.</p>
+
+      <!-- 组件：两栏规格列表 -->
+      <div class="lead-block rise" style="margin-top:clamp(40px,5vw,76px)">
+        <p class="kicker muted">沙盘里有什么 · What the room holds</p>
       </div>
-      <div class="cell rise d2">
-        <span class="num">03</span>
-        <h3 class="h-3">名单要有梯度</h3>
-        <p class="body muted">冲刺、匹配、稳健三档按真实概率配比。自研的选校沙盘把多维条件收敛成清单，少拍脑袋。</p>
-        <p class="en">Reach, match, safety — proportioned to real odds.</p>
+      <div class="spec rise d1">
+        <div class="spec-row">
+          <p class="spec-k">学生画像</p>
+          <p class="spec-v">把课程体系、成绩走势、标化与活动收敛成一组可比对的信号。
+            <span class="en">Coursework, trajectory, tests and activities as comparable signals.</span></p>
+        </div>
+        <div class="spec-row">
+          <p class="spec-k">规则匹配</p>
+          <p class="spec-v">按专业方向的录取逻辑做匹配，美本 / 英本 / 美英双轨分开走。
+            <span class="en">Matched by programme logic — US, UK, or dual-track.</span></p>
+        </div>
+        <div class="spec-row">
+          <p class="spec-k">信号校准</p>
+          <p class="spec-v">对照同方向申请人的实际分布校准这些信号，再决定哪些值得补。
+            <span class="en">Signals calibrated against real applicant distributions.</span></p>
+        </div>
+        <div class="spec-row">
+          <p class="spec-k">组合分档</p>
+          <p class="spec-v">冲刺 · 匹配 · 稳健 · 待复核，四档给出一份有梯度的名单。
+            <span class="en">Reach, match, safety, and a hold list for review.</span></p>
+        </div>
+        <div class="spec-row">
+          <p class="spec-k">学校决策卡</p>
+          <p class="spec-v">每所学校一张卡，写清它凭什么在名单上；旁边是横向对比区。
+            <span class="en">One decision card per school, plus a side-by-side compare view.</span></p>
+        </div>
+        <div class="spec-row">
+          <p class="spec-k">策略快照</p>
+          <p class="spec-v">名单与理由可导出为策略快照，下一轮复盘时对得上账。
+            <span class="en">Exportable strategy snapshots you can revisit later.</span></p>
+        </div>
       </div>
-    </div>
+
+      <div class="torn" data-torn="bottom" data-seed="42" aria-hidden="true"></div>
   </div>
 
 </section>
 
-<!-- 后续章节 II–VIII 待铺开 -->
+<!-- ============ II · 档案 ============ -->
+<section class="chapter" id="profile" data-chapter="profile">
+
+  <div class="chap-backdrop" data-tone="dark" aria-hidden="true">
+    <div class="art-wrap">
+      <img class="art-base" src="assets/art/profile.webp" alt="" loading="lazy" fetchpriority="low">
+      <img class="art-line" src="assets/art/profile-line.webp" alt="" loading="lazy">
+    </div>
+    <div class="art-veil"></div>
+  </div>
+
+  <div class="chap-hero">
+    <div class="chap-type">
+      <p class="chap-zh rise">档&nbsp;案</p>
+      <h2 class="chap-display rise d1">Profile</h2>
+      <div class="chap-sub rise d2">
+        <p class="swash-line"><span class="sw">E</span>very line in the file<br>earns its place.</p>
+        <p class="cjk-lede">竞赛、科研、标化协同推进，<br>每一项都要说得出它为什么在这儿。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 花体句压在画面上，不占嵌板 —— 参考站 d055 就是这么排的 -->
+  <div class="over-art rise">
+    <p class="kicker">Chapter II · 档案与背景提升</p>
+    <p class="swash-line"><span class="sw">A</span> file is an argument,<br>not an inventory.</p>
+  </div>
+
+  <div class="panel" data-tone="light" data-surface="cream">
+    <div class="torn" data-torn="top" data-seed="23" aria-hidden="true"></div>
+
+    <div class="lead-block rise" data-lead="label">
+      <p class="cjk-lede">
+        背景提升不是把奖项堆到最多。四条线各有各的作用——竞赛证明学术强度，
+        科研证明方法，实习证明落地，标化把门槛清掉。哪条该重推、哪条够用即止，
+        取决于定位阶段画出来的那条边界。
+      </p>
+    </div>
+
+    <div class="g-cue rise d1" aria-hidden="true"><span class="bar"></span>横向滑动 · 四条线</div>
+    <div class="gallery rise d1" tabindex="0" role="group" aria-label="档案的四条线：竞赛、科研、实习、标化">
+      <article class="card g-item">
+        <div class="card-face">
+          <img src="assets/art/p-contest.webp" alt="深色天鹅绒上放着月桂花环、黄铜奖章与一卷羊皮纸" loading="lazy" width="640" height="800">
+        </div>
+        <div class="card-body">
+          <span class="num">01</span>
+          <h3 class="card-t">竞赛 · 高含金量优先</h3>
+          <p class="card-b">宁少而准。选与目标专业同向、且认可度可核对的赛事，而不是凑数量。</p>
+          <p class="en">Fewer, better contests — aligned with the target programme.</p>
+        </div>
+      </article>
+      <article class="card g-item">
+        <div class="card-face">
+          <img src="assets/art/p-research.webp" alt="黄铜显微镜、玻片、压制标本与一本空白笔记本" loading="lazy" width="640" height="800">
+        </div>
+        <div class="card-body">
+          <span class="num">02</span>
+          <h3 class="card-t">科研 · 看方法不看头衔</h3>
+          <p class="card-b">重点是你在里面真正做了什么、怎么想的。这段经历后面要能撑起文书与面试的追问。</p>
+          <p class="en">Method over titles — research that can survive follow-up questions.</p>
+        </div>
+      </article>
+      <article class="card g-item">
+        <div class="card-face">
+          <img src="assets/art/p-intern.webp" alt="皮质挎包、黄铜圆规与摊开的图纸，后方一盏油灯" loading="lazy" width="640" height="800">
+        </div>
+        <div class="card-body">
+          <span class="num">03</span>
+          <h3 class="card-t">实习 · 把想法落地一次</h3>
+          <p class="card-b">实习的价值在于让抽象兴趣接触真实约束——预算、期限、别人的意见。</p>
+          <p class="en">One encounter with real constraints beats three résumé lines.</p>
+        </div>
+      </article>
+      <article class="card g-item">
+        <div class="card-face">
+          <img src="assets/art/p-test.webp" alt="正在流沙的沙漏、三支削好的铅笔、圆框眼镜与一张空白纸" loading="lazy" width="640" height="800">
+        </div>
+        <div class="card-body">
+          <span class="num">04</span>
+          <h3 class="card-t">标化 · 够用即止</h3>
+          <p class="card-b">标化是门槛不是加分项。到了目标校的安全区间就收手，时间挪给别的线。</p>
+          <p class="en">Tests are a threshold. Clear it, then move the hours elsewhere.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="panel" data-tone="light" data-surface="sage">
+    <div class="lead-block rise">
+      <p class="kicker muted">节点与材料 · Structure</p>
+      <p class="cjk-lede">申请季真正难的不是单项做不到，是十几条线并行时没人说得清现在到哪了。
+        时间线、材料与任务收束到一套可追踪的结构里——Terra 总台协助，顾问与学生看同一份进度。</p>
+      <a href="#systems" class="pill" style="align-self:flex-start;margin-top:4px">看 Terra 怎么托住执行 ↗</a>
+    </div>
+
+    <div class="spec rise d1">
+      <div class="spec-row">
+        <p class="spec-k">时间线</p>
+        <p class="spec-v">按截止日倒推排布，每个节点挂着它自己的前置条件。
+          <span class="en">Deadlines worked backwards, each node carrying its prerequisites.</span></p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-k">材料与任务</p>
+        <p class="spec-v">谁在做、做到哪、还缺什么，一处可查，不靠对话记录翻。
+          <span class="en">Owner, status and gaps in one place — not buried in chat.</span></p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-k">多角色门户</p>
+        <p class="spec-v">学生、家长、顾问各自的视图，看到的是同一套结构。
+          <span class="en">Student, parent and advisor views over one shared structure.</span></p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-k">决策留痕</p>
+        <p class="spec-v">写入带 trace 的记录：什么时候改的、为什么改，后面复盘对得上账。
+          <span class="en">Traced writes — what changed, when, and why.</span></p>
+      </div>
+    </div>
+
+    <div class="torn" data-torn="bottom" data-seed="57" aria-hidden="true"></div>
+  </div>
+
+</section>
+
+<!-- ============ III · 文书 ============ -->
+<section class="chapter" id="essays" data-chapter="essays">
+
+  <div class="chap-backdrop" data-tone="dark" aria-hidden="true">
+    <div class="art-wrap">
+      <img class="art-base" src="assets/art/essays.webp" alt="" loading="lazy" fetchpriority="low">
+      <img class="art-line" src="assets/art/essays-line.webp" alt="" loading="lazy">
+    </div>
+    <div class="art-veil"></div>
+  </div>
+
+  <div class="chap-hero">
+    <div class="chap-type">
+      <p class="chap-zh rise">文&nbsp;书</p>
+      <h2 class="chap-display rise d1">Essays</h2>
+      <div class="chap-sub rise d2">
+        <p class="swash-line"><span class="sw">Y</span>our voice,<br>not a template.</p>
+        <p class="cjk-lede">拒绝模板腔。<br>结构可以教，声音只能是你自己的。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-tone="light" data-surface="accent">
+    <div class="torn" data-torn="top" data-seed="31" aria-hidden="true"></div>
+
+    <div class="lead-block rise">
+      <p class="kicker muted">Chapter III · 文书</p>
+      <p class="swash-line"><span class="sw">S</span>pecific beats<br>impressive.</p>
+      <p class="cjk-lede">
+        招生官一天读几十份文书，模板腔三行之内就露馅。我们不替学生写，
+        是把话问出来——追问到那个只有他才讲得出的细节，再帮他把结构立稳。
+      </p>
+    </div>
+
+    <p class="kicker muted rise d1" style="margin-top:clamp(34px,4vw,62px)">
+      改的是什么 · 写法示意，非学员文书原文
+    </p>
+    <div class="compare rise d1">
+      <div class="col col-before">
+        <p class="col-h">模板腔 <span class="num">Before</span></p>
+        <p class="line">我从小就对工程学充满浓厚的兴趣。</p>
+        <p class="line">这次经历让我学到了团队合作的重要性。</p>
+        <p class="line">我希望能进入贵校深造，成为一名优秀的工程师。</p>
+        <p class="why">问题不在文法，在于任何人都能写。抽掉名字，看不出是谁。</p>
+      </div>
+      <div class="col col-after">
+        <p class="col-h">保留声音 <span class="num">After</span></p>
+        <p class="line">拆第三台的时候我才发现，之前两台都装反了。</p>
+        <p class="line">队里三个人的方案都比我的好，我负责说服他们选哪一个。</p>
+        <p class="line">我想去能把这套东西做到能上路的地方。</p>
+        <p class="why">同一件事，换成具体的、可追问的说法。招生官能顺着往下问——这才是留得下印象的文书。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-tone="light" data-surface="sage">
+    <blockquote class="pullquote rise">
+      <span class="sw">“</span>结构可以教，<br>声音只能是你自己的。
+      <cite>引力坊 · 文书方法</cite>
+    </blockquote>
+
+    <div class="spec rise d1">
+      <div class="spec-row">
+        <p class="spec-k">先问，后写</p>
+        <p class="spec-v">动笔前的访谈比改稿更花时间。素材不够具体，怎么润色都是空的。
+          <span class="en">Interview first. No amount of editing rescues vague material.</span></p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-k">结构深度打磨</p>
+        <p class="spec-v">主线、证据、转折各归其位；删掉所有不为主线服务的漂亮句子。
+          <span class="en">Spine, evidence, turn — and nothing that doesn't serve them.</span></p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-k">不代笔</p>
+        <p class="spec-v">改到最后一稿仍然是学生的语气。面试时他要能认得出自己写的每一句。
+          <span class="en">It stays his voice — he has to own every line at interview.</span></p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-k">与档案对齐</p>
+        <p class="spec-v">文书里的每处引证，档案里都找得到对应的那件事。
+          <span class="en">Every claim in the essay maps to something real in the file.</span></p>
+      </div>
+    </div>
+
+    <div class="torn" data-torn="bottom" data-seed="64" aria-hidden="true"></div>
+  </div>
+
+</section>
+
+<!-- ============ IV · 面试 ============ -->
+<section class="chapter" id="interview" data-chapter="interview">
+
+  <div class="chap-backdrop" data-tone="dark" aria-hidden="true">
+    <div class="art-wrap">
+      <img class="art-base" src="assets/art/interview.webp" alt="" loading="lazy" fetchpriority="low">
+      <img class="art-line" src="assets/art/interview-line.webp" alt="" loading="lazy">
+    </div>
+    <div class="art-veil"></div>
+  </div>
+
+  <div class="chap-hero">
+    <div class="chap-type">
+      <p class="chap-zh rise">面&nbsp;试</p>
+      <h2 class="chap-display rise d1">Interview</h2>
+      <div class="chap-sub rise d2">
+        <p class="swash-line"><span class="sw">P</span>ressure,<br>rehearsed in advance.</p>
+        <p class="cjk-lede">模拟高压，校准表达。<br>第一次被追问，不该发生在正式面试里。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 色块面板上滑：自己钉住一屏，被下一块嵌板压着盖掉 -->
+  <div class="panel" data-tone="light" data-surface="accent" data-stack data-split>
+    <div class="torn" data-torn="top" data-seed="43" aria-hidden="true"></div>
+    <div class="stack-inner rise">
+      <p class="kicker muted">高压模拟 · Mock under pressure</p>
+      <p class="swash-line" style="margin-top:14px"><span class="sw">T</span>he first hard question<br>should not be the real one.</p>
+      <p class="cjk-lede" style="margin-top:18px">
+        模拟面试的目的不是背答案，是把「被追问到答不上来」这件事提前发生完。
+        按目标校的实际风格对齐节奏：牛剑那种一路追问到边界的学术面，
+        和美本那种看你怎么讲自己的对话面，练法完全不同。
+      </p>
+    </div>
+    <figure class="split-fig rise d1">
+      <img src="assets/art/iv-chair.webp" width="900" height="1350" loading="lazy"
+           alt="空旷厅堂里一把独椅正对观者，后方长桌前坐着三个模糊剪影">
+    </figure>
+  </div>
+
+  <div class="panel" data-tone="light" data-surface="cream">
+    <div class="lead-block rise">
+      <p class="swash-line"><span class="sw">N</span>ot answers.<br>Reasoning out loud.</p>
+      <p class="cjk-lede">练的不是标准答案，是当场把思路讲清楚的能力——包括承认某处没想明白。</p>
+    </div>
+
+    <div class="qa rise d1">
+      <div class="qa-card">
+        <p class="qa-q">为什么是这个专业，而不是隔壁那个？</p>
+        <p class="qa-a">考的是动机有没有到具体的程度。答得出两个专业的实际差别，才算真想过。</p>
+        <span class="qa-tag">动机 · Motivation</span>
+      </div>
+      <div class="qa-card">
+        <p class="qa-q">你刚才那个结论，换一组条件还成立吗？</p>
+        <p class="qa-a">考的是推理经不经得起挪动。学术面试的追问基本都往这个方向去。</p>
+        <span class="qa-tag">推理 · Reasoning</span>
+      </div>
+      <div class="qa-card">
+        <p class="qa-q">这段经历里，你做错了什么？</p>
+        <p class="qa-a">考的是反思是否真实。全是顺利和收获的版本，一追就空。</p>
+        <span class="qa-tag">反思 · Reflection</span>
+      </div>
+      <div class="qa-card">
+        <p class="qa-q">这个问题我没想过——可以吗？</p>
+        <p class="qa-a">可以。说清楚你会怎么去想，比硬编一个答案得分高。这一条要专门练。</p>
+        <span class="qa-tag">诚实 · Candour</span>
+      </div>
+    </div>
+
+    <div class="spec rise d2">
+      <div class="spec-row">
+        <p class="spec-k">对齐招生官逻辑</p>
+        <p class="spec-v">按目标校与系所的实际面试风格设计题目，而不是通用题库。
+          <span class="en">Built to the department's actual interview style.</span></p>
+      </div>
+      <div class="spec-row">
+        <p class="spec-k">录下来回看</p>
+        <p class="spec-v">语速、填充词、眼神落点——这些自己讲的时候感觉不到。
+          <span class="en">Pace, filler words, where the eyes go — invisible from the inside.</span></p>
+      </div>
+    </div>
+
+    <div class="torn" data-torn="bottom" data-seed="71" aria-hidden="true"></div>
+  </div>
+
+</section>
+
+<!-- 后续章节 V–VIII 待铺开 -->
 
 </main>
 
@@ -692,9 +1358,10 @@ ul{ list-style:none; }
     var d = "M0," + h + " L0," + pts[0][1].toFixed(1);
     for(var i = 1; i < pts.length; i++) d += " L" + pts[i][0].toFixed(1) + "," + pts[i][1].toFixed(1);
     d += " L" + w + "," + h + " Z";
+    // 填色跟随所在嵌板的表面（奶白或灰绿），不能写死 --paper
     el.innerHTML =
       '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
-        '<path d="' + d + '" fill="var(--paper)"/>' +
+        '<path d="' + d + '" fill="var(--torn-fill, var(--paper))"/>' +
       '</svg>';
   }
   var torns = [].slice.call(document.querySelectorAll("[data-torn]"));
@@ -749,8 +1416,10 @@ ul{ list-style:none; }
     var foot = document.querySelector(".rail-foot");
     if(foot) foot.style.opacity = (0.4 * (1 - fly)).toFixed(3);
 
-    // 线描负片：每个 art-wrap 在离开视口上缘时"X 光化"
-    document.querySelectorAll(".chap-hero .art-wrap, #intro .art-wrap").forEach(function(w){
+    // 线描负片：art-wrap 离开视口上缘时"X 光化"。
+    // 画面现在住在 sticky 的 .chap-backdrop 里：整章钉住期间 r.top 恒为 0，
+    // 只有章节末尾 sticky 松开、画面随页面上滑时才起效——正好落在章节交界处。
+    document.querySelectorAll(".chap-backdrop .art-wrap, #intro .art-wrap").forEach(function(w){
       var r = w.getBoundingClientRect();
       var out = Math.min(1, Math.max(0, -r.top / (r.height * 0.72)));
       var line = w.querySelector(".art-line");
@@ -797,33 +1466,47 @@ ul{ list-style:none; }
   var tocItems = {};
   document.querySelectorAll("#toc li").forEach(function(li){ tocItems[li.dataset.for] = li; });
 
-  /* 明暗翻转与目录高亮同样走轮询：取覆盖视口中线的那个区块。
+  /* 明暗翻转与目录高亮同样走轮询：取覆盖视口中线的那个表面。
      中线判定比 IntersectionObserver 的比例阈值更贴近肉眼感受，
      深浅交界处也不会出现两个区块争抢的抖动。 */
-  var toneBlocks = [].slice.call(document.querySelectorAll(".block[data-tone]"));
-  var curTone = "", curChap = " ";
+  var toneBlocks = [].slice.call(
+    document.querySelectorAll("#intro[data-tone], .chap-backdrop[data-tone], .panel[data-tone]"));
+  var topbarEl = document.querySelector(".topbar");
+  var curTone = "", curChap = null;   // 用 null 而不是 ""：开场那节的 data-chapter 本身就是空串
 
-  /* 视口某一高度背后是哪个区块 */
-  function blockAt(y){
+  /* 视口上某一点背后是什么表面。
+     改成嵌板结构后取样必须带 x：同一个 y 上，左边 270px 是章节画面（深），
+     右边是悬浮嵌板（浅）。只按 y 判定会把左栏刷成深字压在深画面上。 */
+  function surfaceAt(x, y){
+    var best = null, bestZ = -1;
     for(var i = 0; i < toneBlocks.length; i++){
-      var r = toneBlocks[i].getBoundingClientRect();
-      if(r.top <= y && r.bottom >= y) return toneBlocks[i];
+      var el = toneBlocks[i], r = el.getBoundingClientRect();
+      if(r.top <= y && r.bottom >= y && r.left <= x && r.right >= x){
+        var z = el.classList.contains("panel") ? 2 : 0;   // 嵌板浮在画面之上
+        if(z >= bestZ){ bestZ = z; best = el; }
+      }
     }
-    return null;
+    return best;
   }
   var railParts = [].slice.call(document.querySelectorAll(".rail [data-slot], .rail-foot"));
 
   function tonePass(){
     // 左栏各块与顶栏，各自按背后底色着色
-    var tb = blockAt(18);
-    if(tb) document.querySelector(".topbar").setAttribute("data-lt", tb.dataset.tone);
+    var midX = innerWidth * 0.62;              // 内容列中部：最左那条一直是画面，代表不了整屏
+    /* 取样点可能落在任何表面之外——章节之间、以及页面最末端嵌板收尾之后
+       那一段（左栏页脚就正好落在那里）。这时候背后画的就是 body 底色，
+       跟着 body 走；早先版本在这种情况下直接不设 data-lt，于是页脚
+       退回默认的浅色字，压在已经翻浅的 body 上，整块看不见。 */
+    var fallback = document.body.dataset.tone || "dark";
+    var tb = surfaceAt(midX, 18);
+    topbarEl.setAttribute("data-lt", tb ? tb.dataset.tone : fallback);
     railParts.forEach(function(p){
       var r = p.getBoundingClientRect();
-      var b = blockAt(r.top + r.height / 2);
-      if(b) p.setAttribute("data-lt", b.dataset.tone);
+      var b = surfaceAt(r.left + 4, r.top + r.height / 2);
+      p.setAttribute("data-lt", b ? b.dataset.tone : fallback);
     });
 
-    var hit = blockAt(innerHeight * 0.5);
+    var hit = surfaceAt(midX, innerHeight * 0.5);
     if(!hit) return;
     var tone = hit.dataset.tone;
     if(tone !== curTone){ curTone = tone; document.body.setAttribute("data-tone", tone); }

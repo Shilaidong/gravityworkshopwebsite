@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--
+  诊断夹具 —— 开发工具，不属于站点内容，不要部署。
+
+  为什么需要它：截图受 --virtual-time-budget 影响，CSS 过渡常被截在中途，
+  看着"没渲染"其实只是没过渡完（HANDOFF 第 5 节）。所以判定一律读实时页面的
+  类名 / 矩形 / getComputedStyle，而不是看图猜。
+
+  为什么把报告画成可见文字而不是用 --dump-dom：--dump-dom 在主文档 load
+  事件时就把 DOM 吐出来了，那时 iframe 里的 rAF 轮询还没跑完，永远只能拿到
+  "PENDING"。而 --screenshot 会等满 virtual-time-budget，rAF 能跑完。
+  所以走本项目里唯一验证可靠的那条管道：截图。
+
+  用法：配合 tools/probe.sh，输出 .shots/probe-<y>.png
+-->
+<html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:#0C0F14;color:#E8EEF2;
+  font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace}
+/* iframe 必须留在视口内：移到屏幕外时它自己的 rAF 会被节流，
+   站点的滚动轮询就永远不跑，探针只能拿到未初始化的状态。
+   报告用不透明浮层盖在上面——遮挡不影响 rAF。 */
+#f{position:absolute;left:0;top:0;border:0}
+#out{position:absolute;left:0;top:0;right:0;z-index:9;
+  background:#0C0F14;padding:14px 16px;white-space:pre-wrap;min-height:100vh}
+b{color:#7FD4A8}.bad{color:#FF8A7A;font-weight:700}.warn{color:#FFC46B}
+</style></head><body>
+<iframe id="f"></iframe>
+<div id="out">PENDING — 探针未完成（rAF 没跑够帧数或页面报错）</div>
+<script>
+var q = new URLSearchParams(location.search);
+var w = +q.get('w') || 1384, h = +q.get('h') || 868, y = +q.get('y') || 0;
+var f = document.getElementById('f'), out = document.getElementById('out');
+f.style.width = w + 'px'; f.style.height = h + 'px';
+
+var errors = [];
+f.src = 'index.html';
+f.onload = function(){
+  var cw = f.contentWindow, cd = f.contentDocument;
+  cw.addEventListener('error', function(e){ errors.push(String(e.message || e.type)); });
+  // 站点 html 上有 scroll-behavior:smooth，scrollTo 会走动画；
+  // 虚拟时间下动画常推不完，滚动位置就停在 0。必须先关掉再滚。
+  cd.documentElement.style.scrollBehavior = 'auto';
+
+  function fire(){ try{ report(cw, cd); }catch(err){ out.textContent = 'PROBE THREW: ' + err; } }
+  var n = 0;
+  (function tick(){
+    cw.scrollTo(0, y);
+    if(++n < 90) return cw.requestAnimationFrame(tick);
+    fire();
+  })();
+  // 兜底：万一 rAF 被节流，定时器也把报告出出来
+  setTimeout(function(){ if(out.textContent.indexOf('PENDING') === 0) fire(); }, 4000);
+};
+
+function R(el){
+  var r = el.getBoundingClientRect();
+  return Math.round(r.left) + '..' + Math.round(r.right) +
+         ' y ' + Math.round(r.top) + '..' + Math.round(r.bottom);
+}
+/* ---- 对比度审计 ----
+   只查落在纯色底上的文字（嵌板内）。压在图片上的文字算不出来——脚本拿到的
+   是区块背景色而不是图片像素，那部分要用截图像素法另量（见 HANDOFF 第 5 节）。 */
+function parseRGB(s){
+  var m = /rgba?\(([^)]+)\)/.exec(s); if(!m) return null;
+  var p = m[1].split(',').map(parseFloat);
+  return { r:p[0], g:p[1], b:p[2], a:p.length > 3 ? p[3] : 1 };
+}
+function relLum(c){
+  var f = [c.r, c.g, c.b].map(function(v){
+    v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * f[0] + 0.7152 * f[1] + 0.0722 * f[2];
+}
+function over(fg, bg){        // 前景带 alpha 时先合成到底色上
+  if(fg.a >= 1) return fg;
+  return { r: fg.r * fg.a + bg.r * (1 - fg.a),
+           g: fg.g * fg.a + bg.g * (1 - fg.a),
+           b: fg.b * fg.a + bg.b * (1 - fg.a), a:1 };
+}
+function ratio(fg, bg){
+  var a = relLum(fg), b = relLum(bg);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+function contrastAudit(cw, cd, cs){
+  var out = [], checked = 0, fails = [];
+  [].forEach.call(cd.querySelectorAll('.panel *'), function(el){
+    // 只看直接含文字的元素
+    var hasText = [].some.call(el.childNodes, function(n){
+      return n.nodeType === 3 && n.textContent.trim().length;
+    });
+    if(!hasText) return;
+    var st = cs(el), fg = parseRGB(st.color);
+    if(!fg) return;
+    // 往上找第一个不透明底色
+    var bg = null, p = el;
+    while(p && p !== cd.documentElement){
+      var c = parseRGB(cs(p).backgroundColor);
+      if(c && c.a > 0.95){ bg = c; break; }
+      p = p.parentElement;
+    }
+    if(!bg) return;
+    var size = parseFloat(st.fontSize), wgt = parseInt(st.fontWeight, 10) || 400;
+    var large = size >= 24 || (size >= 18.66 && wgt >= 700);
+    var need = large ? 3.0 : 4.5;
+    var r = ratio(over(fg, bg), bg);
+    checked++;
+    if(r < need){
+      fails.push('  ' + (el.className || el.tagName) + '  ' + size.toFixed(1) + 'px w' + wgt +
+                 '  ' + st.color + ' on ' + st.backgroundColor.replace(/\s/g,'') +
+                 '  = ' + r.toFixed(2) + ':1  需要 ' + need);
+    }
+  });
+  out.push('  已查 ' + checked + ' 处，缺陷 ' + fails.length + (fails.length ? '  <<<' : '  ok'));
+  return out.concat(fails);
+}
+
+function report(cw, cd){
+  var cs = function(el){ return cw.getComputedStyle(el); };
+  var L = [];
+  L.push('== 探针 y=' + y + '  视口 ' + cw.innerWidth + 'x' + cw.innerHeight +
+         '  实际 scrollY=' + Math.round(cw.scrollY) + ' ==');
+  L.push('横向溢出: scrollWidth=' + cd.documentElement.scrollWidth +
+         ' vs innerWidth=' + cw.innerWidth +
+         (cd.documentElement.scrollWidth > cw.innerWidth ? '  <<< 溢出' : '  ok'));
+  L.push('body tone=' + cd.body.getAttribute('data-tone') +
+         '   topbar data-lt=' + cd.querySelector('.topbar').getAttribute('data-lt'));
+  L.push('左栏各块 data-lt = ' + [].map.call(
+    cd.querySelectorAll('.rail [data-slot], .rail-foot'),
+    function(p){ return p.getAttribute('data-lt'); }).join(' / '));
+
+  L.push('');
+  L.push('-- 嵌板 --');
+  [].forEach.call(cd.querySelectorAll('.panel'), function(p){
+    L.push('  [' + p.dataset.surface + '] x ' + R(p) + '  bg=' + cs(p).backgroundColor);
+  });
+  L.push('-- 章节画面 --');
+  [].forEach.call(cd.querySelectorAll('.chap-backdrop'), function(b){
+    L.push('  position=' + cs(b).position + '  x ' + R(b) +
+            '  线描层 opacity=' + cs(b.querySelector('.art-line')).opacity);
+  });
+  L.push('-- 撕纸毛边 --');
+  [].forEach.call(cd.querySelectorAll('[data-torn]'), function(t){
+    var path = t.querySelector('path');
+    L.push('  edge=' + t.dataset.torn + '  x ' + R(t) +
+            '  fill=' + (path ? cs(path).fill : 'NO PATH <<<'));
+  });
+
+  L.push('');
+  var tot = 0, shown = 0, off = 0, bad = [];
+  [].forEach.call(cd.querySelectorAll('.rise'), function(el, i){
+    tot++;
+    var r = el.getBoundingClientRect(), vis = r.top < cw.innerHeight && r.bottom > 0;
+    if(el.classList.contains('in')) shown++;
+    else if(vis) bad.push('#' + i + ' ' + el.className + ' top=' + Math.round(r.top));
+    else off++;
+  });
+  L.push('-- .rise 显形（读类名，不受过渡时序影响）--');
+  L.push('  共 ' + tot + '  已显形 ' + shown + '  在视口外未显形 ' + off +
+         '  在视口内却没显形 ' + bad.length + (bad.length ? '  <<< ' + bad.join(' | ') : '  ok'));
+
+  L.push('-- 图片 --');
+  [].forEach.call(cd.querySelectorAll('img'), function(im){
+    L.push('  ' + im.getAttribute('src').split('/').pop() +
+           '  loaded=' + im.complete + ' natural=' + im.naturalWidth +
+           '  ' + R(im) + (im.complete && im.naturalWidth ? '' : '  <<< 没加载'));
+  });
+
+  L.push('');
+  L.push('-- 嵌板内文字对比度（阈值：普通 4.5:1，大字/粗体 3:1）--');
+  L.push(contrastAudit(cw, cd, cs).join('\n'));
+
+  L.push('');
+  L.push('-- 控制台错误 --  ' + (errors.length ? errors.join(' | ') : '无'));
+  out.textContent = L.join('\n');
+}
+</script>
+</body></html>
