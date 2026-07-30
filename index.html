@@ -834,8 +834,13 @@ ul{ list-style:none; }
 /* 触摸目标。实测有 14 个可点元素高度不足 44px——手指点不准，
    移动端每一次点空都是一次流失。用 padding 撑高而不是改字号，
    免得动到已经调好的版式。指针设备上不需要，所以限定 coarse。 */
-@media (pointer:coarse){
-  .pill, .link-btn, .more, .tel-lnk, .caselist a, .app a.more{
+/* 按视口宽度而不是 pointer:coarse —— coarse 只在真机上为真，
+   无头浏览器不报告它，等于既不生效也无法验证。窄屏布局本来就是给手指用的。 */
+@media (max-width:1024px){
+  /* 开场面板里那份目录在窄屏是可见可点的（.static），不是仅用于测量的副本 */
+  .pill, .link-btn, .more, .tel-lnk, .caselist a, .app a.more,
+  .endcta a, .ip-cta a, .colophon a, .rail-foot a,
+  .intro-panel .toc a, .dl a{
     min-height:44px; display:inline-flex; align-items:center;
   }
   .toc-sheet a{ min-height:48px; }
@@ -856,6 +861,32 @@ ul{ list-style:none; }
 .ip-cta .tel-lnk:hover{ border-color:var(--on-dark-muted); }
 /* 面板飞散时这两块跟着淡出，不然会孤零零留在画面中央 */
 .intro-panel .ip-trust, .intro-panel .ip-cta{ opacity:var(--fly); }
+
+
+/* ---------- 移动端常驻联系条 ----------
+   文档 22000px 长，手机上滚到联系章要很久。中文服务类站点普遍在底部常驻
+   拨号/加微信，是最短的转化路径。只在窄屏出现，桌面端有固定顶栏与左栏，
+   不需要再占一条。开场那一屏先不出现——那时人还没读到任何理由。 */
+.callbar{ display:none; }
+@media (max-width:1024px){
+  .callbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:820;
+    display:grid; grid-template-columns:1fr 1fr; gap:1px;
+    background:var(--on-dark-faint);
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+    transform:translateY(102%); transition:transform .4s var(--ease);
+  }
+  .callbar.on{ transform:none; }
+  .callbar a{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    min-height:54px; font-size:14.5px; font-weight:700; letter-spacing:.01em;
+    background:var(--ink-deep); color:var(--on-dark);
+  }
+  .callbar a.primary{ background:var(--display); color:var(--ink); }
+  /* 底部条会盖住页脚最后一行 */
+  .colophon{ padding-bottom:calc(34px + 54px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion:reduce){ .callbar{ transition:none; } }
 
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
@@ -956,6 +987,13 @@ ul{ list-style:none; }
   <a href="#position" class="tb-link">章节</a>
   <a href="#contact" class="pill">预约咨询</a>
 </header>
+
+
+<!-- 移动端常驻联系条：滚过开场后升起 -->
+<nav class="callbar" id="callbar" aria-label="快速联系">
+  <a href="tel:18519739539" data-ev="bar-tel">拨打 185 1973 9539</a>
+  <a href="#contact" class="primary" data-ev="bar-book">预约咨询</a>
+</nav>
 
 <!-- ========== 移动端目录 ========== -->
 <nav class="toc-sheet" id="tocSheet" aria-label="章节目录">
@@ -2497,6 +2535,20 @@ ul{ list-style:none; }
   var yr = document.getElementById("yr");
   if(yr) yr.textContent = new Date().getFullYear();
 
+
+
+  /* 移动端联系条：滚过开场那一屏再升起。
+     一上来就弹会挡住首屏，也还没给出任何值得联系的理由。 */
+  (function(){
+    var bar = document.getElementById("callbar");
+    if(!bar) return;
+    var last = null;
+    (function tick(){
+      var on = scrollY > innerHeight * 0.9;
+      if(on !== last){ last = on; bar.classList.toggle("on", on); }
+      requestAnimationFrame(tick);
+    })();
+  })();
 
   /* ============================================================
      9. 转化埋点（第一方，可关）
