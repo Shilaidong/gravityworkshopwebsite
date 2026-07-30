@@ -9,6 +9,20 @@
 <meta property="og:title" content="引力坊 GRAVITY FANG — The Gravity Edition">
 <meta property="og:description" content="名校路径的新标准。顾问判断 × 系统执行。">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="引力坊 GRAVITY FANG">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://gravityfang.com/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"EducationalOrganization",
+ "name":"引力坊 GRAVITY FANG","alternateName":"GRAVITY FANG",
+ "description":"面向 G5、常春藤与顶尖硕博申请的精英升学咨询。顾问做判断，自研系统托住执行。",
+ "telephone":"+86-185-1973-9539",
+ "areaServed":["北京","杭州"],
+ "address":[{"@type":"PostalAddress","addressLocality":"北京","addressCountry":"CN"},
+            {"@type":"PostalAddress","addressLocality":"杭州","addressCountry":"CN"}],
+ "openingHours":"Mo-Su 09:00-21:00"}
+</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230B0E14'/><circle cx='16' cy='16' r='4' fill='%23B8873F'/><ellipse cx='16' cy='16' rx='12' ry='5' fill='none' stroke='%23B8873F' stroke-width='1.2' opacity='.7' transform='rotate(-24 16 16)'/></svg>">
 
 <link rel="preload" href="assets/fonts/inter-tight-700.woff2" as="font" type="font/woff2" crossorigin>
@@ -709,6 +723,94 @@ ul{ list-style:none; }
 .spec-v{ font-size:12.5px; line-height:1.52; color:var(--on-light-muted); }
 .spec-v .en{ display:block; margin-top:3px; font-size:11px; }
 
+
+/* ---------- 第五至八章新增组件 ---------- */
+.wrap{ padding:clamp(40px,4.6vw,80px) var(--panel-pad); }
+.art-base{ z-index:0; }
+
+/* 星图：21 例按地区分布。星图是增强，清单才是内容主体 */
+.starmap{ position:relative; margin:clamp(24px,3vw,44px) 0 0; }
+.starmap-svg{ width:100%; height:auto; overflow:visible; display:block; }
+.sm-link{ stroke:var(--brass-ink); stroke-width:.8; opacity:.28; }
+.sm-reg{ font-family:var(--sans); font-size:15px; font-weight:700; fill:var(--on-light);
+         opacity:.5; letter-spacing:.16em; }
+.sm-star{ cursor:pointer; }
+.sm-hit{ fill:transparent; }
+.sm-dot{ fill:var(--brass-ink); opacity:0; transition:opacity .5s var(--ease), r .25s var(--ease); }
+.sm-star.on .sm-dot{ opacity:.9; }
+.sm-star:hover .sm-dot, .sm-star:focus-visible .sm-dot{ opacity:1; r:9; }
+.sm-star:focus-visible{ outline:2px solid var(--brass-ink); outline-offset:3px; border-radius:50%; }
+.sm-card{
+  position:absolute; left:0; right:0; bottom:-8px; margin:0 auto; max-width:44ch;
+  background:var(--paper-2); border:1px solid var(--on-light-faint); border-radius:4px;
+  padding:12px 15px; font-size:13.5px; line-height:1.55; box-shadow:0 14px 34px -20px rgba(22,24,26,.5);
+}
+.sm-card b{ display:block; font-size:15px; letter-spacing:-.012em; }
+.sm-card em{ font-style:normal; color:var(--brass-ink); font-family:var(--mono); font-size:11px; }
+
+/* 案例清单：窄屏与降级下的唯一载体，必须信息完整 */
+.caselist{ list-style:none; margin:clamp(26px,3vw,44px) 0 0; padding:0;
+  display:grid; grid-template-columns:1fr; gap:0; }
+.caselist li{ display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1.4fr) 52px minmax(0,1.6fr);
+  gap:12px; padding:9px 0; border-top:1px solid var(--on-light-faint); align-items:baseline; font-size:13.5px; }
+.caselist li.hi{ background:color-mix(in srgb, var(--brass-ink) 8%, transparent); }
+.ci-s{ font-weight:700; letter-spacing:-.012em; }
+.ci-m, .ci-n{ color:var(--on-light-muted); }
+.ci-t{ font-family:var(--mono); font-size:10.5px; color:var(--brass-ink); }
+
+/* 团队 */
+.people{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px; background:var(--on-light-faint);
+  border-top:1px solid var(--on-light-faint); border-bottom:1px solid var(--on-light-faint); }
+.person{ background:var(--paper); padding:clamp(20px,2.2vw,32px) clamp(16px,1.8vw,26px);
+  display:flex; flex-direction:column; gap:11px; }
+.rl{ font-size:10.5px; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--on-light-muted); }
+.nm{ font-size:clamp(1.3rem,2.2vw,1.9rem); line-height:1.02; letter-spacing:-.03em; font-weight:700; }
+.tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:8px; }
+.tag{ font-size:11px; padding:3px 9px; border:1px solid var(--on-light-faint); border-radius:100px; color:var(--on-light-muted); }
+
+/* 联系 */
+.contact-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(28px,4vw,72px); align-items:start; }
+.dl{ display:grid; grid-template-columns:80px 1fr; gap:14px 18px; align-items:baseline; font-size:14.5px; }
+.dl dt{ font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--on-light-muted); padding-top:5px; }
+.dl dd{ margin:0; }
+.tel{ font-size:clamp(1.5rem,3vw,2.3rem); letter-spacing:-.02em; font-weight:700; line-height:1; }
+.tel:hover{ color:var(--brass-ink); }
+.qr{ width:118px; border:1px solid var(--on-light-faint); border-radius:3px; padding:6px; background:#fff; }
+.link-btn{ font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:700;
+  border-bottom:1px solid currentColor; padding-bottom:2px; }
+.form{ display:flex; flex-direction:column; gap:13px; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--on-light-muted); }
+.field input, .field select, .field textarea{
+  font:inherit; font-size:15px; color:var(--on-light); background:transparent;
+  border:0; border-bottom:1px solid var(--on-light-faint); padding:9px 0; border-radius:0;
+  transition:border-color .3s; min-height:44px;   /* 触摸目标 */
+}
+.field textarea{ resize:vertical; min-height:64px; }
+.field :focus{ outline:none; border-bottom-color:var(--brass-ink); }
+.field select{ appearance:none; cursor:pointer; }
+.form-note{ font-size:13px; color:var(--brass-ink); min-height:1.2em; }
+.fine{ font-size:11.5px; line-height:1.5; color:var(--on-light-muted); }
+.colophon{ position:relative; z-index:4; background:var(--ink-deep); color:var(--on-dark);
+  padding:26px var(--edge-r) 34px calc(var(--rail-w) + var(--gut));
+  display:flex; flex-wrap:wrap; gap:14px 30px; align-items:baseline; font-size:11.5px; }
+.colophon .cw{ margin-left:auto; }
+
+@media (max-width:1024px){
+  .people{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .contact-grid{ grid-template-columns:1fr; }
+  .colophon{ padding-left:var(--gut); }
+}
+@media (max-width:720px){
+  .people{ grid-template-columns:1fr; }
+  .caselist li{ grid-template-columns:1fr; gap:2px; padding:11px 0; }
+  .ci-t{ display:inline-block; margin-right:8px; }
+  .starmap{ display:none; }     /* 窄屏靠清单，信息一条不少 */
+  .dl{ grid-template-columns:1fr; gap:4px 0; }
+  .dl dt{ padding-top:14px; }
+}
+
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
   position:fixed; inset:0; z-index:850; background:var(--ink-deep); color:var(--on-dark);
@@ -929,7 +1031,7 @@ ul{ list-style:none; }
 
   <!-- 嵌板 1 · 奶白 -->
   <div class="panel" data-tone="light" data-surface="cream">
-    <div class="torn" data-torn="top" data-seed="17" aria-hidden="true"></div>
+    <div class="torn" data-torn="top" data-seam="torn" data-seed="17" aria-hidden="true"></div>
 
       <div class="lead-block rise">
         <p class="kicker muted">Chapter I · 定位与选校</p>
@@ -1223,7 +1325,7 @@ ul{ list-style:none; }
   </div>
 
   <div class="panel" data-tone="light" data-surface="cream">
-    <div class="torn" data-torn="top" data-seed="23" aria-hidden="true"></div>
+    <div class="torn" data-torn="top" data-seam="arc" data-seed="23" aria-hidden="true"></div>
 
     <div class="lead-block rise" data-lead="label">
       <p class="cjk-lede">
@@ -1313,7 +1415,7 @@ ul{ list-style:none; }
       </div>
     </div>
 
-    <div class="torn" data-torn="bottom" data-seed="57" aria-hidden="true"></div>
+    <div class="torn" data-torn="bottom" data-seam="arc" data-seed="57" aria-hidden="true"></div>
   </div>
 
 </section>
@@ -1355,7 +1457,7 @@ ul{ list-style:none; }
   </div>
 
   <div class="panel" data-tone="light" data-surface="accent">
-    <div class="torn" data-torn="top" data-seed="31" aria-hidden="true"></div>
+    <div class="torn" data-torn="top" data-seam="step" data-seed="31" aria-hidden="true"></div>
 
     <div class="lead-block rise">
       <p class="kicker muted">Chapter III · 文书</p>
@@ -1416,7 +1518,7 @@ ul{ list-style:none; }
       </div>
     </div>
 
-    <div class="torn" data-torn="bottom" data-seed="64" aria-hidden="true"></div>
+    <div class="torn" data-torn="bottom" data-seam="step" data-seed="64" aria-hidden="true"></div>
   </div>
 
 </section>
@@ -1459,7 +1561,7 @@ ul{ list-style:none; }
 
   <!-- 色块面板上滑：自己钉住一屏，被下一块嵌板压着盖掉 -->
   <div class="panel" data-tone="light" data-surface="accent" data-stack data-split>
-    <div class="torn" data-torn="top" data-seed="43" aria-hidden="true"></div>
+    <div class="torn" data-torn="top" data-seam="rule" data-seed="43" aria-hidden="true"></div>
     <div class="stack-inner rise">
       <p class="kicker muted">高压模拟 · Mock under pressure</p>
       <p class="swash-line" style="margin-top:14px"><span class="sw">T</span>he first hard question<br>should not be the real one.</p>
@@ -1517,12 +1619,373 @@ ul{ list-style:none; }
       </div>
     </div>
 
-    <div class="torn" data-torn="bottom" data-seed="71" aria-hidden="true"></div>
+    <div class="torn" data-torn="bottom" data-seam="rule" data-seed="71" aria-hidden="true"></div>
   </div>
 
 </section>
 
-<!-- 后续章节 V–VIII 待铺开 -->
+
+<!-- ============ V · 系统 ============ -->
+<section class="chapter" id="systems" data-chapter="systems" data-hero="light">
+  <div class="chap-foreground" aria-hidden="true">
+    <div class="fg-inner">
+      <img class="fg-prop" src="assets/art/ob-instrument.webp" alt=""
+           style="right:53%; top:15vh; height:17vh; transform:rotate(-10deg)" loading="lazy">
+      <img class="fg-prop" src="assets/art/fg-student-look.webp" alt=""
+           style="right:38%; bottom:0; height:56vh" loading="lazy">
+      <img class="fg-prop" src="assets/art/ob-case.webp" alt=""
+           style="right:26%; top:33vh; height:13vh; transform:rotate(7deg)" loading="lazy">
+      <img class="fg-prop" src="assets/art/fg-scholar-point.webp" alt=""
+           style="right:1%; bottom:-6vh; height:90vh" loading="lazy">
+    </div>
+  </div>
+  <div class="chap-backdrop" data-tone="light" aria-hidden="true">
+    <div class="art-wrap">
+      <img class="art-base" src="assets/art/bg-systems.webp" alt="" loading="lazy" fetchpriority="low">
+      <img class="art-line" src="assets/art/bg-systems-line.webp" alt="" loading="lazy" fetchpriority="low">
+    </div>
+    <div class="art-veil"></div>
+  </div>
+  <div class="chap-hero">
+    <div class="chap-type">
+      <p class="chap-zh rise">系&nbsp;统</p>
+      <h2 class="chap-display rise d1">Systems</h2>
+      <div class="chap-sub rise d2">
+        <p class="swash-line"><span class="sw">O</span>ne source of truth<br>for the whole season.</p>
+        <p class="cjk-lede">进度、任务、材料与决策节点集中一处。<br>顾问与学生看到同一套结构。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-tone="light">
+    <div class="torn" data-torn="top" data-seam="torn" data-seed="53" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="lead-block rise">
+        <p class="kicker muted">Chapter V · 自研软件矩阵</p>
+        <p class="swash-line"><span class="sw">C</span>onsulting is the product.<br>The software is the proof.</p>
+        <p class="cjk-lede">工程背景不是简历上的一行字。申请季里最重的执行——进度、材料、通信、选校、测评——我们做成了自己的软件。产品持续迭代中，官网只做展示与预约演示。</p>
+      </div>
+
+      <div class="cardgrid">
+        <article class="card rise">
+          <div class="card-face" style="--face-bg:#1B2733; --face:4/5">
+            <p class="face-note"><span class="num">01</span><br>Terra · 中枢总台</p>
+          </div>
+          <div class="card-body">
+            <h3 class="card-t">一个真相源</h3>
+            <p class="card-b">多角色门户、时间线、打卡与探索模块，配带调用链路记录的接口与 AI 推荐摘要。顾问、学生与家长看到同一套结构，不再靠微信群对齐信息。</p>
+            <p class="en">One desk. Advisor, student and parent see the same structure.</p>
+          </div>
+        </article>
+        <article class="card rise d1">
+          <div class="card-face" style="--face-bg:#2A2118; --face:3/4">
+            <p class="face-note"><span class="num">02</span><br>Life-Echo · 结构化测评</p>
+          </div>
+          <div class="card-body">
+            <h3 class="card-t">给定位与文书提供证据</h3>
+            <p class="card-b">基于人生故事访谈与大五人格，输出可用的心理画像，而不是一句星座式结论。</p>
+            <p class="en">Structured assessment that grounds positioning and essays.</p>
+          </div>
+        </article>
+        <article class="card rise d2">
+          <div class="card-face" style="--face-bg:#1F2B26; --face:5/6">
+            <p class="face-note"><span class="num">03</span><br>选校沙盘 · 申请邮箱</p>
+          </div>
+          <div class="card-body">
+            <h3 class="card-t">少拍脑袋，可追踪</h3>
+            <p class="card-b">多维条件收敛成清单，每所学校一张决策卡；申请季往来邮件集中托管，关键节点不淹没在收件箱里。</p>
+            <p class="en">Multi-factor lists, and correspondence that stays traceable.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="spec">
+        <div class="spec-row"><div class="spec-k">多角色门户</div><div class="spec-v">学生、家长、顾问各自的视图，同一套底层数据。<span class="en">One dataset, three views.</span></div></div>
+        <div class="spec-row"><div class="spec-k">决策留痕</div><div class="spec-v">写操作带调用链路记录，回头能查是哪一步起了作用。<span class="en">Traceable writes you can audit later.</span></div></div>
+        <div class="spec-row"><div class="spec-k">AI 辅助</div><div class="spec-v">推荐摘要与问答，只做提示，判断仍在顾问手里。<span class="en">AI suggests; people decide.</span></div></div>
+        <div class="spec-row"><div class="spec-k">迭代中</div><div class="spec-v">产品仍在演进，官网不深链未稳定的生产环境。<span class="en">Still shipping — demos on request.</span></div></div>
+      </div>
+
+      <a href="#contact" class="pill" style="margin-top:clamp(24px,3vw,40px)">预约系统演示 ↗</a>
+    </div>
+    <div class="torn" data-torn="bottom" data-seam="torn" data-seed="59" aria-hidden="true"></div>
+  </div>
+</section>
+
+
+<!-- ============ VI · 结果 ============ -->
+<section class="chapter" id="outcomes" data-chapter="outcomes" data-hero="light">
+  <div class="chap-foreground" aria-hidden="true">
+    <div class="fg-inner">
+      <img class="fg-prop" src="assets/art/ob-medal.webp" alt=""
+           style="right:52%; top:14vh; height:15vh; transform:rotate(12deg)" loading="lazy">
+      <img class="fg-prop" src="assets/art/fg-student-look.webp" alt=""
+           style="right:36%; bottom:0; height:58vh" loading="lazy">
+      <img class="fg-prop" src="assets/art/fg-scholar-point.webp" alt=""
+           style="right:2%; bottom:-6vh; height:88vh" loading="lazy">
+    </div>
+  </div>
+  <div class="chap-backdrop" data-tone="light" aria-hidden="true">
+    <div class="art-wrap">
+      <img class="art-base" src="assets/art/bg-outcomes.webp" alt="" loading="lazy" fetchpriority="low">
+      <img class="art-line" src="assets/art/bg-outcomes-line.webp" alt="" loading="lazy" fetchpriority="low">
+    </div>
+    <div class="art-veil"></div>
+  </div>
+  <div class="chap-hero">
+    <div class="chap-type">
+      <p class="chap-zh rise">结&nbsp;果</p>
+      <h2 class="chap-display rise d1">Outcomes</h2>
+      <div class="chap-sub rise d2">
+        <p class="swash-line"><span class="sw">O</span>utcomes speak.<br>Different profiles, one method.</p>
+        <p class="cjk-lede">结果说话。背景不同，方法一致。<br>案例为往期学员真实录取，背景要点已匿名化。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-tone="light">
+    <div class="torn" data-torn="top" data-seam="arc" data-seed="61" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="lead-block rise">
+        <p class="kicker muted">Chapter VI · 21 例录取</p>
+        <p class="cjk-lede">按地区分布。点亮一颗星看它的背景要点。</p>
+      </div>
+
+      <figure class="starmap rise d1">
+        <svg class="starmap-svg" viewBox="0 0 1000 520" role="img" aria-label="21 例录取按地区分布的星图">
+        <line class="sm-link" x1="210" y1="128" x2="129" y2="155"/>
+        <line class="sm-link" x1="129" y1="155" x2="78" y2="104"/>
+        <line class="sm-link" x1="78" y1="104" x2="153" y2="63"/>
+        <line class="sm-link" x1="501" y1="91" x2="447" y2="124"/>
+        <line class="sm-link" x1="447" y1="124" x2="344" y2="141"/>
+        <line class="sm-link" x1="344" y1="141" x2="354" y2="87"/>
+        <line class="sm-link" x1="354" y1="87" x2="403" y2="13"/>
+        <line class="sm-link" x1="403" y1="13" x2="480" y2="56"/>
+        <line class="sm-link" x1="805" y1="200" x2="746" y2="226"/>
+        <line class="sm-link" x1="746" y1="226" x2="709" y2="200"/>
+        <line class="sm-link" x1="709" y1="200" x2="686" y2="128"/>
+        <line class="sm-link" x1="686" y1="128" x2="797" y2="125"/>
+        <line class="sm-link" x1="371" y1="359" x2="258" y2="364"/>
+        <line class="sm-link" x1="258" y1="364" x2="269" y2="302"/>
+        <line class="sm-link" x1="774" y1="421" x2="640" y2="446"/>
+        <line class="sm-link" x1="640" y1="446" x2="682" y2="354"/>
+        <text class="sm-reg" x="92" y="48">英国</text>
+        <text class="sm-reg" x="362" y="18">美国</text>
+        <text class="sm-reg" x="702" y="108">港新</text>
+        <text class="sm-reg" x="242" y="268">欧陆</text>
+        <text class="sm-reg" x="642" y="328">加拿大</text>
+        <g class="sm-star" tabindex="0" role="button" data-i="0" aria-label="Imperial College London Mechanical Engineering"><circle class="sm-hit" cx="210" cy="128" r="17"/><circle class="sm-dot" cx="210" cy="128" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="1" aria-label="University of Oxford MPhil Economics"><circle class="sm-hit" cx="129" cy="155" r="17"/><circle class="sm-dot" cx="129" cy="155" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="2" aria-label="University of Cambridge Chemistry"><circle class="sm-hit" cx="78" cy="104" r="17"/><circle class="sm-dot" cx="78" cy="104" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="3" aria-label="London School of Economics MSc Management"><circle class="sm-hit" cx="153" cy="63" r="17"/><circle class="sm-dot" cx="153" cy="63" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="4" aria-label="Stanford University Symbolic Systems"><circle class="sm-hit" cx="501" cy="91" r="17"/><circle class="sm-dot" cx="501" cy="91" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="5" aria-label="Columbia University M.S. Data Science"><circle class="sm-hit" cx="447" cy="124" r="17"/><circle class="sm-dot" cx="447" cy="124" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="6" aria-label="Cornell University Biological Engineering"><circle class="sm-hit" cx="344" cy="141" r="17"/><circle class="sm-dot" cx="344" cy="141" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="7" aria-label="UCLA Computer Science"><circle class="sm-hit" cx="354" cy="87" r="17"/><circle class="sm-dot" cx="354" cy="87" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="8" aria-label="Johns Hopkins University M.S. Finance"><circle class="sm-hit" cx="403" cy="13" r="17"/><circle class="sm-dot" cx="403" cy="13" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="9" aria-label="Pomona College Sociology"><circle class="sm-hit" cx="480" cy="56" r="17"/><circle class="sm-dot" cx="480" cy="56" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="10" aria-label="National University of Singapore Business Administration"><circle class="sm-hit" cx="805" cy="200" r="17"/><circle class="sm-dot" cx="805" cy="200" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="11" aria-label="Nanyang Technological University M.Eng Aerospace"><circle class="sm-hit" cx="746" cy="226" r="17"/><circle class="sm-dot" cx="746" cy="226" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="12" aria-label="University of Hong Kong Electronic Engineering"><circle class="sm-hit" cx="709" cy="200" r="17"/><circle class="sm-dot" cx="709" cy="200" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="13" aria-label="Chinese University of Hong Kong M.S. FinTech"><circle class="sm-hit" cx="686" cy="128" r="17"/><circle class="sm-dot" cx="686" cy="128" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="14" aria-label="HKUST MSc Financial Technology"><circle class="sm-hit" cx="797" cy="125" r="17"/><circle class="sm-dot" cx="797" cy="125" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="15" aria-label="ETH Zürich M.S. Robotics, Systems & Control"><circle class="sm-hit" cx="371" cy="359" r="17"/><circle class="sm-dot" cx="371" cy="359" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="16" aria-label="INSEAD MBA"><circle class="sm-hit" cx="258" cy="364" r="17"/><circle class="sm-dot" cx="258" cy="364" r="4.6"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="17" aria-label="EHL Hospitality Business School B.Sc. Hospitality Management"><circle class="sm-hit" cx="269" cy="302" r="17"/><circle class="sm-dot" cx="269" cy="302" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="18" aria-label="University of Toronto Rotman Commerce"><circle class="sm-hit" cx="774" cy="421" r="17"/><circle class="sm-dot" cx="774" cy="421" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="19" aria-label="McGill University Political Science"><circle class="sm-hit" cx="640" cy="446" r="17"/><circle class="sm-dot" cx="640" cy="446" r="6.0"/></g>
+        <g class="sm-star" tabindex="0" role="button" data-i="20" aria-label="University of British Columbia M.A.Sc. Civil Engineering"><circle class="sm-hit" cx="682" cy="354" r="17"/><circle class="sm-dot" cx="682" cy="354" r="4.6"/></g>
+        </svg>
+        <figcaption class="sm-card" id="smCard" hidden></figcaption>
+      </figure>
+
+      <!-- 星图是增强，不是内容的唯一载体：窄屏与降级下这份清单就是主体 -->
+      <ol class="caselist" id="caseList">
+          <li data-i="0" data-reg="UK"><span class="ci-s">Imperial College London</span><span class="ci-m">Mechanical Engineering</span><span class="ci-t">UG</span><span class="ci-n">4A*，STEP II；面试表现突出</span></li>
+          <li data-i="1" data-reg="UK"><span class="ci-s">University of Oxford</span><span class="ci-m">MPhil Economics</span><span class="ci-t">PG</span><span class="ci-n">一等荣誉，IELTS 8.0；研究轨迹连贯</span></li>
+          <li data-i="2" data-reg="UK"><span class="ci-s">University of Cambridge</span><span class="ci-m">Chemistry</span><span class="ci-t">UG</span><span class="ci-n">3A*1A，IELTS 7.5</span></li>
+          <li data-i="3" data-reg="UK"><span class="ci-s">London School of Economics</span><span class="ci-m">MSc Management</span><span class="ci-t">PG</span><span class="ci-n">2:1 学位，对口实习</span></li>
+          <li data-i="4" data-reg="US"><span class="ci-s">Stanford University</span><span class="ci-m">Symbolic Systems</span><span class="ci-t">UG</span><span class="ci-n">SAT 1570，已发表研究</span></li>
+          <li data-i="5" data-reg="US"><span class="ci-s">Columbia University</span><span class="ci-m">M.S. Data Science</span><span class="ci-t">PG</span><span class="ci-n">GRE 330，GPA 3.9</span></li>
+          <li data-i="6" data-reg="US"><span class="ci-s">Cornell University</span><span class="ci-m">Biological Engineering</span><span class="ci-t">UG</span><span class="ci-n">TOEFL 111，ACT 35，9 门 AP</span></li>
+          <li data-i="7" data-reg="US"><span class="ci-s">UCLA</span><span class="ci-m">Computer Science</span><span class="ci-t">UG</span><span class="ci-n">SAT 1550，GPA 4.0，10 门 AP</span></li>
+          <li data-i="8" data-reg="US"><span class="ci-s">Johns Hopkins University</span><span class="ci-m">M.S. Finance</span><span class="ci-t">PG</span><span class="ci-n">GMAT 740，GPA 3.8</span></li>
+          <li data-i="9" data-reg="US"><span class="ci-s">Pomona College</span><span class="ci-m">Sociology</span><span class="ci-t">UG</span><span class="ci-n">TOEFL 108，SAT 1500，6 门 AP</span></li>
+          <li data-i="10" data-reg="APAC"><span class="ci-s">National University of Singapore</span><span class="ci-m">Business Administration</span><span class="ci-t">UG</span><span class="ci-n">IB 44/45，领导型课外活动</span></li>
+          <li data-i="11" data-reg="APAC"><span class="ci-s">Nanyang Technological University</span><span class="ci-m">M.Eng Aerospace</span><span class="ci-t">PG</span><span class="ci-n">B.Eng with High Honours</span></li>
+          <li data-i="12" data-reg="APAC"><span class="ci-s">University of Hong Kong</span><span class="ci-m">Electronic Engineering</span><span class="ci-t">UG</span><span class="ci-n">4A*，长期志愿服务</span></li>
+          <li data-i="13" data-reg="APAC"><span class="ci-s">Chinese University of Hong Kong</span><span class="ci-m">M.S. FinTech</span><span class="ci-t">PG</span><span class="ci-n">GRE 328，四大实习</span></li>
+          <li data-i="14" data-reg="APAC"><span class="ci-s">HKUST</span><span class="ci-m">MSc Financial Technology</span><span class="ci-t">PG</span><span class="ci-n">GRE 325，GPA 3.7</span></li>
+          <li data-i="15" data-reg="EU"><span class="ci-s">ETH Zürich</span><span class="ci-m">M.S. Robotics, Systems & Control</span><span class="ci-t">PG</span><span class="ci-n">机械工程本科，GPA 3.95</span></li>
+          <li data-i="16" data-reg="EU"><span class="ci-s">INSEAD</span><span class="ci-m">MBA</span><span class="ci-t">PG</span><span class="ci-n">GMAT 730，五年头部科技公司经验</span></li>
+          <li data-i="17" data-reg="EU"><span class="ci-s">EHL Hospitality Business School</span><span class="ci-m">B.Sc. Hospitality Management</span><span class="ci-t">UG</span><span class="ci-n">三语，五星级酒店实习</span></li>
+          <li data-i="18" data-reg="CA"><span class="ci-s">University of Toronto</span><span class="ci-m">Rotman Commerce</span><span class="ci-t">UG</span><span class="ci-n">IB 43/45，公益组织创办人</span></li>
+          <li data-i="19" data-reg="CA"><span class="ci-s">McGill University</span><span class="ci-m">Political Science</span><span class="ci-t">UG</span><span class="ci-n">模联主席，IELTS 8.5</span></li>
+          <li data-i="20" data-reg="CA"><span class="ci-s">University of British Columbia</span><span class="ci-m">M.A.Sc. Civil Engineering</span><span class="ci-t">PG</span><span class="ci-n">GPA 3.8，Co-op 经历</span></li>
+      </ol>
+    </div>
+    <div class="torn" data-torn="bottom" data-seed="67" aria-hidden="true"></div>
+  </div>
+</section>
+
+
+<!-- ============ VII · 团队 ============ -->
+<section class="chapter" id="team" data-chapter="team" data-hero="light">
+  <div class="chap-foreground" aria-hidden="true">
+    <div class="fg-inner">
+      <img class="fg-prop" src="assets/art/ob-folio.webp" alt=""
+           style="right:55%; top:16vh; height:14vh; transform:rotate(-9deg)" loading="lazy">
+      <img class="fg-prop" src="assets/art/fg-scholar-two.webp" alt=""
+           style="right:2%; bottom:-4vh; height:82vh" loading="lazy">
+    </div>
+  </div>
+  <div class="chap-backdrop" data-tone="light" aria-hidden="true">
+    <div class="art-wrap">
+      <img class="art-base" src="assets/art/bg-team.webp" alt="" loading="lazy" fetchpriority="low">
+      <img class="art-line" src="assets/art/bg-team-line.webp" alt="" loading="lazy" fetchpriority="low">
+    </div>
+    <div class="art-veil"></div>
+  </div>
+  <div class="chap-hero">
+    <div class="chap-type">
+      <p class="chap-zh rise">团&nbsp;队</p>
+      <h2 class="chap-display rise d1">Team</h2>
+      <div class="chap-sub rise d2">
+        <p class="swash-line"><span class="sw">E</span>xpertise<br>you can verify.</p>
+        <p class="cjk-lede">专业，可核对。<br>工程与招生背景摆在明处，不做流水线中介。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-tone="light">
+    <div class="torn" data-torn="top" data-seam="step" data-seed="73" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="people">
+        <article class="person rise">
+          <p class="rl">创始人 &amp; 首席顾问</p>
+          <h3 class="nm">Mira Shi</h3>
+          <p class="card-b">莱斯大学电子工程本硕（Rice University, EE MS/BS），约八年留学咨询经验。硬核技术背景与精英教育理解的交叉点——拒绝流水线作业，坚持数据驱动的定制化申请策略。</p>
+          <p class="en">M.S./B.S. Electrical Engineering, Rice University. Eight years in admissions consulting.</p>
+          <div class="tags"><span class="tag">G5 申请</span><span class="tag">工程专业</span><span class="tag">AI 教育</span></div>
+        </article>
+        <article class="person rise d1">
+          <p class="rl">学术总监</p>
+          <h3 class="nm">Dr. Wilson</h3>
+          <p class="card-b">宾夕法尼亚大学教育学博士，前招生官，十五年从业经验。熟悉招生政策的实际运作方式，负责文书方向把关与长线学术规划。</p>
+          <p class="en">Ed.D., University of Pennsylvania. Former admissions officer, 15 years.</p>
+          <div class="tags"><span class="tag">招生政策</span><span class="tag">文书指导</span><span class="tag">学术规划</span></div>
+        </article>
+        <article class="person rise d2">
+          <p class="rl">资深顾问</p>
+          <h3 class="nm">Sarah Chen</h3>
+          <p class="card-b">伯克利 MBA，长期负责商科与 STEM 方向的申请。擅长把职业目标倒推成可执行的本科与研究生路径。</p>
+          <p class="en">MBA, UC Berkeley. Business and STEM admissions.</p>
+          <div class="tags"><span class="tag">商科申请</span><span class="tag">STEM</span><span class="tag">MBA 咨询</span></div>
+        </article>
+      </div>
+
+      <div class="spec" style="margin-top:clamp(30px,3.4vw,52px)">
+        <div class="spec-row"><div class="spec-k">我们不做什么</div><div class="spec-v">不贩卖焦虑，不做数字墙，不承诺录取率。所有案例可核对，所有判断说得出依据。<span class="en">No fear-selling, no vanity metrics, no guarantees.</span></div></div>
+        <div class="spec-row"><div class="spec-k">服务城市</div><div class="spec-v">北京 · 杭州。双城面谈，其余环节线上同步进行。<span class="en">Beijing and Hangzhou, with the rest online.</span></div></div>
+        <div class="spec-row"><div class="spec-k">主赛道</div><div class="spec-v">本科 G5 与常春藤；顶尖硕博项目。中英双语全流程。<span class="en">G5 and Ivy undergraduate; top graduate programmes.</span></div></div>
+        <div class="spec-row"><div class="spec-k">团队口径</div><div class="spec-v">顾问做判断，自研系统托住执行。<span class="en">People decide; systems carry the load.</span></div></div>
+      </div>
+    </div>
+    <div class="torn" data-torn="bottom" data-seam="step" data-seed="79" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- ============ VIII · 联系 ============ -->
+<section class="chapter" id="contact" data-chapter="contact" data-hero="light">
+  <div class="chap-foreground" aria-hidden="true">
+    <div class="fg-inner">
+      <img class="fg-prop" src="assets/art/ob-case.webp" alt=""
+           style="right:50%; top:16vh; height:15vh; transform:rotate(-11deg)" loading="lazy">
+      <img class="fg-prop" src="assets/art/fg-student-walk.webp" alt=""
+           style="right:34%; bottom:0; height:60vh" loading="lazy">
+      <img class="fg-prop" src="assets/art/fg-scholar-open.webp" alt=""
+           style="right:1%; bottom:-6vh; height:88vh" loading="lazy">
+    </div>
+  </div>
+  <div class="chap-backdrop" data-tone="light" aria-hidden="true">
+    <div class="art-wrap">
+      <img class="art-base" src="assets/art/bg-contact.webp" alt="" loading="lazy" fetchpriority="low">
+      <img class="art-line" src="assets/art/bg-contact-line.webp" alt="" loading="lazy" fetchpriority="low">
+    </div>
+    <div class="art-veil"></div>
+  </div>
+  <div class="chap-hero">
+    <div class="chap-type">
+      <p class="chap-zh rise">联&nbsp;系</p>
+      <h2 class="chap-display rise d1">Contact</h2>
+      <div class="chap-sub rise d2">
+        <p class="swash-line"><span class="sw">T</span>hirty minutes<br>before anything else.</p>
+        <p class="cjk-lede">先聊三十分钟，判断你的情况值不值得做、怎么做。<br>不合适我们会直说。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-tone="light">
+    <div class="torn" data-torn="top" data-seam="rule" data-seed="83" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="contact-grid">
+        <div class="rise">
+          <dl class="dl">
+            <dt>电话</dt>
+            <dd><a href="tel:18519739539" class="tel">185 1973 9539</a><br><span class="card-b">工作时间 9:00 – 21:00</span></dd>
+            <dt>微信</dt>
+            <dd>
+              <img class="qr" src="assets/qr-wechat.jpg" alt="添加顾问微信的二维码" loading="lazy" width="118" height="118">
+              <span class="card-b" style="display:block;margin-top:8px">扫码添加顾问</span>
+            </dd>
+            <dt>城市</dt>
+            <dd>北京 · 杭州<br><span class="card-b">Beijing · Hangzhou</span></dd>
+            <dt>系统</dt>
+            <dd>
+              <a href="https://terra-edu.vercel.app" target="_blank" rel="noopener" class="link-btn">Terra 演示站 ↗</a>
+              &nbsp;&nbsp;
+              <a href="https://life-echo.vercel.app" target="_blank" rel="noopener" class="link-btn">Life-Echo ↗</a>
+            </dd>
+          </dl>
+        </div>
+
+        <form class="form rise d1" id="consultForm" novalidate>
+          <p class="kicker muted" style="margin-bottom:4px">留下信息，顾问会在一个工作日内回复</p>
+          <div class="field">
+            <label for="f-name">称呼</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required placeholder="怎么称呼您">
+          </div>
+          <div class="field">
+            <label for="f-contact">电话 / 微信</label>
+            <input id="f-contact" name="contact" type="text" autocomplete="tel" required placeholder="方便联系到您的方式">
+          </div>
+          <div class="field">
+            <label for="f-intent">意向</label>
+            <select id="f-intent" name="intent">
+              <option>本科申请</option><option>硕博申请</option><option>系统演示</option><option>其他</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-note">补充</label>
+            <textarea id="f-note" name="note" rows="2" placeholder="年级、目标国家、当前进度……（选填）"></textarea>
+          </div>
+          <button type="submit" class="btn" style="align-self:flex-start;margin-top:4px">提交 <span class="arw">→</span></button>
+          <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+          <p class="fine">提交即表示同意我们通过所留方式与您联系。信息仅用于本次咨询，不会对外提供。</p>
+        </form>
+      </div>
+    </div>
+    <div class="torn" data-torn="bottom" data-seed="89" aria-hidden="true"></div>
+  </div>
+
+  <footer class="colophon">
+    <span>© <span id="yr">2026</span> 引力坊 GRAVITY FANG</span>
+    <span>北京 · 杭州</span>
+    <span>精英留学咨询 &amp; 教育科技</span>
+    <span class="cw">The Gravity Edition ’26</span>
+  </footer>
+</section>
+
 
 </main>
 
@@ -1556,26 +2019,60 @@ ul{ list-style:none; }
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
+  /* 接缝生成器。四种形态轮换 —— 只有一种撕纸毛边时，八个章节的换页
+     看起来是同一下动作，翻到后面就腻了。形态由 data-seam 指定：
+       torn 撕纸毛边 · arc 缓弧 · step 阶梯切口 · rule 直边加铜线 */
+  function seamPath(kind, w, h, rnd){
+    var base = h * 0.52, pts = [], x = 0, i;
+    if(kind === "arc"){
+      // 一道极缓的弧，起伏由种子决定往上还是往下
+      var dir = rnd() > .5 ? 1 : -1, amp = h * (0.28 + rnd() * 0.16);
+      for(x = 0; x <= w; x += w / 48)
+        pts.push([x, base - dir * amp * Math.sin(Math.PI * x / w)]);
+    } else if(kind === "step"){
+      // 阶梯切口：随机宽度的平台，落差成整数级
+      var n = 7 + Math.floor(rnd() * 5), lvl = base, seg = w / n;
+      for(i = 0; i <= n; i++){
+        pts.push([i * seg, lvl]);
+        lvl = base + (Math.floor(rnd() * 5) - 2) * (h * 0.13);
+        lvl = Math.max(h * 0.16, Math.min(h * 0.86, lvl));
+        pts.push([i * seg, lvl]);
+      }
+    } else if(kind === "rule"){
+      pts.push([0, base]); pts.push([w, base]);
+    } else {
+      // 撕纸毛边：大起伏 + 细毛刺 + 缓慢漂移
+      var step = 7;
+      while(x <= w){
+        var coarse = Math.sin(x / 128 + rnd() * .4) * h * .17;
+        var fine   = (rnd() - .5) * h * .30;
+        var drift  = Math.sin(x / 41) * h * .06;
+        pts.push([x, Math.max(2, Math.min(h - 2, base + coarse + fine + drift))]);
+        x += step * (0.6 + rnd() * 0.9);
+      }
+      pts.push([w, base]);
+    }
+    var d = "M0," + h + " L0," + pts[0][1].toFixed(1);
+    for(i = 1; i < pts.length; i++) d += " L" + pts[i][0].toFixed(1) + "," + pts[i][1].toFixed(1);
+    return { d: d + " L" + w + "," + h + " Z", pts: pts };
+  }
+
   function buildTorn(el){
     var w = Math.max(el.clientWidth, 320), h = el.clientHeight || 80;
     var rnd = mulberry(parseInt(el.dataset.seed || "1", 10) * 9973);
-    var step = 7, pts = [], x = 0, base = h * 0.52;
-    // 双层噪声：大起伏 + 细毛刺
-    while(x <= w){
-      var coarse = Math.sin(x / 128 + rnd() * .4) * h * .17;
-      var fine   = (rnd() - .5) * h * .30;
-      var drift  = Math.sin(x / 41) * h * .06;
-      pts.push([x, Math.max(2, Math.min(h - 2, base + coarse + fine + drift))]);
-      x += step * (0.6 + rnd() * 0.9);
+    var kind = el.dataset.seam || "torn";
+    var g = seamPath(kind, w, h, rnd);
+    var extra = "";
+    if(kind === "rule"){
+      // 直边太素，压一条铜线当分隔
+      var y = g.pts[0][1].toFixed(1);
+      extra = '<line x1="0" y1="' + y + '" x2="' + w + '" y2="' + y +
+              '" stroke="var(--brass-ink)" stroke-width="1.2" opacity=".5"/>';
     }
-    pts.push([w, base]);
-    var d = "M0," + h + " L0," + pts[0][1].toFixed(1);
-    for(var i = 1; i < pts.length; i++) d += " L" + pts[i][0].toFixed(1) + "," + pts[i][1].toFixed(1);
-    d += " L" + w + "," + h + " Z";
     // 填色跟随所在嵌板的表面（奶白或灰绿），不能写死 --paper
     el.innerHTML =
       '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
-        '<path d="' + d + '" fill="var(--torn-fill, var(--paper))"/>' +
+        '<path d="' + g.d + '" fill="var(--torn-fill, var(--paper))"/>' + extra +
       '</svg>';
   }
   var torns = [].slice.call(document.querySelectorAll("[data-torn]"));
@@ -1774,6 +2271,90 @@ ul{ list-style:none; }
   toggle.addEventListener("click", function(){ setSheet(!sheet.classList.contains("open")); });
   sheet.addEventListener("click", function(e){ if(e.target.closest("a")) setSheet(false); });
   addEventListener("keydown", function(e){ if(e.key === "Escape") setSheet(false); });
+
+
+  /* ============================================================
+     7. 案例星图（第六章）
+     星图是增强：清单始终在 DOM 里，窄屏与降级下它就是唯一载体。
+     ============================================================ */
+  (function(){
+    var svg = document.querySelector(".starmap-svg");
+    var list = document.getElementById("caseList");
+    var card = document.getElementById("smCard");
+    if(!svg || !list) return;
+    var items = [].slice.call(list.children);
+
+    function show(i){
+      var li = items[i]; if(!li) return;
+      items.forEach(function(x){ x.classList.remove("hi"); });
+      li.classList.add("hi");
+      card.innerHTML = "<b>" + li.querySelector(".ci-s").textContent + "</b>"
+        + li.querySelector(".ci-m").textContent
+        + " <em>" + li.querySelector(".ci-t").textContent + "</em><br>"
+        + li.querySelector(".ci-n").textContent;
+      card.hidden = false;
+    }
+    svg.querySelectorAll(".sm-star").forEach(function(g){
+      var i = +g.dataset.i;
+      g.addEventListener("mouseenter", function(){ show(i); });
+      g.addEventListener("focus", function(){ show(i); });
+      g.addEventListener("click", function(){ show(i); });
+      g.addEventListener("keydown", function(e){
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); show(i); }
+      });
+    });
+    // 进入视口后按区依次点亮；降级模式直接全亮
+    var stars = [].slice.call(svg.querySelectorAll(".sm-star"));
+    function light(){
+      if(reduce){ stars.forEach(function(g){ g.classList.add("on"); }); return; }
+      stars.forEach(function(g,k){ setTimeout(function(){ g.classList.add("on"); }, 55*k); });
+    }
+    var fired = false;
+    pendingShot.push({ getBoundingClientRect:function(){ return svg.getBoundingClientRect(); },
+                       querySelectorAll:function(){ return []; } });
+    (function watch(){
+      if(fired) return;
+      var r = svg.getBoundingClientRect();
+      if(r.top < innerHeight * 0.85 && r.bottom > 0){ fired = true; light(); return; }
+      requestAnimationFrame(watch);
+    })();
+  })();
+
+  /* ============================================================
+     8. 咨询表单
+     端点未配置时不发请求、也不给"提交成功"的假象——直接引导致电。
+     ============================================================ */
+  var FORM_ENDPOINT = "";   // ← 注册第三方表单服务后把端点填在这里
+  (function(){
+    var form = document.getElementById("consultForm");
+    var note = document.getElementById("formNote");
+    if(!form) return;
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var name = form.name.value.trim(), contact = form.contact.value.trim();
+      if(!name || !contact){ note.textContent = "请填写称呼与联系方式。"; return; }
+      var btn = form.querySelector("button[type=submit]");
+
+      if(!FORM_ENDPOINT){
+        note.textContent = "表单尚未接入后端。请直接致电 185 1973 9539 或扫码加微信，我们会更快回复。";
+        return;
+      }
+      btn.disabled = true; note.textContent = "提交中……";
+      fetch(FORM_ENDPOINT, {
+        method:"POST", headers:{ "Accept":"application/json" }, body:new FormData(form)
+      }).then(function(r){
+        if(!r.ok) throw new Error(r.status);
+        note.textContent = "已收到。顾问会在一个工作日内联系您。";
+        form.querySelectorAll("input,select,textarea").forEach(function(el){ el.value=""; });
+      }).catch(function(){
+        btn.disabled = false;
+        note.textContent = "提交没成功。请直接致电 185 1973 9539，或稍后再试。";
+      });
+    });
+  })();
+
+  var yr = document.getElementById("yr");
+  if(yr) yr.textContent = new Date().getFullYear();
 
   /* ============================================================
      6. 尺寸变化

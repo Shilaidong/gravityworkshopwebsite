@@ -46,7 +46,7 @@ def estimate_bg(im):
     return vals[len(vals) // 2]
 
 
-def build_alpha(im, thresh, feather):
+def build_alpha(im, thresh, feather, satmax=0.24):
     """浅底 → alpha：从画框边缘泛洪求背景，未被淹到的即主体。
 
     为什么不用全局阈值：主体同时含极浅（纸张高光 ~200）和极深（轮廓 ~80）部分，
@@ -65,16 +65,48 @@ def build_alpha(im, thresh, feather):
     px = small.load()
     gate = thresh          # 亮于此值才算“可淹的背景”
 
+    # 饱和度闸门。只用亮度分不开两样东西：
+    #   平底      亮度 253  饱和 0.169
+    #   浅色羊皮纸 亮度 237  饱和 0.297   ← 只暗 15，但饱和度差近一倍
+    # 光靠亮度，gate 调低会把羊皮纸内部泛穿（实测 ob-folio 一片窟窿），
+    # 调高又淹不掉 AI 画的灰投影。加一道饱和度闸门后两者可分：
+    # 投影与平底都是近中性的，主体（蓝袍/褐衣/黄铜/羊皮纸）都带色。
+    sat_small = im.convert("RGB").resize((sw, sh), Image.BILINEAR)
+    sp = sat_small.load()
+
+    # 平底色，用于投影判定
+    br, bg_, bb = [max(1, c) for c in sat_small.getpixel((1, 1))]
+
+    def is_shadow(r, gg, b):
+        """投影 = 平底被等比压暗，所以三通道对平底的比值近乎相等；
+        主体像素带色，比值必然不齐。这个判据与投影深浅无关，
+        比"亮度阈值 + 饱和度"稳得多——单靠调 gate 要么留投影、
+        要么把主体的浅色部位一起啃掉（两种都实测撞到过）。"""
+        k = (r / br, gg / bg_, b / bb)
+        lo, hi = min(k), max(k)
+        return hi <= 1.04 and lo >= 0.45 and (hi - lo) <= 0.055
+
+    def traversable(x, y):
+        r, gg, b = sp[x, y]
+        if is_shadow(r, gg, b):
+            return True
+        if px[x, y] < gate:
+            return False
+        mx = max(r, gg, b)
+        if mx == 0:
+            return True
+        return (mx - min(r, gg, b)) / mx <= satmax
+
     reached = bytearray(sw * sh)
     from collections import deque
     q = deque()
     for x in range(sw):
         for y in (0, sh - 1):
-            if px[x, y] >= gate and not reached[y * sw + x]:
+            if traversable(x, y) and not reached[y * sw + x]:
                 reached[y * sw + x] = 1; q.append((x, y))
     for y in range(sh):
         for x in (0, sw - 1):
-            if px[x, y] >= gate and not reached[y * sw + x]:
+            if traversable(x, y) and not reached[y * sw + x]:
                 reached[y * sw + x] = 1; q.append((x, y))
     while q:
         x, y = q.popleft()
@@ -82,7 +114,7 @@ def build_alpha(im, thresh, feather):
             nx, ny = x + dx, y + dy
             if 0 <= nx < sw and 0 <= ny < sh:
                 i = ny * sw + nx
-                if not reached[i] and px[nx, ny] >= gate:
+                if not reached[i] and traversable(nx, ny):
                     reached[i] = 1; q.append((nx, ny))
 
     mask = Image.frombytes("L", (sw, sh), bytes(255 if v else 0 for v in reached))
@@ -182,6 +214,9 @@ def main():
     ap.add_argument("--thresh", type=int, default=None,
                     help="亮于此值判为背景。默认按四角平底色自动取 平底-38")
     ap.add_argument("--feather", type=float, default=1.5)
+    ap.add_argument("--satmax", type=float, default=0.24,
+                    help="饱和度闸门：只有近中性的像素才算可淹的背景。"
+                         "投影与平底近中性，主体带色——这条把两者分开")
     ap.add_argument("--inset", type=float, default=0.02,
                     help="键出前先内缩裁掉边框一圈（比例）。出图常带暗角，"
                          "那一圈会暗于阈值而被判成主体，把主体和画框连通，"
@@ -206,7 +241,7 @@ def main():
     thresh = args.thresh if args.thresh is not None else max(60, bg - 38)
     print("%s  平底亮度 %d  阈值 %d" % (args.name, bg, thresh))
 
-    alpha = build_alpha(im, thresh, args.feather)
+    alpha = build_alpha(im, thresh, args.feather, args.satmax)
     rgb = despill(im, alpha, bg)
     if not args.no_trim:
         before = rgb.size
