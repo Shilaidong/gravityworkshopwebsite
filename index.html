@@ -1060,6 +1060,37 @@ ul{ list-style:none; }
   .hcard{ width:auto; }
 }
 
+
+/* ---------- 星野长卷 ---------- */
+.sky-scene .hstick{ background:
+  radial-gradient(140% 90% at 30% 30%, #17202B 0%, #0B0E14 62%, #070A10 100%); }
+.sky-track{ padding-right:6vw !important; }
+.sky{ height:min(62vh, 620px); width:auto; display:block; overflow:visible; }
+.sky .dust{ fill:#F6F8EB; opacity:.16; }
+.sky .lnk{ stroke:var(--brass-lt); stroke-width:1; opacity:0; transition:opacity .9s var(--ease); }
+.sky .lnk.on{ opacity:.34; }
+.sky .reg{ font-family:var(--sans); font-size:22px; font-weight:700; fill:var(--display);
+  opacity:.42; letter-spacing:.2em; }
+.sky .regln{ stroke:var(--display); stroke-width:1; opacity:.18; }
+.sky .hit{ fill:transparent; cursor:pointer; }
+.sky .dot{ fill:var(--brass-lt); opacity:0; transition:opacity .7s var(--ease), r .25s var(--ease); }
+.sky .st.on .dot{ opacity:.92; }
+.sky .st:hover .dot, .sky .st:focus-visible .dot{ opacity:1; r:11; }
+.sky .st:focus-visible{ outline:2px solid var(--brass-lt); outline-offset:4px; }
+.sky-card{
+  position:absolute; left:calc(var(--rail-w) + var(--gut)); bottom:clamp(58px,9vh,110px);
+  z-index:4; max-width:46ch; background:rgba(11,14,20,.86); color:var(--on-dark);
+  border:1px solid var(--on-dark-faint); border-radius:4px; padding:13px 16px;
+  font-size:13.5px; line-height:1.55; backdrop-filter:blur(8px);
+}
+.sky-card b{ display:block; font-size:15.5px; letter-spacing:-.012em; }
+.sky-card em{ font-style:normal; color:var(--brass-lt); font-family:var(--mono); font-size:11px; }
+.hscene .hhead .hsub{ font-size:13.5px; color:var(--on-dark-muted); margin-top:8px; }
+@media (max-width:1024px){
+  .sky-scene{ display:none; }   /* 窄屏用结果章里那份完整清单，不做长卷 */
+}
+@media (prefers-reduced-motion:reduce){ .sky-scene{ display:none; } }
+
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
   position:fixed; inset:0; z-index:850; background:var(--ink-deep); color:var(--on-dark);
@@ -2053,6 +2084,221 @@ ul{ list-style:none; }
 
 
 <!-- ============ VI · 结果 ============ -->
+
+<!-- ============ 横滚幕间 · 结果星野长卷 ============ -->
+<section class="hscene sky-scene" id="hs-sky" data-hscene aria-label="21 例录取的星野长卷">
+  <div class="hstick">
+    <div class="hhead">
+      <p class="kicker">结果 · 星野 / THE FIELD</p>
+      <h2>二十一例，横穿五个地区。</h2>
+      <p class="hsub">背景不同，方法一致。点亮一颗星看它的背景要点。</p>
+    </div>
+    <div class="htrack sky-track">
+      <svg class="sky" viewBox="0 0 3400 620" preserveAspectRatio="xMinYMid meet" role="img" aria-label="21 例录取按地区分布的星野长卷">
+        <circle class="dust" cx="1538" cy="345" r="1.6"/>
+        <circle class="dust" cx="1583" cy="315" r="1.2"/>
+        <circle class="dust" cx="628" cy="317" r="1.3"/>
+        <circle class="dust" cx="2696" cy="75" r="0.9"/>
+        <circle class="dust" cx="308" cy="490" r="1.4"/>
+        <circle class="dust" cx="142" cy="590" r="1.7"/>
+        <circle class="dust" cx="2223" cy="377" r="0.8"/>
+        <circle class="dust" cx="51" cy="326" r="0.7"/>
+        <circle class="dust" cx="647" cy="160" r="0.6"/>
+        <circle class="dust" cx="1577" cy="276" r="1.5"/>
+        <circle class="dust" cx="1765" cy="391" r="1.1"/>
+        <circle class="dust" cx="2252" cy="285" r="0.9"/>
+        <circle class="dust" cx="3392" cy="598" r="1.5"/>
+        <circle class="dust" cx="2407" cy="203" r="0.9"/>
+        <circle class="dust" cx="983" cy="61" r="1.4"/>
+        <circle class="dust" cx="1361" cy="511" r="1.0"/>
+        <circle class="dust" cx="3257" cy="511" r="0.6"/>
+        <circle class="dust" cx="713" cy="548" r="1.1"/>
+        <circle class="dust" cx="3333" cy="251" r="0.7"/>
+        <circle class="dust" cx="2140" cy="472" r="0.9"/>
+        <circle class="dust" cx="296" cy="213" r="1.7"/>
+        <circle class="dust" cx="2577" cy="88" r="0.9"/>
+        <circle class="dust" cx="344" cy="55" r="1.5"/>
+        <circle class="dust" cx="604" cy="344" r="1.1"/>
+        <circle class="dust" cx="648" cy="444" r="0.7"/>
+        <circle class="dust" cx="2189" cy="88" r="1.1"/>
+        <circle class="dust" cx="724" cy="176" r="1.7"/>
+        <circle class="dust" cx="2732" cy="196" r="1.6"/>
+        <circle class="dust" cx="716" cy="249" r="1.5"/>
+        <circle class="dust" cx="2182" cy="78" r="1.7"/>
+        <circle class="dust" cx="725" cy="170" r="1.4"/>
+        <circle class="dust" cx="1118" cy="192" r="0.7"/>
+        <circle class="dust" cx="306" cy="358" r="0.9"/>
+        <circle class="dust" cx="2044" cy="236" r="1.1"/>
+        <circle class="dust" cx="3261" cy="301" r="1.2"/>
+        <circle class="dust" cx="2946" cy="126" r="0.8"/>
+        <circle class="dust" cx="3089" cy="494" r="0.9"/>
+        <circle class="dust" cx="645" cy="449" r="1.6"/>
+        <circle class="dust" cx="668" cy="571" r="1.6"/>
+        <circle class="dust" cx="2052" cy="264" r="0.7"/>
+        <circle class="dust" cx="132" cy="578" r="0.9"/>
+        <circle class="dust" cx="2396" cy="169" r="1.5"/>
+        <circle class="dust" cx="2028" cy="190" r="0.8"/>
+        <circle class="dust" cx="2449" cy="60" r="0.9"/>
+        <circle class="dust" cx="1902" cy="514" r="1.3"/>
+        <circle class="dust" cx="953" cy="552" r="0.8"/>
+        <circle class="dust" cx="56" cy="176" r="1.1"/>
+        <circle class="dust" cx="206" cy="122" r="1.0"/>
+        <circle class="dust" cx="1945" cy="96" r="1.0"/>
+        <circle class="dust" cx="3029" cy="589" r="1.3"/>
+        <circle class="dust" cx="2350" cy="359" r="0.8"/>
+        <circle class="dust" cx="119" cy="30" r="1.6"/>
+        <circle class="dust" cx="2383" cy="578" r="0.6"/>
+        <circle class="dust" cx="2163" cy="300" r="1.4"/>
+        <circle class="dust" cx="1084" cy="600" r="0.7"/>
+        <circle class="dust" cx="1857" cy="447" r="1.6"/>
+        <circle class="dust" cx="2506" cy="428" r="1.5"/>
+        <circle class="dust" cx="3111" cy="224" r="1.4"/>
+        <circle class="dust" cx="3063" cy="525" r="1.1"/>
+        <circle class="dust" cx="2688" cy="521" r="1.2"/>
+        <circle class="dust" cx="2125" cy="242" r="1.2"/>
+        <circle class="dust" cx="2070" cy="67" r="1.3"/>
+        <circle class="dust" cx="3377" cy="530" r="1.4"/>
+        <circle class="dust" cx="1321" cy="446" r="1.2"/>
+        <circle class="dust" cx="1498" cy="506" r="0.7"/>
+        <circle class="dust" cx="2551" cy="37" r="1.3"/>
+        <circle class="dust" cx="1635" cy="154" r="1.4"/>
+        <circle class="dust" cx="1691" cy="376" r="1.6"/>
+        <circle class="dust" cx="870" cy="27" r="0.9"/>
+        <circle class="dust" cx="2306" cy="137" r="0.8"/>
+        <circle class="dust" cx="3079" cy="403" r="1.1"/>
+        <circle class="dust" cx="3032" cy="210" r="1.3"/>
+        <circle class="dust" cx="675" cy="270" r="1.5"/>
+        <circle class="dust" cx="3108" cy="531" r="1.0"/>
+        <circle class="dust" cx="1983" cy="204" r="0.7"/>
+        <circle class="dust" cx="1688" cy="506" r="1.5"/>
+        <circle class="dust" cx="2418" cy="571" r="0.9"/>
+        <circle class="dust" cx="575" cy="281" r="0.9"/>
+        <circle class="dust" cx="728" cy="260" r="1.3"/>
+        <circle class="dust" cx="1679" cy="203" r="1.5"/>
+        <circle class="dust" cx="3339" cy="282" r="0.7"/>
+        <circle class="dust" cx="107" cy="526" r="0.6"/>
+        <circle class="dust" cx="2409" cy="351" r="0.9"/>
+        <circle class="dust" cx="2691" cy="31" r="0.7"/>
+        <circle class="dust" cx="1546" cy="34" r="1.5"/>
+        <circle class="dust" cx="807" cy="102" r="0.7"/>
+        <circle class="dust" cx="2139" cy="279" r="1.3"/>
+        <circle class="dust" cx="2227" cy="488" r="1.7"/>
+        <circle class="dust" cx="2327" cy="136" r="1.1"/>
+        <circle class="dust" cx="608" cy="26" r="1.1"/>
+        <circle class="dust" cx="2428" cy="124" r="0.9"/>
+        <circle class="dust" cx="1176" cy="424" r="1.2"/>
+        <circle class="dust" cx="2089" cy="459" r="1.0"/>
+        <circle class="dust" cx="2693" cy="546" r="0.7"/>
+        <circle class="dust" cx="3171" cy="439" r="0.7"/>
+        <circle class="dust" cx="1542" cy="383" r="1.6"/>
+        <circle class="dust" cx="1281" cy="350" r="1.6"/>
+        <circle class="dust" cx="2709" cy="568" r="1.1"/>
+        <circle class="dust" cx="2214" cy="139" r="1.4"/>
+        <circle class="dust" cx="2782" cy="392" r="1.4"/>
+        <circle class="dust" cx="725" cy="542" r="1.7"/>
+        <circle class="dust" cx="3323" cy="331" r="1.5"/>
+        <circle class="dust" cx="1089" cy="548" r="1.5"/>
+        <circle class="dust" cx="1185" cy="68" r="1.1"/>
+        <circle class="dust" cx="1871" cy="466" r="1.1"/>
+        <circle class="dust" cx="97" cy="489" r="0.7"/>
+        <circle class="dust" cx="2720" cy="120" r="1.0"/>
+        <circle class="dust" cx="2679" cy="101" r="0.8"/>
+        <circle class="dust" cx="1756" cy="440" r="1.5"/>
+        <circle class="dust" cx="2344" cy="569" r="1.1"/>
+        <circle class="dust" cx="3227" cy="70" r="0.8"/>
+        <circle class="dust" cx="1791" cy="188" r="1.4"/>
+        <circle class="dust" cx="2172" cy="323" r="1.5"/>
+        <circle class="dust" cx="1904" cy="201" r="1.0"/>
+        <circle class="dust" cx="2874" cy="542" r="0.8"/>
+        <circle class="dust" cx="2893" cy="582" r="1.2"/>
+        <circle class="dust" cx="1948" cy="137" r="1.2"/>
+        <circle class="dust" cx="1711" cy="371" r="0.6"/>
+        <circle class="dust" cx="3296" cy="319" r="1.0"/>
+        <circle class="dust" cx="2724" cy="346" r="1.1"/>
+        <circle class="dust" cx="2349" cy="58" r="1.2"/>
+        <circle class="dust" cx="1407" cy="575" r="1.6"/>
+        <circle class="dust" cx="915" cy="294" r="0.7"/>
+        <circle class="dust" cx="1475" cy="493" r="1.6"/>
+        <circle class="dust" cx="1620" cy="204" r="0.8"/>
+        <circle class="dust" cx="2101" cy="557" r="0.7"/>
+        <circle class="dust" cx="2650" cy="33" r="0.8"/>
+        <circle class="dust" cx="773" cy="418" r="1.0"/>
+        <circle class="dust" cx="1208" cy="379" r="0.7"/>
+        <circle class="dust" cx="2485" cy="91" r="1.2"/>
+        <circle class="dust" cx="852" cy="135" r="1.2"/>
+        <circle class="dust" cx="1485" cy="238" r="1.1"/>
+        <circle class="dust" cx="1800" cy="113" r="0.8"/>
+        <circle class="dust" cx="2146" cy="390" r="1.2"/>
+        <circle class="dust" cx="2894" cy="375" r="1.5"/>
+        <circle class="dust" cx="791" cy="450" r="1.5"/>
+        <circle class="dust" cx="3069" cy="203" r="0.9"/>
+        <circle class="dust" cx="3137" cy="147" r="1.7"/>
+        <circle class="dust" cx="3018" cy="98" r="0.9"/>
+        <circle class="dust" cx="2470" cy="171" r="0.7"/>
+        <circle class="dust" cx="2829" cy="265" r="1.5"/>
+        <circle class="dust" cx="428" cy="254" r="1.4"/>
+        <circle class="dust" cx="60" cy="137" r="1.4"/>
+        <circle class="dust" cx="3099" cy="582" r="0.7"/>
+        <circle class="dust" cx="1719" cy="460" r="1.2"/>
+        <circle class="dust" cx="2331" cy="130" r="0.7"/>
+        <circle class="dust" cx="361" cy="42" r="1.2"/>
+        <circle class="dust" cx="1750" cy="350" r="0.8"/>
+        <circle class="dust" cx="627" cy="138" r="1.5"/>
+        <circle class="dust" cx="3367" cy="558" r="0.7"/>
+        <line class="lnk" x1="556" y1="329" x2="279" y2="458"/>
+        <line class="lnk" x1="279" y1="458" x2="190" y2="296"/>
+        <line class="lnk" x1="190" y1="296" x2="393" y2="219"/>
+        <text class="reg" x="250" y="132">英国</text>
+        <line class="regln" x1="248" y1="146" x2="432" y2="146"/>
+        <g class="st" data-i="0" data-x="556" tabindex="0" role="button" aria-label="Imperial College London Mechanical Engineering"><circle class="hit" cx="556" cy="329" r="26"/><circle class="dot" cx="556" cy="329" r="7.0"/></g>
+        <g class="st" data-i="1" data-x="279" tabindex="0" role="button" aria-label="University of Oxford MPhil Economics"><circle class="hit" cx="279" cy="458" r="26"/><circle class="dot" cx="279" cy="458" r="5.4"/></g>
+        <g class="st" data-i="2" data-x="190" tabindex="0" role="button" aria-label="University of Cambridge Chemistry"><circle class="hit" cx="190" cy="296" r="26"/><circle class="dot" cx="190" cy="296" r="7.0"/></g>
+        <g class="st" data-i="3" data-x="393" tabindex="0" role="button" aria-label="London School of Economics MSc Management"><circle class="hit" cx="393" cy="219" r="26"/><circle class="dot" cx="393" cy="219" r="5.4"/></g>
+        <line class="lnk" x1="1108" y1="351" x2="1027" y2="473"/>
+        <line class="lnk" x1="1027" y1="473" x2="928" y2="412"/>
+        <line class="lnk" x1="928" y1="412" x2="893" y2="269"/>
+        <line class="lnk" x1="893" y1="269" x2="976" y2="243"/>
+        <line class="lnk" x1="976" y1="243" x2="1095" y2="277"/>
+        <text class="reg" x="930" y="132">美国</text>
+        <line class="regln" x1="928" y1="146" x2="1112" y2="146"/>
+        <g class="st" data-i="4" data-x="1108" tabindex="0" role="button" aria-label="Stanford University Symbolic Systems"><circle class="hit" cx="1108" cy="351" r="26"/><circle class="dot" cx="1108" cy="351" r="7.0"/></g>
+        <g class="st" data-i="5" data-x="1027" tabindex="0" role="button" aria-label="Columbia University M.S. Data Science"><circle class="hit" cx="1027" cy="473" r="26"/><circle class="dot" cx="1027" cy="473" r="5.4"/></g>
+        <g class="st" data-i="6" data-x="928" tabindex="0" role="button" aria-label="Cornell University Biological Engineering"><circle class="hit" cx="928" cy="412" r="26"/><circle class="dot" cx="928" cy="412" r="7.0"/></g>
+        <g class="st" data-i="7" data-x="893" tabindex="0" role="button" aria-label="UCLA Computer Science"><circle class="hit" cx="893" cy="269" r="26"/><circle class="dot" cx="893" cy="269" r="7.0"/></g>
+        <g class="st" data-i="8" data-x="976" tabindex="0" role="button" aria-label="Johns Hopkins University M.S. Finance"><circle class="hit" cx="976" cy="243" r="26"/><circle class="dot" cx="976" cy="243" r="5.4"/></g>
+        <g class="st" data-i="9" data-x="1095" tabindex="0" role="button" aria-label="Pomona College Sociology"><circle class="hit" cx="1095" cy="277" r="26"/><circle class="dot" cx="1095" cy="277" r="7.0"/></g>
+        <line class="lnk" x1="1860" y1="408" x2="1663" y2="472"/>
+        <line class="lnk" x1="1663" y1="472" x2="1556" y2="343"/>
+        <line class="lnk" x1="1556" y1="343" x2="1621" y2="220"/>
+        <line class="lnk" x1="1621" y1="220" x2="1867" y2="244"/>
+        <text class="reg" x="1610" y="132">港新</text>
+        <line class="regln" x1="1608" y1="146" x2="1792" y2="146"/>
+        <g class="st" data-i="10" data-x="1860" tabindex="0" role="button" aria-label="National University of Singapore Business Administration"><circle class="hit" cx="1860" cy="408" r="26"/><circle class="dot" cx="1860" cy="408" r="7.0"/></g>
+        <g class="st" data-i="11" data-x="1663" tabindex="0" role="button" aria-label="Nanyang Technological University M.Eng Aerospace"><circle class="hit" cx="1663" cy="472" r="26"/><circle class="dot" cx="1663" cy="472" r="5.4"/></g>
+        <g class="st" data-i="12" data-x="1556" tabindex="0" role="button" aria-label="University of Hong Kong Electronic Engineering"><circle class="hit" cx="1556" cy="343" r="26"/><circle class="dot" cx="1556" cy="343" r="7.0"/></g>
+        <g class="st" data-i="13" data-x="1621" tabindex="0" role="button" aria-label="Chinese University of Hong Kong M.S. FinTech"><circle class="hit" cx="1621" cy="220" r="26"/><circle class="dot" cx="1621" cy="220" r="5.4"/></g>
+        <g class="st" data-i="14" data-x="1867" tabindex="0" role="button" aria-label="HKUST MSc Financial Technology"><circle class="hit" cx="1867" cy="244" r="26"/><circle class="dot" cx="1867" cy="244" r="5.4"/></g>
+        <line class="lnk" x1="2588" y1="351" x2="2212" y2="395"/>
+        <line class="lnk" x1="2212" y1="395" x2="2387" y2="214"/>
+        <text class="reg" x="2290" y="132">欧陆</text>
+        <line class="regln" x1="2288" y1="146" x2="2472" y2="146"/>
+        <g class="st" data-i="15" data-x="2588" tabindex="0" role="button" aria-label="ETH Zürich M.S. Robotics, Systems & Control"><circle class="hit" cx="2588" cy="351" r="26"/><circle class="dot" cx="2588" cy="351" r="5.4"/></g>
+        <g class="st" data-i="16" data-x="2212" tabindex="0" role="button" aria-label="INSEAD MBA"><circle class="hit" cx="2212" cy="395" r="26"/><circle class="dot" cx="2212" cy="395" r="5.4"/></g>
+        <g class="st" data-i="17" data-x="2387" tabindex="0" role="button" aria-label="EHL Hospitality Business School B.Sc. Hospitality Management"><circle class="hit" cx="2387" cy="214" r="26"/><circle class="dot" cx="2387" cy="214" r="7.0"/></g>
+        <line class="lnk" x1="3228" y1="413" x2="2897" y2="398"/>
+        <line class="lnk" x1="2897" y1="398" x2="3062" y2="214"/>
+        <text class="reg" x="2970" y="132">加拿大</text>
+        <line class="regln" x1="2968" y1="146" x2="3152" y2="146"/>
+        <g class="st" data-i="18" data-x="3228" tabindex="0" role="button" aria-label="University of Toronto Rotman Commerce"><circle class="hit" cx="3228" cy="413" r="26"/><circle class="dot" cx="3228" cy="413" r="7.0"/></g>
+        <g class="st" data-i="19" data-x="2897" tabindex="0" role="button" aria-label="McGill University Political Science"><circle class="hit" cx="2897" cy="398" r="26"/><circle class="dot" cx="2897" cy="398" r="7.0"/></g>
+        <g class="st" data-i="20" data-x="3062" tabindex="0" role="button" aria-label="University of British Columbia M.A.Sc. Civil Engineering"><circle class="hit" cx="3062" cy="214" r="26"/><circle class="dot" cx="3062" cy="214" r="5.4"/></g>
+        </svg>
+    </div>
+    <figcaption class="sky-card" id="skyCard" hidden></figcaption>
+    <div class="hbar"><i></i></div>
+  </div>
+</section>
+
 <section class="chapter" id="outcomes" data-chapter="outcomes" data-hero="light" data-comp="quiet" data-veil="edge">
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
@@ -2926,9 +3172,59 @@ ul{ list-style:none; }
       sc.querySelector(".htrack").style.setProperty("--hx", (p * travel).toFixed(1));
       var bar = sc.querySelector(".hbar");
       if(bar) bar.style.setProperty("--hp", p.toFixed(4));
+      if(sc._light) sc._light();
     }
   }
   layoutH();
+
+
+  /* 星野长卷：星点随横向进度依次点亮，hover/键盘出决策卡。
+     窄屏与降级模式下整段 display:none，靠结果章里那份完整清单承载信息。 */
+  (function(){
+    var sc = document.getElementById("hs-sky");
+    if(!sc) return;
+    var svg = sc.querySelector(".sky"), card = document.getElementById("skyCard");
+    var stars = [].slice.call(svg.querySelectorAll(".st"));
+    var links = [].slice.call(svg.querySelectorAll(".lnk"));
+    var list  = document.getElementById("caseList");
+    var vb = svg.viewBox.baseVal.width || 3400;
+
+    function show(i){
+      var li = list && list.children[i]; if(!li) return;
+      card.innerHTML = "<b>" + li.querySelector(".ci-s").textContent + "</b>"
+        + li.querySelector(".ci-m").textContent
+        + " <em>" + li.querySelector(".ci-t").textContent + "</em><br>"
+        + li.querySelector(".ci-n").textContent;
+      card.hidden = false;
+    }
+    stars.forEach(function(g){
+      var i = +g.dataset.i;
+      ["mouseenter","focus","click"].forEach(function(t){
+        g.addEventListener(t, function(){ show(i); });
+      });
+      g.addEventListener("keydown", function(e){
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); show(i); }
+      });
+    });
+
+    /* 点亮判据用星点在屏上的真实位置，不用长卷坐标推算——
+       推算那版在开头有一段视口里已经有星、却还没到阈值，第一屏是空的。
+       已点亮的从待办表移除，所以每帧只量还没亮的那几颗，量完就归零。 */
+    var pendStar = stars.slice(), pendLink = links.slice();
+    sc._light = function(){
+      var edge = innerWidth * 0.92;
+      for(var i = pendStar.length - 1; i >= 0; i--){
+        if(pendStar[i].getBoundingClientRect().left < edge){
+          pendStar[i].classList.add("on"); pendStar.splice(i, 1);
+        }
+      }
+      for(var j = pendLink.length - 1; j >= 0; j--){
+        if(pendLink[j].getBoundingClientRect().left < edge){
+          pendLink[j].classList.add("on"); pendLink.splice(j, 1);
+        }
+      }
+    };
+  })();
 
   /* ============================================================
      6. 尺寸变化
