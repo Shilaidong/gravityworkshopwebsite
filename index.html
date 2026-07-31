@@ -999,6 +999,67 @@ ul{ list-style:none; }
   .chapter[data-comp="center"] .chap-sub, .chapter[data-comp="ensemble"] .chap-sub{ margin-left:0; }
 }
 
+
+/* ============================================================
+   横滚幕间
+   钉住一屏，把纵向滚动量翻译成横向位移。刻意不用真的 overflow-x——
+   真横向滚动会和手机的返回手势、触控板横扫打架，而且没法和纵向节奏对齐。
+   章高 = 100vh + 横向行程，所以滚到底横向内容刚好走完，不早停不超冲。
+   ============================================================ */
+.hscene{ position:relative; background:var(--ink-deep); }
+.hscene .hstick{ position:sticky; top:0; height:100vh; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:center; }
+.hscene .htrack{
+  display:flex; align-items:center; gap:clamp(20px,2.6vw,44px);
+  padding-left:calc(var(--rail-w) + var(--gut)); padding-right:40vw;
+  will-change:transform;
+  transform:translate3d(calc(var(--hx, 0) * -1px), 0, 0);
+}
+.hscene .hhead{
+  position:absolute; top:clamp(48px,8vh,110px); left:calc(var(--rail-w) + var(--gut));
+  right:var(--edge-r); z-index:3; pointer-events:none; color:var(--on-dark);
+}
+.hscene .hhead .kicker{ color:var(--on-dark-muted); }
+.hscene .hhead h2{ font-size:clamp(1.8rem,4.4vw,3.6rem); line-height:1.02;
+  letter-spacing:-.035em; font-weight:700; color:var(--display); margin-top:8px; }
+/* 进度条：让人知道这段有多长，不然被钉住会以为卡死 */
+.hscene .hbar{ position:absolute; left:calc(var(--rail-w) + var(--gut)); right:var(--edge-r);
+  bottom:clamp(30px,5vh,64px); height:1px; background:var(--on-dark-faint); z-index:3; }
+.hscene .hbar i{ display:block; height:100%; width:calc(var(--hp,0) * 100%);
+  background:var(--brass-lt); }
+.hcard{
+  flex:0 0 auto; width:clamp(240px,26vw,380px); background:var(--paper);
+  color:var(--on-light); border-radius:3px; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.hcard img{ width:100%; aspect-ratio:4/5; object-fit:cover; }
+.hcard .hc-b{ padding:clamp(16px,1.6vw,24px); display:flex; flex-direction:column; gap:9px; }
+.hcard .hc-n{ font-family:var(--mono); font-size:10.5px; color:var(--brass-ink); letter-spacing:.06em; }
+.hcard h3{ font-size:clamp(1.05rem,1.4vw,1.3rem); line-height:1.2; letter-spacing:-.016em; font-weight:700; }
+.hcard p{ font-size:13.5px; line-height:1.6; color:var(--on-light-muted); }
+
+/* 窄屏与降级：钉屏横滚全部拆成纵向堆叠，信息一条不少 */
+@media (max-width:1024px){
+  .hscene{ height:auto !important; }
+  .hscene .hstick{ position:relative; height:auto; padding:clamp(60px,9vh,110px) 0; }
+  .hscene .htrack{ flex-direction:column; align-items:stretch; transform:none !important;
+    padding:0 var(--gut); gap:14px; }
+  .hscene .hhead{ position:relative; top:auto; left:auto; right:auto;
+    padding:0 var(--gut); margin-bottom:22px; }
+  .hscene .hbar{ display:none; }
+  .hcard{ width:auto; }
+  .hcard img{ aspect-ratio:16/9; }
+}
+@media (prefers-reduced-motion:reduce){
+  .hscene{ height:auto !important; }
+  .hscene .hstick{ position:relative; height:auto; padding:80px 0; }
+  .hscene .htrack{ flex-direction:column; align-items:stretch; transform:none !important;
+    padding:0 var(--gut); gap:14px; }
+  .hscene .hhead{ position:relative; top:auto; left:auto; padding:0 var(--gut); margin-bottom:22px; }
+  .hscene .hbar{ display:none; }
+  .hcard{ width:auto; }
+}
+
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
   position:fixed; inset:0; z-index:850; background:var(--ink-deep); color:var(--on-dark);
@@ -1635,6 +1696,45 @@ ul{ list-style:none; }
     <div class="torn" data-torn="bottom" data-seam="arc" data-seed="57" aria-hidden="true"></div>
   </div>
 
+</section>
+
+
+<!-- ============ 横滚幕间 · 档案四条线 ============ -->
+<section class="hscene" id="hs-profile" data-hscene aria-label="背景提升的四条线">
+  <div class="hstick">
+    <div class="hhead">
+      <p class="kicker">档案 · 四条线 / FOUR LINES</p>
+      <h2>四条线各有各的作用，<br>哪条该重推取决于定位。</h2>
+    </div>
+    <div class="htrack">
+      <article class="hcard">
+        <img src="assets/art/p-contest.webp" alt="桂冠与奖章" loading="lazy">
+        <div class="hc-b"><span class="hc-n">01</span><h3>竞赛</h3>
+          <p>证明学术强度。要的是与目标专业同向的那几项，不是奖状数量。</p></div>
+      </article>
+      <article class="hcard">
+        <img src="assets/art/p-research.webp" alt="显微镜与笔记" loading="lazy">
+        <div class="hc-b"><span class="hc-n">02</span><h3>科研</h3>
+          <p>证明方法。做过什么问题、用了什么手段、结论站不站得住。</p></div>
+      </article>
+      <article class="hcard">
+        <img src="assets/art/p-intern.webp" alt="书包与文件" loading="lazy">
+        <div class="hc-b"><span class="hc-n">03</span><h3>实习</h3>
+          <p>证明落地。在真实约束下做过事，和课堂里的项目不是一回事。</p></div>
+      </article>
+      <article class="hcard">
+        <img src="assets/art/p-test.webp" alt="沙漏与试卷" loading="lazy">
+        <div class="hc-b"><span class="hc-n">04</span><h3>标化</h3>
+          <p>把门槛清掉。它不加分，但缺了它前面三条都进不了审读。</p></div>
+      </article>
+      <article class="hcard">
+        <img src="assets/art/desk.webp" alt="书桌上的星图与圆规" loading="lazy">
+        <div class="hc-b"><span class="hc-n">05</span><h3>怎么配</h3>
+          <p>四条线不是平均使力。定位阶段画出的边界，决定哪条重推、哪条够用即止。</p></div>
+      </article>
+    </div>
+    <div class="hbar"><i></i></div>
+  </div>
 </section>
 
 <!-- ============ III · 文书 ============ -->
@@ -2425,6 +2525,7 @@ ul{ list-style:none; }
         onScroll();
         tonePass();
         motionPass();
+        hscenePass();
         if(pendingRise.length || pendingShot.length) revealPass();
       }
       requestAnimationFrame(frame);
@@ -2796,13 +2897,46 @@ ul{ list-style:none; }
     }
   }
 
+
+  /* ============================================================
+     11. 横滚幕间：把纵向滚动翻译成横向位移
+     章高由 JS 按内容实宽设定，保证滚动量与横向行程一一对应。
+     窄屏与降级模式下 CSS 已把它拆成纵向堆叠，这里直接跳过。
+     ============================================================ */
+  var hscenes = [].slice.call(document.querySelectorAll("[data-hscene]"));
+  function layoutH(){
+    var stacked = innerWidth <= 1024 || reduce;
+    hscenes.forEach(function(sc){
+      var track = sc.querySelector(".htrack");
+      if(stacked){ sc.style.height = ""; track.style.setProperty("--hx", "0"); return; }
+      // 横向行程 = 内容实宽 − 一屏
+      var travel = Math.max(0, track.scrollWidth - innerWidth);
+      sc._travel = travel;
+      sc.style.height = (innerHeight + travel) + "px";
+    });
+  }
+  function hscenePass(){
+    if(innerWidth <= 1024 || reduce) return;
+    for(var i = 0; i < hscenes.length; i++){
+      var sc = hscenes[i], travel = sc._travel || 0;
+      var r = sc.getBoundingClientRect();
+      if(r.bottom < 0 || r.top > innerHeight) continue;
+      // 钉住期间：top 从 0 走到 -travel
+      var p = Math.min(1, Math.max(0, -r.top / travel || 0));
+      sc.querySelector(".htrack").style.setProperty("--hx", (p * travel).toFixed(1));
+      var bar = sc.querySelector(".hbar");
+      if(bar) bar.style.setProperty("--hp", p.toFixed(4));
+    }
+  }
+  layoutH();
+
   /* ============================================================
      6. 尺寸变化
      ============================================================ */
   var rt;
   addEventListener("resize", function(){
     clearTimeout(rt);
-    rt = setTimeout(function(){ drawTorns(); measureFly(); dirty = true; }, 140);
+    rt = setTimeout(function(){ drawTorns(); measureFly(); layoutH(); dirty = true; }, 140);
   });
 
   // 字体到位后重量一次（字宽会变，位移必须重算）
