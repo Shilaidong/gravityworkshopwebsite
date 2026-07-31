@@ -284,8 +284,17 @@ ul{ list-style:none; }
      在没有任何 CSS 规则设 width 时它会生效，把宽钉死在 1200px，
      配上 inline 的 height 就把道具横向拉扁（实测比例 3.006，原图 0.667）。 */
   position:absolute; display:block; width:auto; height:auto;
-  /* 与背景图共用 --art-scale（JS 挂在 .chapter 上），两层才不会脱开 */
-  transform:scale(var(--art-scale,1.06)); transform-origin:52% 46%;
+  /* 合成式 transform：视差 + 鼠标 + 进场滑入 + 与背景共用的 --art-scale。
+     全部走 transform/opacity，不推布局。--depth 0 远 1 近，决定漂移幅度。 */
+  --depth:.5; --par:0px; --mx:0px; --my:0px; --in:1; --slide:0px; --rot:0deg;
+  transform:
+    translate3d(calc(var(--mx) + (1 - var(--in)) * var(--slide)),
+                calc(var(--par) + var(--my)), 0)
+    rotate(var(--rot))
+    scale(var(--art-scale,1.06));
+  transform-origin:52% 46%;
+  opacity:var(--in);
+  will-change:transform;
   /* 不做压暗。参考站的抠图人物是全亮度高饱和的——压暗会让抠图变成脏污一团，
      那正是上一版"突兀"的原因之一。拼贴感靠背景变亮来拉开，不靠把前景压下去。 */
 }
@@ -888,6 +897,108 @@ ul{ list-style:none; }
 }
 @media (prefers-reduced-motion:reduce){ .callbar{ transition:none; } }
 
+
+/* ============================================================
+   八章八种构图 · 八种遮罩
+   实测过：八章的首屏排版签名只有 1 种，art-veil 也只有 1 种——
+   单屏都不差，连起来是同一张画重复八次。下面用 data-comp / data-veil
+   两个属性切换整套排版与遮罩，DOM 不动。
+   ============================================================ */
+
+/* ── 构图原型 ── */
+
+/* 对称夹持：巨字居中，两人一左一右夹住 */
+.chapter[data-comp="center"] .chap-hero{ align-items:center; text-align:center;
+  padding-left:max(var(--panel-x), var(--edge-r)); }
+.chapter[data-comp="center"] .chap-type{ max-width:none; }
+.chapter[data-comp="center"] .chap-sub{ margin-left:auto; margin-right:auto; max-width:34ch; }
+.chapter[data-comp="center"] .chap-sub .cjk-lede{ margin-left:auto; margin-right:auto; }
+
+/* 压底：图占上方，字沉到底部横贯 */
+.chapter[data-comp="baseline"] .chap-hero{ justify-content:flex-end;
+  padding-bottom:clamp(56px,7vh,110px); }
+.chapter[data-comp="baseline"] .chap-sub{ max-width:52ch; }
+.chapter[data-comp="baseline"] .chap-sub .cjk-lede{ max-width:44ch; }
+
+/* 对峙遮断：字整体右移，被前景人物切断；两人隔字对望 */
+.chapter[data-comp="standoff"] .chap-hero{ justify-content:center; }
+.chapter[data-comp="standoff"] .chap-type{ padding-left:clamp(0px,6vw,110px); }
+.chapter[data-comp="standoff"] .chap-display{ letter-spacing:-.05em; }
+
+/* 中文竖排：中文章节名竖成一列贴在左侧，英文退为常规大字 */
+.chapter[data-comp="vertical"] .chap-type{
+  display:grid; grid-template-columns:auto 1fr; column-gap:clamp(18px,2.4vw,40px); align-items:start; }
+.chapter[data-comp="vertical"] .chap-zh{
+  writing-mode:vertical-rl; text-orientation:upright; letter-spacing:.30em;
+  font-size:clamp(1rem,1.9vw,1.5rem); margin:0; padding:0; grid-row:1 / span 2; opacity:.95; }
+.chapter[data-comp="vertical"] .chap-display{ grid-column:2; }
+.chapter[data-comp="vertical"] .chap-sub{ grid-column:2; }
+
+/* 反差：英文字退到很小，让画面当主角 */
+.chapter[data-comp="quiet"] .chap-hero{ justify-content:flex-start;
+  padding-top:clamp(80px,14vh,170px); }
+.chapter[data-comp="quiet"] .chap-display{
+  font-size:clamp(2rem,4.6vw,4.2rem); letter-spacing:-.02em; }
+.chapter[data-comp="quiet"] .chap-zh{ font-size:clamp(1.1rem,2.6vw,2rem); opacity:.95; }
+.chapter[data-comp="quiet"] .chap-sub{ max-width:30ch; }
+
+/* 群像居中：字在下方单行横贯，人物居中站在字上方 */
+.chapter[data-comp="ensemble"] .chap-hero{ justify-content:flex-end;
+  padding-bottom:clamp(44px,6vh,92px); }
+.chapter[data-comp="ensemble"] .chap-display{ font-size:clamp(2.6rem,9vw,10rem); }
+.chapter[data-comp="ensemble"] .chap-sub{ max-width:40ch; }
+
+
+/* 出画：字撑满屏宽被右缘裁切，与第一章镜像，首尾呼应 */
+.chapter[data-comp="exit"] .chap-display{
+  font-size:clamp(3.6rem,16.5vw,18rem); white-space:nowrap; }
+.chapter[data-comp="exit"] .chap-hero{ overflow:hidden; }
+
+/* ── 遮罩变体 ──
+   遮罩挂在 .art-veil 上（跟着画面），暗床挂在 hero::before（跟着标题滚走）。
+   明亮章节的暗床是提亮层，所以这里同时给两套。 */
+.chapter[data-veil="radial"] .art-veil{
+  background:radial-gradient(78% 78% at 50% 46%, transparent 0%, transparent 30%, rgba(11,14,20,.58) 100%); }
+.chapter[data-veil="bottom"] .art-veil{
+  background:linear-gradient(to top, rgba(11,14,20,.74) 0%, rgba(11,14,20,.30) 34%, transparent 62%); }
+.chapter[data-veil="none"] .art-veil{ background:none; }
+.chapter[data-veil="split"] .art-veil{
+  background:linear-gradient(96deg, rgba(24,38,52,.52) 0%, rgba(24,38,52,.18) 42%,
+                                    rgba(60,44,22,.16) 62%, rgba(60,44,22,.44) 100%); }
+.chapter[data-veil="edge"] .art-veil{
+  background:linear-gradient(to right, rgba(11,14,20,.52) 0%, transparent 26%,
+                                       transparent 74%, rgba(11,14,20,.52) 100%); }
+.chapter[data-veil="updown"] .art-veil{
+  background:linear-gradient(rgba(11,14,20,.50) 0%, transparent 26%,
+                             transparent 66%, rgba(11,14,20,.62) 100%); }
+.chapter[data-veil="right"] .art-veil{
+  background:linear-gradient(260deg, rgba(11,14,20,.72) 0%, rgba(11,14,20,.34) 30%, transparent 62%); }
+
+/* 明亮章节的提亮暗床，按构图换方向——否则八章的字底依然一模一样 */
+.chapter[data-hero="light"][data-veil="radial"] .chap-hero::before{
+  background:radial-gradient(62% 58% at 50% 44%, rgba(246,248,235,.80) 0%, rgba(246,248,235,.30) 52%, transparent 78%); }
+.chapter[data-hero="light"][data-veil="bottom"] .chap-hero::before{
+  background:linear-gradient(to top, rgba(246,248,235,.86) 0%, rgba(246,248,235,.40) 34%, transparent 62%); }
+.chapter[data-hero="light"][data-veil="none"] .chap-hero::before{ background:none; }
+.chapter[data-hero="light"][data-veil="split"] .chap-hero::before{
+  background:linear-gradient(100deg, rgba(246,248,235,.72) 0%, rgba(246,248,235,.30) 40%, transparent 66%); }
+.chapter[data-hero="light"][data-veil="edge"] .chap-hero::before{
+  background:linear-gradient(to bottom, rgba(246,248,235,.70) 0%, rgba(246,248,235,.20) 40%, transparent 70%); }
+.chapter[data-hero="light"][data-veil="updown"] .chap-hero::before{
+  background:linear-gradient(to top, rgba(246,248,235,.82) 0%, rgba(246,248,235,.34) 38%, transparent 66%); }
+.chapter[data-hero="light"][data-veil="right"] .chap-hero::before{
+  background:linear-gradient(260deg, rgba(246,248,235,.80) 0%, rgba(246,248,235,.40) 30%, transparent 64%); }
+
+/* 窄屏收敛：竖排与出画在小屏上会挤爆，回落成常规排版 */
+@media (max-width:1024px){
+  .chapter[data-comp="vertical"] .chap-type{ display:flex; flex-direction:column; }
+  .chapter[data-comp="vertical"] .chap-zh{ writing-mode:horizontal-tb; margin-bottom:.55em; }
+  .chapter[data-comp="exit"] .chap-display{ white-space:normal; font-size:clamp(3.2rem,16vw,9rem); }
+  .chapter[data-comp="center"] .chap-hero,
+  .chapter[data-comp="ensemble"] .chap-hero{ align-items:flex-start; text-align:left; }
+  .chapter[data-comp="center"] .chap-sub, .chapter[data-comp="ensemble"] .chap-sub{ margin-left:0; }
+}
+
 /* ---------- 6. 移动端目录 ---------- */
 .toc-sheet{
   position:fixed; inset:0; z-index:850; background:var(--ink-deep); color:var(--on-dark);
@@ -955,6 +1066,9 @@ ul{ list-style:none; }
   /* 面板要留着——副题只在这里出现，隐藏它等于对降级用户丢内容 */
   .intro-panel{ opacity:1 !important; }
   .cloud-card{ filter:none !important; opacity:1 !important; }
+  /* 视差、进场、鼠标跟随全部归零；元素保持在最终位置，内容一条不少 */
+  .fg-prop{ --par:0px !important; --mx:0px !important; --my:0px !important;
+            --in:1 !important; --slide:0px !important; opacity:1 !important; }
   /* 钉屏覆盖是纯装饰，降级下摊平成普通嵌板；内容一条不少 */
   /* 必须用 relative 而不是 static：z-index 只对定位元素生效，
      一改 static，.panel 的 z-index:2 就失效，背后 sticky 的章节大图
@@ -1086,7 +1200,7 @@ ul{ list-style:none; }
 </section>
 
 <!-- ============ I · 定位 ============ -->
-<section class="chapter" id="position" data-chapter="position" data-hero="light">
+<section class="chapter" id="position" data-chapter="position" data-hero="light" data-comp="standard" data-veil="left">
 
   <!-- 前景抠图层：压在巨型标题之上，只盖词尾，词首完整露出。
        必须排在 .chap-backdrop 之前 —— 见 .chap-foreground 的注释。 -->
@@ -1375,19 +1489,19 @@ ul{ list-style:none; }
 </section>
 
 <!-- ============ II · 档案 ============ -->
-<section class="chapter" id="profile" data-chapter="profile" data-hero="light">
+<section class="chapter" id="profile" data-chapter="profile" data-hero="light" data-comp="center" data-veil="radial">
 
   <!-- 前景抠图层：烛台竖直穿过 Profile 的词尾。必须排在 backdrop 之前 -->
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
       <img class="fg-prop" src="assets/art/ob-medal.webp" alt=""
-           style="right:56%; top:16vh; height:15vh; transform:rotate(-13deg)" loading="lazy">
+           style="right:56%; top:16vh; height:15vh; --rot:-13deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-student-take.webp" alt=""
-           style="right:36%; bottom:0; height:58vh" loading="lazy">
+           style="right:34%; bottom:0; height:40vh" loading="lazy">
       <img class="fg-prop" src="assets/art/ob-folio.webp" alt=""
-           style="right:28%; top:30vh; height:17vh; transform:rotate(9deg)" loading="lazy">
+           style="right:8%; top:6vh; height:13vh; --rot:9deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-scholar-hand.webp" alt=""
-           style="right:2%; bottom:-8vh; height:92vh" loading="lazy">
+           style="right:-12%; bottom:-6vh; height:74vh" loading="lazy">
     </div>
   </div>
 
@@ -1524,19 +1638,19 @@ ul{ list-style:none; }
 </section>
 
 <!-- ============ III · 文书 ============ -->
-<section class="chapter" id="essays" data-chapter="essays" data-hero="light">
+<section class="chapter" id="essays" data-chapter="essays" data-hero="light" data-comp="baseline" data-veil="bottom">
 
   <!-- 前景抠图层：废稿堆从下缘咬住 Essays 的下半。必须排在 backdrop 之前 -->
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
       <img class="fg-prop" src="assets/art/ob-folio.webp" alt=""
-           style="right:52%; top:14vh; height:14vh; transform:rotate(15deg)" loading="lazy">
+           style="right:52%; top:14vh; height:14vh; --rot:15deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-student-write.webp" alt=""
-           style="right:33%; bottom:2vh; height:52vh" loading="lazy">
+           style="right:24%; bottom:6vh; height:46vh" loading="lazy">
       <img class="fg-prop" src="assets/art/ob-case.webp" alt=""
-           style="right:20%; top:34vh; height:16vh; transform:rotate(-8deg)" loading="lazy">
+           style="right:20%; top:34vh; height:16vh; --rot:-8deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-scholar-write.webp" alt=""
-           style="right:1%; bottom:-4vh; height:70vh" loading="lazy">
+           style="right:-3%; bottom:2vh; height:62vh" loading="lazy">
     </div>
   </div>
 
@@ -1638,17 +1752,17 @@ ul{ list-style:none; }
 </section>
 
 <!-- ============ IV · 面试 ============ -->
-<section class="chapter" id="interview" data-chapter="interview" data-hero="light">
+<section class="chapter" id="interview" data-chapter="interview" data-hero="light" data-comp="standoff" data-veil="none">
 
   <!-- 前景抠图层：椅背从右侧压住 Interview 的词尾。必须排在 backdrop 之前 -->
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
       <img class="fg-prop" src="assets/art/ob-case.webp" alt=""
-           style="right:54%; top:17vh; height:14vh; transform:rotate(11deg)" loading="lazy">
+           style="right:54%; top:17vh; height:14vh; --rot:11deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-student-answer.webp" alt=""
            style="right:41%; bottom:0; height:58vh" loading="lazy">
       <img class="fg-prop" src="assets/art/ob-medal.webp" alt=""
-           style="right:38%; top:36vh; height:15vh; transform:rotate(-16deg)" loading="lazy">
+           style="right:38%; top:36vh; height:15vh; --rot:-16deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-scholar-ask.webp" alt=""
            style="right:0%; bottom:-6vh; height:88vh" loading="lazy">
     </div>
@@ -1751,17 +1865,17 @@ ul{ list-style:none; }
 
 
 <!-- ============ V · 系统 ============ -->
-<section class="chapter" id="systems" data-chapter="systems" data-hero="light">
+<section class="chapter" id="systems" data-chapter="systems" data-hero="light" data-comp="vertical" data-veil="split">
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
       <img class="fg-prop" src="assets/art/ob-instrument.webp" alt=""
-           style="right:53%; top:15vh; height:17vh; transform:rotate(-10deg)" loading="lazy">
+           style="right:53%; top:15vh; height:17vh; --rot:-10deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-student-look.webp" alt=""
-           style="right:38%; bottom:0; height:56vh" loading="lazy">
+           style="right:26%; bottom:0; height:52vh" loading="lazy">
       <img class="fg-prop" src="assets/art/ob-case.webp" alt=""
-           style="right:26%; top:33vh; height:13vh; transform:rotate(7deg)" loading="lazy">
+           style="right:26%; top:33vh; height:13vh; --rot:7deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-scholar-point.webp" alt=""
-           style="right:1%; bottom:-6vh; height:90vh" loading="lazy">
+           style="right:-5%; bottom:-6vh; height:84vh" loading="lazy">
     </div>
   </div>
   <div class="chap-backdrop" data-tone="light" aria-hidden="true">
@@ -1839,11 +1953,11 @@ ul{ list-style:none; }
 
 
 <!-- ============ VI · 结果 ============ -->
-<section class="chapter" id="outcomes" data-chapter="outcomes" data-hero="light">
+<section class="chapter" id="outcomes" data-chapter="outcomes" data-hero="light" data-comp="quiet" data-veil="edge">
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
       <img class="fg-prop" src="assets/art/ob-medal.webp" alt=""
-           style="right:52%; top:14vh; height:15vh; transform:rotate(12deg)" loading="lazy">
+           style="right:52%; top:14vh; height:15vh; --rot:12deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-student-look.webp" alt=""
            style="right:36%; bottom:0; height:58vh" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-scholar-point.webp" alt=""
@@ -1966,13 +2080,13 @@ ul{ list-style:none; }
 
 
 <!-- ============ VII · 团队 ============ -->
-<section class="chapter" id="team" data-chapter="team" data-hero="light">
+<section class="chapter" id="team" data-chapter="team" data-hero="light" data-comp="ensemble" data-veil="updown">
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
       <img class="fg-prop" src="assets/art/ob-folio.webp" alt=""
-           style="right:55%; top:16vh; height:14vh; transform:rotate(-9deg)" loading="lazy">
+           style="right:55%; top:16vh; height:14vh; --rot:-9deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-scholar-two.webp" alt=""
-           style="right:2%; bottom:-4vh; height:82vh" loading="lazy">
+           style="right:-6%; bottom:26vh; height:58vh" loading="lazy">
     </div>
   </div>
   <div class="chap-backdrop" data-tone="light" aria-hidden="true">
@@ -2043,11 +2157,11 @@ ul{ list-style:none; }
 </section>
 
 <!-- ============ VIII · 联系 ============ -->
-<section class="chapter" id="contact" data-chapter="contact" data-hero="light">
+<section class="chapter" id="contact" data-chapter="contact" data-hero="light" data-comp="exit" data-veil="right">
   <div class="chap-foreground" aria-hidden="true">
     <div class="fg-inner">
       <img class="fg-prop" src="assets/art/ob-case.webp" alt=""
-           style="right:50%; top:16vh; height:15vh; transform:rotate(-11deg)" loading="lazy">
+           style="right:50%; top:16vh; height:15vh; --rot:-11deg" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-student-walk.webp" alt=""
            style="right:34%; bottom:0; height:60vh" loading="lazy">
       <img class="fg-prop" src="assets/art/fg-scholar-open.webp" alt=""
@@ -2305,10 +2419,12 @@ ul{ list-style:none; }
   var lastY = -1, running = true, dirty = true;
   function frame(){
     if(running){
+      if(fine && !reduce) mousePass();           // 指针可能在页面不滚时移动，只改两个变量
       if(dirty || scrollY !== lastY){
         lastY = scrollY; dirty = false;
         onScroll();
         tonePass();
+        motionPass();
         if(pendingRise.length || pendingShot.length) revealPass();
       }
       requestAnimationFrame(frame);
@@ -2597,6 +2713,88 @@ ul{ list-style:none; }
       });
     }
   })();
+
+
+  /* ============================================================
+     10. 让画面动起来：分层视差 · 进场滑入 · 悬浮漂移 · 鼠标跟随
+     26 件抠图此前全部静止，这是"像贴上去的"最后一层原因。
+     刻意不用 scale——放大缩小廉价且容易晕。全部走 transform/opacity。
+     ============================================================ */
+  var props = [].slice.call(document.querySelectorAll(".fg-prop"));
+  (function initDepth(){
+    // 深度按体量推断：大件在前（近），小件在后（远）。
+    // 近的漂得快、鼠标跟随幅度大，远的相反——这才有纵深。
+    props.forEach(function(el, i){
+      var h = parseFloat(el.style.height) || 50;         // vh
+      var d = Math.max(0, Math.min(1, (h - 12) / 80));   // 12vh→0  92vh→1
+      el.style.setProperty("--depth", d.toFixed(3));
+      // 进场方向：从画面外侧滑入，左半边往左出、右半边往右出
+      var r = parseFloat(el.style.right);
+      var fromRight = isNaN(r) ? true : r < 40;
+      el.style.setProperty("--slide", (fromRight ? 1 : -1) * (40 + d * 70) + "px");
+      el.style.setProperty("--in", "0");
+      el._d = d; el._seed = (i * 37 % 100) / 100;
+    });
+  })();
+
+  // 鼠标跟随：只在有精确指针的设备生效。手机与平板完全无效，
+  // 所以它不承载任何必要信息，纯属锦上添花。
+  var fine = matchMedia("(pointer:fine)").matches && matchMedia("(hover:hover)").matches;
+  var mX = 0, mY = 0;
+  if(fine && !reduce){
+    addEventListener("pointermove", function(e){
+      mX = (e.clientX / innerWidth  - .5) * 2;   // -1..1
+      mY = (e.clientY / innerHeight - .5) * 2;
+    }, { passive:true });
+  }
+
+  var t0 = performance.now();
+
+  /* 鼠标只动、页面没滚时，不要重跑整套。
+     motionPass 每帧对 26 件抠图各做一次 getBoundingClientRect，
+     那是 26 次强制布局读取；指针一动就跑满帧会白烧性能。
+     所以拆两条：滚动时跑全套并缓存矩形，指针移动只改 --mx/--my。 */
+  function mousePass(){
+    if(!fine || reduce) return;
+    for(var i = 0; i < props.length; i++){
+      var el = props[i];
+      if(!el._vis) continue;                    // 用上一轮全套算出的可见性
+      var d = el._d;
+      el.style.setProperty("--mx", (-mX * (4 + d * 22)).toFixed(1) + "px");
+      el.style.setProperty("--my", (-mY * (3 + d * 14)).toFixed(1) + "px");
+    }
+  }
+
+  function motionPass(){
+    if(reduce) return;
+    var now = performance.now(), t = (now - t0) / 1000;
+    for(var i = 0; i < props.length; i++){
+      var el = props[i];
+      var r = el.getBoundingClientRect();
+      el._vis = !(r.bottom < -200 || r.top > innerHeight + 200);
+      if(!el._vis) continue;
+      var d = el._d;
+
+      // 进场：元素上缘进到视口 85% 以内即开始，走完 25vh 完成
+      var start = innerHeight * 0.92, span = innerHeight * 0.25;
+      var p = Math.min(1, Math.max(0, (start - r.top) / span));
+      p = p * p * (3 - 2 * p);                                     // 缓动
+      el.style.setProperty("--in", p.toFixed(3));
+
+      // 视差：以元素中心相对视口中心的偏移驱动，近的幅度大
+      var mid = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
+      var par = -mid * (18 + d * 62);
+      // 悬浮小件再叠一层极缓的自漂移，让画面不死
+      if(d < 0.35) par += Math.sin(t * 0.5 + el._seed * 6.28) * 5;
+      el.style.setProperty("--par", par.toFixed(1) + "px");
+
+      // 鼠标跟随：按深度反向偏移，近的跟得多
+      if(fine){
+        el.style.setProperty("--mx", (-mX * (4 + d * 22)).toFixed(1) + "px");
+        el.style.setProperty("--my", (-mY * (3 + d * 14)).toFixed(1) + "px");
+      }
+    }
+  }
 
   /* ============================================================
      6. 尺寸变化
