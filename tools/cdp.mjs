@@ -237,12 +237,13 @@ async function contrast(sid) {
     const ratio = (f,b) => (Math.max(lum(f),lum(b))+0.05)/(Math.min(lum(f),lum(b))+0.05);
     let checked = 0; const fails = [];
     for (const el of document.querySelectorAll('body *')) {
-      if (![...el.childNodes].some(n => n.nodeType===3 && n.textContent.trim())
-          && el.namespaceURI !== 'http://www.w3.org/2000/svg') continue;
+      const svgText = el.namespaceURI === 'http://www.w3.org/2000/svg'
+        && (el.tagName === 'text' || el.tagName === 'tspan');
+      if (![...el.childNodes].some(n => n.nodeType===3 && n.textContent.trim()) && !svgText) continue;
       const st = getComputedStyle(el);
       if (st.display==='none' || st.visibility==='hidden') continue;
       if (el.getBoundingClientRect().width === 0) continue;
-      const fg = parse(el.namespaceURI==='http://www.w3.org/2000/svg' && el.tagName!=='tspan' ? st.fill : st.color);
+      const fg = parse(svgText ? st.fill : st.color);
       if (!fg) continue;
       let bg = null, p = el;
       while (p && p !== document.documentElement) {
