@@ -304,6 +304,66 @@ tr[hidden]{display:none}
   .step{grid-template-columns:36px 1fr;row-gap:calc(var(--u)*1)}
   .step .d{grid-column:2}
 }
+
+/* ============================================================
+   打印样式：这份东西自称年刊，那它就该印得出来。
+   屏幕上的固定栏、筛选器、CTA 在纸上都没有意义；
+   边注一条不丢（静态三条挪刊尾、章节限定收节尾），链接要把地址展开。
+   ============================================================ */
+@media print{
+  @page{ size:A4 portrait; margin:16mm 15mm 18mm; }
+
+  html,body{ background:#fff; color:#000; font-size:10.5pt; line-height:15pt }
+
+  /* 屏幕专用件一律去掉 */
+  .bar, .filters, .count, .bar a.cta, .sub, .fnote, form button{ display:none !important }
+
+  /* 双栏塌成单栏：纸上没有 sticky。边注一条不丢——
+     三条静态边注挪到刊尾，每节的限定条件收在节尾当脚注印（见下）。 */
+  .sheet{ display:flex; flex-direction:column; max-width:none; padding:0 }
+  .main{ padding:0; order:1 }
+  .side{ order:2 }                   /* 静态边注汇编挪到刊尾 */
+  .side-in{ position:static; border-top:1px solid #000; margin-top:8mm; padding-top:4mm;
+    break-inside:avoid }             /* 汇编整块挪，不把标题留在上一页页尾 */
+  .side-in::before{ content:"边注 · Margin notes"; display:block;
+    font-family:var(--mono); font-size:8.5pt; letter-spacing:.14em; color:#444; margin-bottom:3mm }
+  .marg .now{ display:none }         /* 屏上随章节切换的那条是动态件，不进纸面 */
+
+  /* 每节的限定条件收在节尾，当脚注印 */
+  .sec::after{ content:"本节限定 — " attr(data-marg); display:block;
+    font-family:var(--mono); font-size:8.5pt; line-height:13pt; color:#333;
+    margin-top:5mm; padding-top:2mm; border-top:1px solid #bbb }
+
+  /* 章节从新页起，标题不与正文分离 */
+  .sec{ padding-top:10mm; break-inside:auto }
+  .sec-h{ break-after:avoid }
+  h1,h2,h3{ break-after:avoid }
+
+  /* 图版与图表不许跨页撕裂 */
+  .plate, .fig, .tbl, figure, table{ break-inside:avoid }
+  .plate img{ max-height:120mm; object-fit:contain }
+  tr{ break-inside:avoid }
+  thead{ display:table-header-group }   /* 长表跨页时表头重复 */
+
+  /* 表在纸上不需要滚动容器 */
+  .scroller, .tbl{ overflow:visible !important }
+  .scroller table, .tbl table{ min-width:0 !important }
+  tr[hidden]{ display:table-row !important }   /* 打印给全量，不受屏幕筛选影响 */
+
+  /* 规线一律画完 */
+  .fig .draw{ stroke-dashoffset:0 !important }
+
+  /* 链接把地址展开——纸上点不动，得看得见 */
+  a[href^="http"]::after{
+    content:" \A0(" attr(href) ")";
+    font-family:var(--mono); font-size:8.5pt; color:#444; word-break:break-all;
+  }
+  a[href^="tel:"]::after{ content:"" }
+
+  /* 版本记录收在最后一页 */
+  .colo{ break-before:page; padding-top:8mm }
+}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
@@ -362,6 +422,11 @@ tr[hidden]{display:none}
       </p>
     </div>
 
+    <figure class="plate plate-band">
+      <img src="assets/plates/pl-desk.png" alt="侧逆光下的书桌横幅：护照、笔记本、文件夹与黄铜夹" loading="lazy" width="900" height="352">
+      <figcaption><b>图版 零</b>一个申请季的工作面。本刊记录的就是这张桌子上发生的判断。</figcaption>
+    </figure>
+
     <nav class="toc" aria-label="目录">
       <a href="#s1"><span class="n m">§1</span><span class="t">命题<small>PROPOSITION</small></span><span class="p m">01</span></a>
       <a href="#s2"><span class="n m">§2</span><span class="t">方法<small>METHOD</small></span><span class="p m">02</span></a>
@@ -389,7 +454,7 @@ tr[hidden]{display:none}
     </section>
 
     <figure class="plate">
-      <img src="assets/plates/pl-transcript.png" alt="成绩单摊开成叠，一页带钢印，侧逆光下可见纸张层次" loading="lazy" width="860" height="537">
+      <img src="assets/plates/pl-transcript.png" alt="成绩单摊开成叠，一页带钢印，侧逆光下可见纸张层次" loading="lazy" width="760" height="475">
       <figcaption><b>图版 一</b>一份档案的物理形态。判断的对象最终落到这些纸上——每一页都要说得出为什么在这里。</figcaption>
     </figure>
 
@@ -600,7 +665,7 @@ tr[hidden]{display:none}
           <tbody>
             <tr data-t="UG" data-r="UK" data-d="ENG"><td class="k">Imperial College London</td><td class="v">Mechanical Engineering</td><td><span class="tag m">UG</span></td><td><span class="tag m">英国</span></td><td class="v">4A*，STEP II；面试表现突出</td></tr>
             <tr data-t="PG" data-r="UK" data-d="SOC"><td class="k">University of Oxford</td><td class="v">MPhil Economics</td><td><span class="tag m">PG</span></td><td><span class="tag m">英国</span></td><td class="v">一等荣誉，IELTS 8.0；研究轨迹连贯</td></tr>
-            <tr data-t="UG" data-r="UK" data-d="SCI"><td class="k">University of Cambridge</td><td class="v">Chemistry</td><td><span class="tag m">UG</span></td><td><span class="tag m">英国</span></td><td class="v">3A*1A，IELTS 7.5</td></tr>
+            <tr data-t="UG" data-r="UK" data-d="ENG"><td class="k">University of Cambridge</td><td class="v">Chemistry</td><td><span class="tag m">UG</span></td><td><span class="tag m">英国</span></td><td class="v">3A*1A，IELTS 7.5</td></tr>
             <tr data-t="PG" data-r="UK" data-d="BIZ"><td class="k">London School of Economics</td><td class="v">MSc Management</td><td><span class="tag m">PG</span></td><td><span class="tag m">英国</span></td><td class="v">2:1 学位，对口实习</td></tr>
             <tr data-t="UG" data-r="US" data-d="ENG"><td class="k">Stanford University</td><td class="v">Symbolic Systems</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">SAT 1570，已发表研究</td></tr>
             <tr data-t="PG" data-r="US" data-d="ENG"><td class="k">Columbia University</td><td class="v">M.S. Data Science</td><td><span class="tag m">PG</span></td><td><span class="tag m">美国</span></td><td class="v">GRE 330，GPA 3.9</td></tr>
@@ -718,7 +783,7 @@ tr[hidden]{display:none}
         <dt>图表</dt><dd>全部为内联 SVG，无位图。规线随进入视口画出；<code>prefers-reduced-motion</code> 下直接画完。</dd>
         <dt>度量</dt><dd>对比度按 sRGB 通道合成 alpha 后再计算，阈值 4.5:1（大字 3:1）。响应式在 375 / 768 / 1280 / 1440 四档核对无横向溢出。</dd>
         <dt>口径</dt><dd>全文不含录取率、学员总数一类无法核对的统计。案例为往期学员真实录取，背景要点已匿名化。</dd>
-        <dt>照片</dt><dd>无。本刊除微信二维码外不使用任何图片。</dd>
+        <dt>图版</dt><dd>四张（零至三），由物证照片经双色调半色调转制（tools/plate.py），墨与黄铜两色，无损 PNG——网点即印刷品的证据。此外的图像仅微信二维码一张。</dd>
       </dl>
     </footer>
 
