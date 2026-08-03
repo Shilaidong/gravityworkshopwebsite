@@ -283,6 +283,37 @@ async function widths(sid) {
   return ok;
 }
 
+/* ---------- 6. 图 1 联动：强调只加在弧上，默认态完整 ---------- */
+async function fig1(sid) {
+  const r = await evaljs(sid, `(async function(){
+    const svg = document.getElementById('fig1');
+    const steps = [...document.querySelectorAll('#fig1 .fstep')];
+    const op = sel => getComputedStyle(document.querySelector(sel)).opacity;
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const out = {};
+    out.def = { cls: svg.className, allVisible: ['.base','.arc-top','.arc-bot'].every(s => op(s) === '1') };
+    steps[1].dispatchEvent(new MouseEvent('mouseenter'));
+    await wait(400);   // 等 .22s 的 opacity 过渡走完再读
+    out.hover = { cls: svg.className, arcTop: op('.arc-top'), arcBot: op('.arc-bot'), base: op('.base') };
+    steps[1].dispatchEvent(new MouseEvent('mouseleave'));
+    await wait(400);
+    steps[4].dispatchEvent(new FocusEvent('focus'));
+    await wait(400);
+    out.focus = { cls: svg.className, arcTop: op('.arc-top'), arcBot: op('.arc-bot') };
+    steps[4].dispatchEvent(new FocusEvent('blur'));
+    await wait(400);
+    out.cleared = { cls: svg.className, allVisible: ['.base','.arc-top','.arc-bot'].every(s => op(s) === '1') };
+    return out;
+  })()`, true);
+  const ok = !r.def.cls.includes('hl-') && r.def.allVisible
+    && r.hover.cls.includes('hl-top') && r.hover.arcTop === '1' && r.hover.arcBot === '0.25' && r.hover.base === '0.25'
+    && r.focus.cls.includes('hl-bot') && r.focus.arcBot === '1' && r.focus.arcTop === '0.25'
+    && !r.cleared.cls.includes('hl-') && r.cleared.allVisible;
+  console.log(`[fig1] 默认完整=${r.def.allVisible} · hover02→${r.hover.cls}(顶弧 ${r.hover.arcTop}/其余 ${r.hover.base})`
+    + ` · focus05→${r.focus.cls} · 复位完整=${r.cleared.allVisible} ${ok ? '✓' : '✗'}`);
+  return ok;
+}
+
 /* ---------- 驱动 ---------- */
 const chromeProc = await ensureChrome();
 const sid = await connect();
@@ -293,6 +324,7 @@ try {
   if (mode === 'audit' || mode === 'all') ok = await audit(sid) && ok;
   if (mode === 'filters' || mode === 'all') ok = await filters(sid) && ok;
   if (mode === 'contrast' || mode === 'all') ok = await contrast(sid) && ok;
+  if (mode === 'fig1' || mode === 'all') ok = await fig1(sid) && ok;
   if (mode === 'widths' || mode === 'all') ok = await widths(sid) && ok;
   if (mode === 'reduce' || mode === 'all') ok = await reduce(sid) && ok;
   if (mode === 'frames' || mode === 'all') {
