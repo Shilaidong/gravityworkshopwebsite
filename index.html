@@ -231,7 +231,7 @@ td.v .en{display:block;font-family:var(--mono);font-size:11.5px;line-height:18px
 .fgrp{display:flex;flex-wrap:wrap;align-items:center;gap:calc(var(--u)*1)}
 .fgrp>span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--ink-2);margin-right:4px}
-.fbtn{font-family:var(--mono);font-size:11.5px;padding:6px 10px;min-height:32px;
+.fbtn{font-family:var(--mono);font-size:11.5px;padding:6px 12px;min-height:44px;
   border:1px solid var(--rule-2);border-radius:2px;color:var(--ink-2);
   transition:background .16s,color .16s,border-color .16s}
 .fbtn:hover{border-color:var(--ink)}
@@ -240,7 +240,16 @@ td.v .en{display:block;font-family:var(--mono);font-size:11.5px;line-height:18px
 .count{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);
   margin-top:calc(var(--u)*2)}
 .count b{color:var(--brass);font-weight:600}
-.scroller{overflow-x:auto;margin-top:calc(var(--u)*1)}
+.scroller{overflow-x:auto;max-width:100%;margin-top:calc(var(--u)*1);
+  -webkit-overflow-scrolling:touch}
+/* 真正越界的不是记录表——.scroller 一直工作正常（实测 w=335 / scrollWidth=560）。
+   是 §3 §4 §6 §7 那四张裸 <table>：它们在 .tbl 里没有滚动容器，
+   min-content 直接把 documentElement 顶到 391。所以约束加在 .tbl 上。 */
+.scroller table{min-width:560px}
+.tbl{overflow-x:auto}
+.tbl table{min-width:520px}
+/* 祖先链只要有一环没有 min-width:0，内部的 min-content 就会往外顶 */
+.sec,.tbl,.body{min-width:0}
 tr[hidden]{display:none}
 
 /* ---------- 版本记录 ---------- */
@@ -263,12 +272,12 @@ tr[hidden]{display:none}
 .field label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .field input,.field select,.field textarea{
   font:inherit;font-size:14.5px;color:var(--ink);background:transparent;border:0;
-  border-bottom:1px solid var(--rule-2);padding:8px 0;border-radius:0;min-height:40px}
-.field textarea{resize:vertical;min-height:56px}
+  border-bottom:1px solid var(--rule-2);padding:10px 0;border-radius:0;min-height:44px}
+.field textarea{resize:vertical;min-height:64px}
 .field :focus{outline:none;border-bottom-color:var(--brass)}
 .field select{appearance:none;cursor:pointer}
 .sub{font-family:var(--mono);font-size:12px;font-weight:600;border:1px solid var(--ink);
-  padding:9px 16px;border-radius:2px;min-height:40px;
+  padding:11px 18px;border-radius:2px;min-height:44px;
   transition:background .2s,color .2s}
 .sub:hover{background:var(--ink);color:var(--paper)}
 .fnote{font-family:var(--mono);font-size:11.5px;line-height:18px;color:var(--brass);
@@ -280,6 +289,13 @@ tr[hidden]{display:none}
   .colo dt{margin-top:calc(var(--u)*1)}
 }
 
+/* 触摸目标：WCAG 2.5.5 建议 ≥44px。窄屏下把行高与内边距撑够，
+   桌面端靠 hover 精确指针，不必牺牲密度。 */
+@media (pointer:coarse){
+  .toc a{padding:calc(var(--u)*2) 0}
+  .bar a.cta{padding:11px 14px}
+  .colo a,.contact a{display:inline-block;padding:6px 0}
+}
 @media (max-width:860px){
   .sheet{grid-template-columns:1fr}
   .side{order:2}
