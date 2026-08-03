@@ -180,6 +180,17 @@ img{max-width:100%;height:auto;display:block}
   transition:stroke-dashoffset 1.1s var(--ease)}
 .fig.in .draw{stroke-dashoffset:0}
 
+
+/* ---------- 图版：物证，双色调网点 ----------
+   与「图 1–3」那套线条图分开编号：线条图是我们画的，图版是拍下来的物证。
+   网点让它以印刷品的身份进入文档，而不是贴上来的照片。 */
+.plate{margin-top:calc(var(--u)*5)}
+.plate img{width:100%;border:1px solid var(--rule)}
+.plate figcaption{
+  font-family:var(--mono);font-size:11.5px;line-height:18px;color:var(--ink-2);
+  margin-top:calc(var(--u)*1.5);padding-top:calc(var(--u)*1);border-top:1px solid var(--rule)}
+.plate figcaption b{color:var(--brass);font-weight:600;margin-right:8px}
+
 /* ---------- 步骤 ---------- */
 .steps{margin-top:calc(var(--u)*4);border-top:1px solid var(--rule)}
 .step{
@@ -361,6 +372,11 @@ tr[hidden]{display:none}
       </div>
     </section>
 
+    <figure class="plate">
+      <img src="assets/plates/pl-transcript.png" alt="成绩单摊开成叠，一页带钢印，侧逆光下可见纸张层次" loading="lazy" width="860" height="537">
+      <figcaption><b>图版 一</b>一份档案的物理形态。判断的对象最终落到这些纸上——每一页都要说得出为什么在这里。</figcaption>
+    </figure>
+
     <!-- ============ §2 方法 ============ -->
     <section class="sec" id="s2" data-marg="五步不是排队。定位画出的边界决定档案怎么配，档案的实际形状又回过来修正定位。">
       <div class="sec-h"><span class="n m">§2</span><h2>方法<small>Method</small></h2></div>
@@ -531,6 +547,11 @@ tr[hidden]{display:none}
         <p class="en-note">Twenty-one admissions. Filter by level, region and field.</p>
       </div>
 
+      <figure class="plate" style="margin-bottom:calc(var(--u)*2)">
+        <img src="assets/plates/pl-envelopes.png" alt="密封的推荐信封堆叠，可见火漆与邮戳" loading="lazy" width="900" height="562">
+        <figcaption><b>图版 二</b>推荐信。下表二十一例的每一行背后，都有一叠这样的东西。</figcaption>
+      </figure>
+
       <div class="filters" role="group" aria-label="筛选记录">
         <div class="fgrp"><span>层次</span>
           <button class="fbtn" data-f="t" data-v="" aria-pressed="true">全部</button>
@@ -615,6 +636,11 @@ tr[hidden]{display:none}
       <div class="body">
         <p>把不做的事写在明处，比多列几条服务更省双方的时间。</p>
       </div>
+      <figure class="plate">
+        <img src="assets/plates/pl-draft.png" alt="布满批注与删改的手写文书草稿，旁有废弃的揉皱稿纸" loading="lazy" width="900" height="562">
+        <figcaption><b>图版 三</b>一稿到定稿之间。我们改结构、不改声音——代写的东西经不起面试追问。</figcaption>
+      </figure>
+
       <div class="tbl">
         <p class="tbl-h"><b>表 4</b>我们不做什么</p>
         <table>

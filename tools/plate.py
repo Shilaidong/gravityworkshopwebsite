@@ -69,7 +69,9 @@ def press_lut(gray):
     if hi - lo < 24:
         lo, hi = max(0, lo - 12), min(255, hi + 12)
     mid = (lo + hi) / 2
-    return lut([(0, 30), (lo, 30), (mid, 128), (hi, 232), (255, 232)])
+    # 输出抬到 58–246：压在骨白纸上的图版不能太重，否则像三块黑砖，
+    # 也会让网点覆盖率过高、PNG 体积上去。
+    return lut([(0, 58), (lo, 58), (mid, 150), (hi, 246), (255, 246)])
 
 
 def halftone(gray, cell, angle=15):
