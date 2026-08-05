@@ -182,7 +182,7 @@ async function audit(sid) {
 /* ---------- 3. §5 筛选组合 ---------- */
 async function filters(sid) {
   const r = await evaljs(sid, `(function(){
-    const rows = [...document.querySelectorAll('#rec tbody tr')];
+    const rows = [...document.querySelectorAll('#rec tbody tr')].filter(r => r.dataset.t);
     const cN = document.getElementById('cN');
     const btns = [...document.querySelectorAll('.fbtn')];
     const combos = [
@@ -208,18 +208,34 @@ async function filters(sid) {
                  ok: shown === expected && expected === counter && pressedOK });
     }
     reset();
+    // 展开/收起 + 筛选收起的联动
+    const b1 = document.querySelector('[aria-controls="x01"]');
+    const x1 = document.getElementById('x01');
+    b1.click();
+    const opened = !x1.hidden && b1.getAttribute('aria-expanded') === 'true'
+      && b1.querySelector('.xi').textContent === '−';
+    b1.click();
+    const closed = x1.hidden && b1.getAttribute('aria-expanded') === 'false';
+    b1.click();                 // 先展开，再换筛选——应被收起
+    click('t', 'UG');
+    const filterCloses = x1.hidden && b1.getAttribute('aria-expanded') === 'false'
+      && b1.querySelector('.xi').textContent === '+';
+    const expand = { opened, closed, filterCloses };
+    reset();
     const reach = { t: new Set(), r: new Set(), d: new Set() };
     btns.forEach(b => { if (b.dataset.v) reach[b.dataset.f].add(b.dataset.v); });
     const unreachable = rows.filter(r => ['t','r','d'].some(f => !reach[f].has(r.dataset[f])))
       .map(r => r.cells[0].textContent + ' (d=' + r.dataset.d + ')');
-    return { out, afterReset: rows.filter(r => !r.hidden).length, unreachable };
+    return { out, afterReset: rows.filter(r => !r.hidden).length, unreachable, expand };
   })()`);
-  let ok = r.afterReset === 21 && r.unreachable.length === 0;
+  let ok = r.afterReset === 21 && r.unreachable.length === 0
+    && r.expand.opened && r.expand.closed && r.expand.filterCloses;
   for (const c of r.out) {
     console.log(`[filters] ${c.combo.padEnd(26)} 显示 ${c.shown} · 期望 ${c.expected} · 计数器 ${c.counter} ${c.ok ? '✓' : '✗'}`);
     if (!c.ok) ok = false;
   }
   console.log(`[filters] 重置后 ${r.afterReset}/21`
+    + ` · 展开${r.expand.opened ? '✓' : '✗'} 收起${r.expand.closed ? '✓' : '✗'} 筛选收起${r.expand.filterCloses ? '✓' : '✗'}`
     + (r.unreachable.length ? ` · ✗ 任何筛选都到不了的行：${r.unreachable.join('、')}` : ''));
   return ok;
 }

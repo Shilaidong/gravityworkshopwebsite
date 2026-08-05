@@ -285,6 +285,26 @@ td.v .en{display:block;font-family:var(--mono);font-size:11.5px;line-height:18px
   margin-top:calc(var(--u)*1.5)}
 .rec-note .feat-m{color:var(--brass)}
 #rec tr[data-feat] td.k::before{content:"◆ ";color:var(--brass)}
+
+/* ---------- 表 5 案例展开：点学校名，三层细节 ----------
+   瞬时开合零动画；筛选变化时全部收起；打印强制全展开。 */
+.xbtn{display:flex;align-items:baseline;gap:calc(var(--u)*1);cursor:pointer;
+  text-align:left;white-space:nowrap}
+.xn{font-family:var(--mono);font-size:10.5px;color:var(--brass);letter-spacing:.04em}
+.xi{font-family:var(--mono);color:var(--brass);opacity:.45;transition:opacity .15s}
+.xbtn:hover .xi,.xbtn:focus-visible .xi{opacity:1}
+.xbtn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+tr.x>td{padding:0;border-bottom:1px solid var(--rule)}
+.xd{display:grid;grid-template-columns:1fr 1fr 1fr;gap:calc(var(--u)*4);
+  padding:calc(var(--u)*3) calc(var(--u)*2) calc(var(--u)*4) 0}
+.xk{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  color:var(--brass);margin-bottom:6px}
+.xb p{font-size:13.5px;line-height:22px;color:var(--ink-2)}
+.xb a{border-bottom:1px solid var(--rule-2)}
+.xb a:hover{color:var(--brass);border-bottom-color:var(--brass)}
+@media (max-width:860px){
+  .xd{grid-template-columns:1fr;gap:calc(var(--u)*3)}
+}
 /* 真正越界的不是记录表——.scroller 一直工作正常（实测 w=335 / scrollWidth=560）。
    是 §3 §4 §6 §7 那四张裸 <table>：它们在 .tbl 里没有滚动容器，
    min-content 直接把 documentElement 顶到 391。所以约束加在 .tbl 上。 */
@@ -369,7 +389,7 @@ tr[hidden]{display:none}
   html,body{ background:#fff; color:#000; font-size:10.5pt; line-height:15pt }
 
   /* 屏幕专用件一律去掉 */
-  .bar, .filters, .count, .bar a.cta, .sub, .fnote, form button, .skip{ display:none !important }
+  .bar, .filters, .count, .bar a.cta, .sub, .fnote, form button, .skip, .xi{ display:none !important }
 
   /* 双栏塌成单栏：纸上没有 sticky。边注一条不丢——
      三条静态边注挪到刊尾，每节的限定条件收在节尾当脚注印（见下）。 */
@@ -725,7 +745,7 @@ tr[hidden]{display:none}
         </div>
       </div>
       <p class="count m" role="status" aria-live="polite">显示 <b id="cN">21</b> / 21 例</p>
-      <p class="tbl-h" style="margin-top:calc(var(--u)*3)"><b>表 5</b>录取记录（二十一例，往期真实录取，背景已匿名化）</p>
+      <p class="tbl-h" style="margin-top:calc(var(--u)*3)"><b>表 5</b>录取记录（二十一例，往期真实录取，背景已匿名化；点学校名展开细节）</p>
 
       <div class="scroller">
         <table id="rec">
@@ -734,27 +754,132 @@ tr[hidden]{display:none}
             <th scope="col">地区</th><th scope="col">背景要点</th>
           </tr></thead>
           <tbody>
-            <tr data-t="UG" data-r="UK" data-d="ENG" data-feat="1"><td class="k">Imperial College London</td><td class="v">Mechanical Engineering</td><td><span class="tag m">UG</span></td><td><span class="tag m">英国</span></td><td class="v">4A*，STEP II；面试表现突出</td></tr>
-            <tr data-t="PG" data-r="UK" data-d="SOC" data-feat="1"><td class="k">University of Oxford</td><td class="v">MPhil Economics</td><td><span class="tag m">PG</span></td><td><span class="tag m">英国</span></td><td class="v">一等荣誉，IELTS 8.0；研究轨迹连贯</td></tr>
-            <tr data-t="UG" data-r="UK" data-d="ENG"><td class="k">University of Cambridge</td><td class="v">Chemistry</td><td><span class="tag m">UG</span></td><td><span class="tag m">英国</span></td><td class="v">3A*1A，IELTS 7.5</td></tr>
-            <tr data-t="PG" data-r="UK" data-d="BIZ"><td class="k">London School of Economics</td><td class="v">MSc Management</td><td><span class="tag m">PG</span></td><td><span class="tag m">英国</span></td><td class="v">2:1 学位，对口实习</td></tr>
-            <tr data-t="UG" data-r="US" data-d="ENG" data-feat="1"><td class="k">Stanford University</td><td class="v">Symbolic Systems</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">SAT 1570，已发表研究</td></tr>
-            <tr data-t="PG" data-r="US" data-d="ENG" data-feat="1"><td class="k">Columbia University</td><td class="v">M.S. Data Science</td><td><span class="tag m">PG</span></td><td><span class="tag m">美国</span></td><td class="v">GRE 330，GPA 3.9</td></tr>
-            <tr data-t="UG" data-r="US" data-d="ENG" data-feat="1"><td class="k">Cornell University</td><td class="v">Biological Engineering</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">TOEFL 111，ACT 35，9 门 AP</td></tr>
-            <tr data-t="UG" data-r="US" data-d="ENG"><td class="k">UCLA</td><td class="v">Computer Science</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">SAT 1550，GPA 4.0，10 门 AP</td></tr>
-            <tr data-t="PG" data-r="US" data-d="BIZ"><td class="k">Johns Hopkins University</td><td class="v">M.S. Finance</td><td><span class="tag m">PG</span></td><td><span class="tag m">美国</span></td><td class="v">GMAT 740，GPA 3.8</td></tr>
-            <tr data-t="UG" data-r="US" data-d="SOC"><td class="k">Pomona College</td><td class="v">Sociology</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">TOEFL 108，SAT 1500，6 门 AP</td></tr>
-            <tr data-t="UG" data-r="APAC" data-d="BIZ"><td class="k">National University of Singapore</td><td class="v">Business Administration</td><td><span class="tag m">UG</span></td><td><span class="tag m">港新</span></td><td class="v">IB 44/45，领导型课外活动</td></tr>
-            <tr data-t="PG" data-r="APAC" data-d="ENG"><td class="k">Nanyang Technological University</td><td class="v">M.Eng Aerospace</td><td><span class="tag m">PG</span></td><td><span class="tag m">港新</span></td><td class="v">B.Eng with High Honours</td></tr>
-            <tr data-t="UG" data-r="APAC" data-d="ENG"><td class="k">University of Hong Kong</td><td class="v">Electronic Engineering</td><td><span class="tag m">UG</span></td><td><span class="tag m">港新</span></td><td class="v">4A*，长期志愿服务</td></tr>
-            <tr data-t="PG" data-r="APAC" data-d="BIZ"><td class="k">Chinese University of Hong Kong</td><td class="v">M.S. FinTech</td><td><span class="tag m">PG</span></td><td><span class="tag m">港新</span></td><td class="v">GRE 328，四大实习</td></tr>
-            <tr data-t="PG" data-r="APAC" data-d="BIZ"><td class="k">HKUST</td><td class="v">MSc Financial Technology</td><td><span class="tag m">PG</span></td><td><span class="tag m">港新</span></td><td class="v">GRE 325，GPA 3.7</td></tr>
-            <tr data-t="PG" data-r="EU" data-d="ENG" data-feat="1"><td class="k">ETH Zürich</td><td class="v">M.S. Robotics, Systems & Control</td><td><span class="tag m">PG</span></td><td><span class="tag m">欧陆</span></td><td class="v">机械工程本科，GPA 3.95</td></tr>
-            <tr data-t="PG" data-r="EU" data-d="BIZ"><td class="k">INSEAD</td><td class="v">MBA</td><td><span class="tag m">PG</span></td><td><span class="tag m">欧陆</span></td><td class="v">GMAT 730，五年头部科技公司经验</td></tr>
-            <tr data-t="UG" data-r="EU" data-d="BIZ"><td class="k">EHL Hospitality Business School</td><td class="v">B.Sc. Hospitality Management</td><td><span class="tag m">UG</span></td><td><span class="tag m">欧陆</span></td><td class="v">三语，五星级酒店实习</td></tr>
-            <tr data-t="UG" data-r="CA" data-d="BIZ"><td class="k">University of Toronto</td><td class="v">Rotman Commerce</td><td><span class="tag m">UG</span></td><td><span class="tag m">加拿大</span></td><td class="v">IB 43/45，公益组织创办人</td></tr>
-            <tr data-t="UG" data-r="CA" data-d="SOC"><td class="k">McGill University</td><td class="v">Political Science</td><td><span class="tag m">UG</span></td><td><span class="tag m">加拿大</span></td><td class="v">模联主席，IELTS 8.5</td></tr>
-            <tr data-t="PG" data-r="CA" data-d="ENG"><td class="k">University of British Columbia</td><td class="v">M.A.Sc. Civil Engineering</td><td><span class="tag m">PG</span></td><td><span class="tag m">加拿大</span></td><td class="v">GPA 3.8，Co-op 经历</td></tr>
+            <tr data-t="UG" data-r="UK" data-d="ENG" data-feat="1"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x01"><span class="xn m">5·01</span>Imperial College London<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Mechanical Engineering</td><td><span class="tag m">UG</span></td><td><span class="tag m">英国</span></td><td class="v">4A*，STEP II；面试表现突出</td></tr>
+            <tr class="x" id="x01" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年制 MEng，ESAT（数学+物理）后学术面试，官方报录比约 11:1。<a href="https://www.imperial.ac.uk/study/courses/undergraduate/2026/mechanical-engineering/" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>4A*；STEP II 高二暑假完成，笔试门槛比同届提前一年清掉。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>高三全程只做一件事：六轮高压模拟，逐句回看拆解；第五轮起押追问方向，正式面试的力学建模题在射程内。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="UK" data-d="SOC" data-feat="1"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x02"><span class="xn m">5·02</span>University of Oxford<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">MPhil Economics</td><td><span class="tag m">PG</span></td><td><span class="tag m">英国</span></td><td class="v">一等荣誉，IELTS 8.0；研究轨迹连贯</td></tr>
+            <tr class="x" id="x02" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>约 21 个月，研究训练强度高；须 GRE（成功者约 V160/Q164/AW4.5）与不超过 2000 词的书面作业。<a href="https://www.ox.ac.uk/admissions/graduate/courses/mphil-economics" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>一等荣誉，IELTS 8.0；毕业论文做劳动力市场摩擦与工资分布的微观实证，直接延伸为申请的研究提案。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>研究计划三稿：第一稿大得像文献综述，砍到一个可操作的识别策略，用一组自然实验数据讲清因果链条。审稿导师评「问题定义比大多数申请者成熟一档」。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="UK" data-d="ENG"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x03"><span class="xn m">5·03</span>University of Cambridge<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Chemistry</td><td><span class="tag m">UG</span></td><td><span class="tag m">英国</span></td><td class="v">3A*1A，IELTS 7.5</td></tr>
+            <tr class="x" id="x03" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>经 Natural Sciences 入读，ESAT 加学院面试；2025 周期 NatSci 录取成功率约 21.8%。<a href="https://www.undergraduate.study.cam.ac.uk/courses/natural-sciences" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>3A*1A，IELTS 7.5；高一暑假自己联系大学有机化学实验室，跟完两周合成实验，拿到导师推荐信。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>UCAS 文书四段课外经历全砍，只留实验室那两周，把「做了什么—卡在哪—怎么想」写透；正式面试沿这条线被追问近十分钟——预设的战场。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="UK" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x04"><span class="xn m">5·04</span>London School of Economics<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">MSc Management</td><td><span class="tag m">PG</span></td><td><span class="tag m">英国</span></td><td class="v">2:1 学位，对口实习</td></tr>
+            <tr class="x" id="x04" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>一年制 Master's in Management，任何背景可申；GMAT/GRE 按数学背景选交。<a href="https://www.lse.ac.uk/study-at-lse/graduate/masters-in-management" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>2:1 学位；大三暑假在一家战略咨询公司做供应链优化项目，能拆出「发现瓶颈—用数据说服客户改流程」的完整场景。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>从金融转管理：2:1 在金融项目里没优势，管理项目看重实习深度，咨询经历刚好是加分项。背景匹配度分析先于一切投递。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="US" data-d="ENG" data-feat="1"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x05"><span class="xn m">5·05</span>Stanford University<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Symbolic Systems</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">SAT 1570，已发表研究</td></tr>
+            <tr class="x" id="x05" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年制 B.S.，入校后声明专业；校级录取约 3.8%。<a href="https://symsys.stanford.edu/undergraduates/how-declare" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>SAT 1570；高二做用 NLP 分析社交媒体文本中心理健康信号的小型研究，发表在青少年学术期刊。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>活动列表从十几项砍到七项，全部收拢到「人与技术的交互」一条主线——论文把「为什么选 SymSys」的逻辑锁死，散装活动一个不留。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="US" data-d="ENG" data-feat="1"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x06"><span class="xn m">5·06</span>Columbia University<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">M.S. Data Science</td><td><span class="tag m">PG</span></td><td><span class="tag m">美国</span></td><td class="v">GRE 330，GPA 3.9</td></tr>
+            <tr class="x" id="x06" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>30 学分（核心 21 + 选修 ≥9，含 Capstone）；须量化先修与编程基础；GRE 2026 可选。<a href="https://datascience.columbia.edu/education/programs/m-s-in-data-science/admissions/" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>GRE 330，GPA 3.9；本科 NLP 项目里负责数据预处理与特征工程，论文被后续研究引用。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>从 CS 转申 Data Science：对比课程设置与就业走向——统计功底加 NLP 经验在 DSI 有辨识度，在 CS 项目里反而普通。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="US" data-d="ENG" data-feat="1"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x07"><span class="xn m">5·07</span>Cornell University<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Biological Engineering</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">TOEFL 111，ACT 35，9 门 AP</td></tr>
+            <tr class="x" id="x07" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年制 B.S.（≥128 学分，ABET）；CALS 明列微积分与物理等先修。<a href="https://cals.cornell.edu/education/degrees-programs/biological-engineering-major" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>TOEFL 111，ACT 35，9 门 AP；高中三年围绕同一个水质检测课题，从地区科学竞赛做到全国赛拿奖。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>9 门 AP 的节奏是排出来的：高一锁理科核心，高二上实验类，文科放高三——保 GPA，又让难度曲线逐年上升。三年一题，既是学术证据也是坚持的故事。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="US" data-d="ENG"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x08"><span class="xn m">5·08</span>UCLA<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Computer Science</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">SAT 1550，GPA 4.0，10 门 AP</td></tr>
+            <tr class="x" id="x08" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年制 B.S.，按专业录取，test-blind；Fall 2025 CS 录取率 7.3%，录取 GPA 区间约 4.64–4.92。<a href="https://admission.ucla.edu/apply/first-year/first-year-profile/2025/major" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>SAT 1550，GPA 4.0，10 门 AP；自己开发的食堂排队时间预测 App 上架后，真有几百个同学在用。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>四篇 PIQ 整体规划：技术项目、社区贡献、身份认同、学术好奇心各一篇，维度不重叠，每篇只回答招生官一个具体问题。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="US" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x09"><span class="xn m">5·09</span>Johns Hopkins University<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">M.S. Finance</td><td><span class="tag m">PG</span></td><td><span class="tag m">美国</span></td><td class="v">GMAT 740，GPA 3.8</td></tr>
+            <tr class="x" id="x09" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>9/12/15 个月可选；GMAT/GRE 可选；须录制面试与两篇文书。班级画像均值约 GPA 3.52、GMAT 720。<a href="https://carey.jhu.edu/programs/master-science-programs/ms-finance-full-time" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>GMAT 740，GPA 3.8；投行暑期实习跟完一个跨境并购案的财务建模，从假设搭建到敏感性分析。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>拦下直接申 MBA：工作年限只有两年。先读金融硕士积技术深度，两三年后再申 MBA——长期路径比一步到位稳。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="US" data-d="SOC"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x10"><span class="xn m">5·10</span>Pomona College<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Sociology</td><td><span class="tag m">UG</span></td><td><span class="tag m">美国</span></td><td class="v">TOEFL 108，SAT 1500，6 门 AP</td></tr>
+            <tr class="x" id="x10" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年制 B.A.，校级整体录取约 7%，Sociology 无单独门槛。<a href="https://www.pomona.edu/academics/departments/sociology" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>TOEFL 108，SAT 1500，6 门 AP；在社区做了整年流动儿童教育支持，从辅导作业做到帮家长对接入学资源。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>名单推翻重来：从 Top 20 综合大学转攻顶尖文理学院——学术兴趣与文书气质跟小班制、社科资源的匹配度高得多。主文书只写一个具体孩子的转变。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="APAC" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x11"><span class="xn m">5·11</span>National University of Singapore<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Business Administration</td><td><span class="tag m">UG</span></td><td><span class="tag m">港新</span></td><td class="v">IB 44/45，领导型课外活动</td></tr>
+            <tr class="x" id="x11" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年荣誉 BBA，须先修数学；官方 IGP：A 水准 10–90 分位 AAA/C–AAA/A。<a href="https://bba.nus.edu.sg/admissions-scholarships/entry-requirements/" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>IB 44/45；Extended Essay 写东南亚中小企业数字化转型案例分析，答辩拿 A。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>面试框架定为「商业洞察 + 社会影响」：EE 与领导力活动串成一条线，每个回答落到「观察到了什么、做了什么决定」——面试不能变成背成绩单。考官正好从 EE 追问起。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="APAC" data-d="ENG"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x12"><span class="xn m">5·12</span>Nanyang Technological University<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">M.Eng Aerospace</td><td><span class="tag m">PG</span></td><td><span class="tag m">港新</span></td><td class="v">B.Eng with High Honours</td></tr>
+            <tr class="x" id="x12" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>研究型 M.Eng 一至三年，课程加论文；荣誉学位门槛；GRE/GMAT 加分非强制。<a href="https://www.ntu.edu.sg/education/graduate-programme/mae-master-of-engineering" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>B.Eng with High Honours；大学生方程式赛车队负责空气动力学组件，前翼方案通过校内风洞测试。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>方向二选一：复合材料结构还是推进系统。对比两个方向的导师产出与实验室设备后选推进系统——与意向导师课题更契合，套磁回复率马上变高。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="APAC" data-d="ENG"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x13"><span class="xn m">5·13</span>University of Hong Kong<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Electronic Engineering</td><td><span class="tag m">UG</span></td><td><span class="tag m">港新</span></td><td class="v">4A*，长期志愿服务</td></tr>
+            <tr class="x" id="x13" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年 BEng，JS6987 合招首年共通；DSE 计分 Eng+Math+Best 3，M1/M2 优先。<a href="https://www.jupas.edu.hk/en/programme/hku/JS6987/" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>4A*；三年坚持在同一个社区中心教小朋友编程，从 Scratch 一路教到基础 Python。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>文书流水账全删，只留一个瞬间：一个孩子突然理解递归时的表情。从「教别人」反推「我为什么想学电子工程」——因果一收紧，整篇立住。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="APAC" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x14"><span class="xn m">5·14</span>Chinese University of Hong Kong<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">M.S. FinTech</td><td><span class="tag m">PG</span></td><td><span class="tag m">港新</span></td><td class="v">GRE 328，四大实习</td></tr>
+            <tr class="x" id="x14" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>授课型一年，24 学分；成绩单须体现数学与一门编程语言；IELTS 6.5。<a href="https://fintech.erg.cuhk.edu.hk/programme-information/master-science" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>GRE 328；四大审计实习时自己写 Python 脚本，自动核查底稿交叉引用错误，被小组采纳日常使用。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>SOP 从「金融科技将改变世界」砍到审计流程自动化一个切口：从亲手写脚本的体验，讲要学什么、解决什么、毕业后做什么——专业度与可信度翻倍。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="APAC" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x15"><span class="xn m">5·15</span>HKUST<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">MSc Financial Technology</td><td><span class="tag m">PG</span></td><td><span class="tag m">港新</span></td><td class="v">GRE 325，GPA 3.7</td></tr>
+            <tr class="x" id="x15" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>授课型一年，约 30 学分；强烈建议 GMAT/GRE；全日制无最低工作经验。<a href="https://prog-crs.hkust.edu.hk/pgprog/2026-27/msc-fintech" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>GRE 325，GPA 3.7；48 小时区块链黑客松，团队搭出去中心化小额借贷协议原型，拿二等奖。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>中大与科大 FinTech 双 offer 在手做课程对比：中大偏金融建模，科大偏工程实现与区块链——结合黑客松背景与职业方向，选科大。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="EU" data-d="ENG" data-feat="1"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x16"><span class="xn m">5·16</span>ETH Zürich<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">M.S. Robotics, Systems &amp; Control</td><td><span class="tag m">PG</span></td><td><span class="tag m">欧陆</span></td><td class="v">机械工程本科，GPA 3.95</td></tr>
+            <tr class="x" id="x16" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>90 ECTS、约一年半，dossier 评审；非 EU/EFTA 学位常须 GRE（约 Q168）与英语 C1。<a href="https://ethz.ch/en/studies/master/degree-programmes/engineering-sciences/robotics-systems-and-control.html" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>机械工程本科，GPA 3.95；毕设做四自由度协作机械臂的轨迹规划算法，成果发了一篇 IEEE 会议论文。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>动机信从简历罗列重构为问题叙事：从毕设撞上的执行器精度瓶颈讲起，落到非去 ETH 做 sensor-actuator co-design 不可——与意向导师课题直接对接。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="EU" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x17"><span class="xn m">5·17</span>INSEAD<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">MBA</td><td><span class="tag m">PG</span></td><td><span class="tag m">欧陆</span></td><td class="v">GMAT 730，五年头部科技公司经验</td></tr>
+            <tr class="x" id="x17" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>约十个月，GMAT/GRE 不可豁免；班级平均约六年全职经验；文书加两轮校友面试。<a href="https://www.insead.edu/master-programmes/master-business-administration/admissions" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>GMAT 730，五年头部科技公司经验；主导横跨三个时区的产品国际化上线，带 12 人团队，三个月交付。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>推荐人换了三轮：直属经理的故事太日常，最终换跨部门合作过的 VP——「影响力超出直接汇报线」的角度，正对 INSEAD 强调的领导力叙事。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="EU" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x18"><span class="xn m">5·18</span>EHL Hospitality Business School<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">B.Sc. Hospitality Management</td><td><span class="tag m">UG</span></td><td><span class="tag m">欧陆</span></td><td class="v">三语，五星级酒店实习</td></tr>
+            <tr class="x" id="x18" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>约四年（含预备年），英语 C1 加 essay；流程含面试、能力测试与 Motivation Day。<a href="https://www.ehl.edu/en/study/bachelor-degree-in-hospitality/admission-requirements" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>三语；五星级酒店实习遇上大型宴会供应商临时违约，独立协调备选供应商，四小时内完成替换。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>文书从「从小热爱酒店业」改成「运营端发现的效率问题」：真实危机场景做核心段，三语串起跨文化服务线索——对上 EHL 的商业管理定位。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="CA" data-d="BIZ"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x19"><span class="xn m">5·19</span>University of Toronto<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Rotman Commerce</td><td><span class="tag m">UG</span></td><td><span class="tag m">加拿大</span></td><td class="v">IB 43/45，公益组织创办人</td></tr>
+            <tr class="x" id="x19" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>四年 BCom，须完成 Supplemental Application；安省建议中高 80 分，IB 建议中高 30 以上。<a href="https://rotmancommerce.utoronto.ca/future-students/ontario-applicants/" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>IB 43/45；创办帮本地小商户搭线上销售渠道的公益组织，服务二十多家店铺，其中几家线上营收从零做到占比 15%。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>补充文书砍掉「全面发展」的活动罗列，只写公益组织从零到一：特别是一次商户不信任、几乎散伙的失败与后续调整——比堆数量有力得多。</p></div>
+            </div></td></tr>
+            <tr data-t="UG" data-r="CA" data-d="SOC"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x20"><span class="xn m">5·20</span>McGill University<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">Political Science</td><td><span class="tag m">UG</span></td><td><span class="tag m">加拿大</span></td><td class="v">模联主席，IELTS 8.5</td></tr>
+            <tr class="x" id="x20" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>经 Faculty of Arts 入读；美高参考上年门槛；SAT/ACT 可 opt-out。<a href="https://mcgill.ca/undergraduate-admissions/program/political-science" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>模联主席，IELTS 8.5；把一次议事规则争议——两个代表团对动议优先级的理解冲突——写成关于程序正义的短文书。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>补充文书弃旅行经历，换自办的公共政策读书会：选书单、组织讨论、邀请校外嘉宾——展示持续的学术好奇心，比一段见闻有力。</p></div>
+            </div></td></tr>
+            <tr data-t="PG" data-r="CA" data-d="ENG"><td class="k"><button class="xbtn" aria-expanded="false" aria-controls="x21"><span class="xn m">5·21</span>University of British Columbia<span class="xi m" aria-hidden="true">+</span></button></td><td class="v">M.A.Sc. Civil Engineering</td><td><span class="tag m">PG</span></td><td><span class="tag m">加拿大</span></td><td class="v">GPA 3.8，Co-op 经历</td></tr>
+            <tr class="x" id="x21" hidden><td colspan="5"><div class="xd">
+              <div class="xb"><span class="xk">项目实况</span><p>研究型 MASc 十六至二十四个月；GPA 通常 ≥B+；TOEFL iBT 100 或 IELTS 7.0；GRE 非强制。<a href="https://vancouver.calendar.ubc.ca/faculties-colleges-and-schools/faculty-graduate-and-postdoctoral-studies/degree-programs/civil-engineering" target="_blank" rel="noopener">项目页 ↗</a></p></div>
+              <div class="xb"><span class="xk">背景与条件</span><p>GPA 3.8；Co-op 在岩土工程咨询公司做地震响应分析的有限元建模，成果被纳入一座桥梁改造项目的实际评估报告。</p></div>
+              <div class="xb"><span class="xk">关键判断</span><p>SOP 从泛谈「可持续基础设施」收窄到「既有结构抗震性能评估与优化」，与意向导师近三年方向完全对齐——套磁信发出两天就收到详细回复。</p></div>
+            </div></td></tr>
           </tbody>
         </table>
       </div>
@@ -922,7 +1047,7 @@ tr[hidden]{display:none}
   (function(){
     var tbl = document.getElementById("rec");
     if(!tbl) return;
-    var rows = [].slice.call(tbl.tBodies[0].rows);
+    var rows = [].slice.call(tbl.tBodies[0].rows).filter(function(tr){ return tr.dataset.t; });
     var cN = document.getElementById("cN");
     var sel = { t:"", r:"", d:"" };
 
@@ -933,6 +1058,13 @@ tr[hidden]{display:none}
               && (!sel.r || tr.dataset.r === sel.r)
               && (!sel.d || tr.dataset.d === sel.d);
         tr.hidden = !ok;
+        /* 筛选一变全部收起：详情行随母行同隐同显 */
+        var x = tr.nextElementSibling;
+        if(x && x.classList.contains("x")){
+          x.hidden = true;
+          var b = tr.querySelector(".xbtn");
+          if(b){ b.setAttribute("aria-expanded", "false"); b.querySelector(".xi").textContent = "+"; }
+        }
         if(ok) n++;
       });
       cN.textContent = n;
@@ -948,6 +1080,20 @@ tr[hidden]{display:none}
       });
     });
     apply();
+  })();
+
+  /* ---------- 表 5 案例展开：瞬时开合零动画 ---------- */
+  (function(){
+    [].forEach.call(document.querySelectorAll(".xbtn"), function(btn){
+      btn.addEventListener("click", function(){
+        var x = document.getElementById(btn.getAttribute("aria-controls"));
+        if(!x) return;
+        var open = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", String(!open));
+        btn.querySelector(".xi").textContent = open ? "+" : "−";
+        x.hidden = open;
+      });
+    });
   })();
 
   /* ---------- 表单 ----------
