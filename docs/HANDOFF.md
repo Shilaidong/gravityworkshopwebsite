@@ -324,17 +324,27 @@ python3 tools/grade.py art-src/e-interview.jpg interview --crop-bottom 0.04
 
 ---
 
-## 7. 目录约定
+## 7. 部署与目录约定
+
+**线上**：https://gravityfang.lodestaredu.xyz/（Vercel 项目 `gravityfang`，
+团队 laidongs-projects）。CLI 部署时自动挂上了 git 链接——
+**`git push origin main` 即生产部署**，不用再跑 CLI。
+DNS：lodestaredu.xyz 整个 zone 在 Vercel DNS，子域加完即生效。
 
 ```
 index.html            唯一的站点代码文件
-assets/art/           成品图 WebP（= 上线内容）
-assets/fonts/         自托管 OFL 字体（Inter Tight 600/700, Cormorant Italic 400/600）
+assets/plates/        成品图版 PNG（= 上线内容）
+assets/fonts/         自托管 OFL 字体（Plex Mono 400/600，Sans 已撤）
+robots.txt sitemap.xml 检索三件套
+.vercelignore         部署白名单：只上 index.html + assets + 三件套
 tools/                开发工具，不部署
 art-src/              出图原始素材，已 gitignore
 docs/                 计划、交接、参考帧、v3 存档
 COMPANY.md            全部文案的唯一事实源
 ```
+
+**唯一没收口的**：`FORM_ENDPOINT` 仍是空字符串（表单走剪贴板 + 二维码的
+诚实兜底）。要真收线索，业主注册第三方表单服务后把端点填进 `index.html`。
 
 **文案一律取自 `COMPANY.md`**，不要自己编数据或案例。
 该文件里已明确标注哪些是"中介套路"不能用（500+/98% 数字墙、

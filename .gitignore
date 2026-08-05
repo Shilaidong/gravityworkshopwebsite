@@ -24,3 +24,5 @@ art-src/
 # 截图与探针输出
 .shots/
 __pycache__/
+.vercel
+.env*

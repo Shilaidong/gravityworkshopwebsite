@@ -1,0 +1,8 @@
+# 部署只带站点本体：单页 + 资产 + 检索三件套。
+# 其余（录屏、art-src、.shots、tools、docs、.git）一律不上。
+*
+!index.html
+!robots.txt
+!sitemap.xml
+!assets
+!assets/**
