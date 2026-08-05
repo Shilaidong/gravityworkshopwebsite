@@ -284,7 +284,9 @@ td.v .en{display:block;font-family:var(--mono);font-size:11.5px;line-height:18px
 .rec-note{font-family:var(--mono);font-size:11.5px;line-height:18px;color:var(--ink-2);
   margin-top:calc(var(--u)*1.5)}
 .rec-note .feat-m{color:var(--brass)}
-#rec tr[data-feat] td.k::before{content:"◆ ";color:var(--brass)}
+/* 精选 ◆ 要进按钮里当第一个 flex 子项——写在 td.k::before 会被
+   块级按钮顶到文字上面一行（实测撞过一次） */
+#rec tr[data-feat] .xbtn::before{content:"◆ ";color:var(--brass)}
 
 /* ---------- 表 5 案例展开：点学校名，三层细节 ----------
    瞬时开合零动画；筛选变化时全部收起；打印强制全展开。 */
