@@ -327,9 +327,18 @@ python3 tools/grade.py art-src/e-interview.jpg interview --crop-bottom 0.04
 ## 7. 部署与目录约定
 
 **线上**：https://gravityfang.lodestaredu.xyz/（Vercel 项目 `gravityfang`，
-团队 laidongs-projects）。CLI 部署时自动挂上了 git 链接——
-**`git push origin main` 即生产部署**，不用再跑 CLI。
-DNS：lodestaredu.xyz 整个 zone 在 Vercel DNS，子域加完即生效。
+团队 laidongs-projects）。DNS：lodestaredu.xyz 整个 zone 在 Vercel DNS，子域加完即生效。
+
+**部署走 CLI，不走 git push**（2026-08-05 纠正过一次的误判：CLI 部署会附上
+git 元信息，让人以为挂了 GitHub 集成，其实没有——push 完线上不变。
+我验证时只查了"站点还活着"，没查"新内容上线了"，误判就是这么来的）：
+
+```bash
+npx -y vercel@latest deploy --prod --yes --scope laidongs-projects
+# 部完必须 curl 线上验证新内容真的在了，再收工
+```
+
+DNS 无需操作；部署白名单在 `.vercelignore`（只上 index.html + assets + 检索三件套）。
 
 ```
 index.html            唯一的站点代码文件
