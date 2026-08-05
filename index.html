@@ -11,9 +11,29 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="zh_CN">
 <link rel="canonical" href="https://gravityfang.com/">
+<meta property="og:image" content="https://gravityfang.com/assets/plates/pl-transcript.png">
+<meta property="og:image:width" content="760">
+<meta property="og:image:height" content="475">
+<meta property="og:image:alt" content="引力坊图版：一份档案的物理形态，成绩单摊开成叠">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23FBFAF7'/><circle cx='16' cy='16' r='3' fill='%236B4B1A'/><circle cx='16' cy='16' r='10' fill='none' stroke='%236B4B1A' stroke-width='1.2'/></svg>">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "引力坊",
+  "alternateName": "GRAVITY FANG",
+  "description": "面向 G5、常春藤与顶尖硕博申请的精英咨询。顾问做判断，自研系统托住执行。",
+  "url": "https://gravityfang.com/",
+  "telephone": "+86-185-1973-9539",
+  "openingHours": "Mo-Su 09:00-21:00",
+  "areaServed": [
+    { "@type": "City", "name": "北京" },
+    { "@type": "City", "name": "杭州" }
+  ],
+  "knowsLanguage": ["zh-CN", "en"]
+}
+</script>
 <link rel="preload" href="assets/fonts/plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
 
 <style>
 /* ============================================================
@@ -26,11 +46,8 @@
   font-weight:400;font-display:swap}
 @font-face{font-family:"Plex Mono";src:url("assets/fonts/plex-mono-600.woff2") format("woff2");
   font-weight:600;font-display:swap}
-@font-face{font-family:"Plex Sans";src:url("assets/fonts/plex-sans-400.woff2") format("woff2");
-  font-weight:400;font-display:swap}
-@font-face{font-family:"Plex Sans";src:url("assets/fonts/plex-sans-600.woff2") format("woff2");
-  font-weight:600;font-display:swap}
-
+/* Plex Sans 已撤：定义后没有任何元素使用它，两个 40KB 的 woff2 是白付的死重。
+   西文全走 Plex Mono（本刊的主语），中文走系统字体栈。 */
 :root{
   --paper:#FBFAF7;
   --paper-2:#F3F1EC;
@@ -43,7 +60,6 @@
   --brass:#6B4B1A;              /* 只用于编号与数据标记，不做装饰 */
 
   --mono:"Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:"Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --cjk:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
 
   /* 基线网格：8px 基本单位，正文 24px 行距（3 格） */
@@ -70,6 +86,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 img{max-width:100%;height:auto;display:block}
 ::selection{background:var(--brass);color:var(--paper)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* skip link：键盘 Tab 到时浮出，鼠标用户永远看不见它 */
+.skip:focus{
+  position:static;width:auto;height:auto;clip:auto;white-space:normal;
+  display:block;background:var(--ink);color:var(--paper);
+  font-family:var(--mono);font-size:12.5px;padding:10px 16px;
+}
 
 /* 拉丁文与数字一律等宽——这一版的主语 */
 .m{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -305,7 +327,6 @@ tr[hidden]{display:none}
   border-bottom:1px solid var(--rule-2);padding:10px 0;border-radius:0;min-height:44px}
 .field textarea{resize:vertical;min-height:64px}
 .field :focus{outline:none;border-bottom-color:var(--brass)}
-.field select{appearance:none;cursor:pointer}
 .sub{font-family:var(--mono);font-size:12px;font-weight:600;border:1px solid var(--ink);
   padding:11px 18px;border-radius:2px;min-height:44px;
   transition:background .2s,color .2s}
@@ -346,7 +367,7 @@ tr[hidden]{display:none}
   html,body{ background:#fff; color:#000; font-size:10.5pt; line-height:15pt }
 
   /* 屏幕专用件一律去掉 */
-  .bar, .filters, .count, .bar a.cta, .sub, .fnote, form button{ display:none !important }
+  .bar, .filters, .count, .bar a.cta, .sub, .fnote, form button, .skip{ display:none !important }
 
   /* 双栏塌成单栏：纸上没有 sticky。边注一条不丢——
      三条静态边注挪到刊尾，每节的限定条件收在节尾当脚注印（见下）。 */
@@ -404,6 +425,8 @@ tr[hidden]{display:none}
 
 <body>
 
+<a class="sr skip" href="#main">跳到正文</a>
+
 <header class="bar">
   <div class="bar-in">
     <b>引力坊 GRAVITY FANG</b>
@@ -435,7 +458,7 @@ tr[hidden]{display:none}
     </div>
   </aside>
 
-  <main class="main">
+  <main class="main" id="main">
 
     <div class="mast">
       <p class="issue m">
@@ -699,6 +722,7 @@ tr[hidden]{display:none}
         </div>
       </div>
       <p class="count m" role="status" aria-live="polite">显示 <b id="cN">21</b> / 21 例</p>
+      <p class="tbl-h" style="margin-top:calc(var(--u)*3)"><b>表 5</b>录取记录（二十一例，往期真实录取，背景已匿名化）</p>
 
       <div class="scroller">
         <table id="rec">
@@ -791,7 +815,7 @@ tr[hidden]{display:none}
 
       <div class="contact">
         <div>
-          <a class="tel" href="tel:18519739539" data-ev="tel">185 1973 9539</a>
+          <a class="tel" href="tel:18519739539">185 1973 9539</a>
           <p class="m" style="font-size:11.5px;color:var(--ink-2);margin-top:6px">工作时间 9:00 – 21:00 · 北京 · 杭州</p>
           <img class="qr" src="assets/qr-wechat.jpg" alt="添加顾问微信的二维码" loading="lazy" width="132" height="132">
           <p class="m" style="font-size:11.5px;color:var(--ink-2);margin-top:8px">扫码添加顾问</p>
