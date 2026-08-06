@@ -101,6 +101,12 @@ async function frames(sid) {
   const s = [...deltas].sort((a, b) => a - b);
   const med = s[Math.floor(s.length / 2)];
   const p90 = s[Math.floor(s.length * 0.9)];
+  // rAF 不限速说明 Chrome 窗口没吃到 vsync（被遮挡或离屏）——
+  // 量出来的不是真帧率，直接判本次无效，别拿假数据下结论
+  if (med < 8) {
+    console.log(`[frames] 本次无效：中位 ${med.toFixed(1)}ms，rAF 不限速（窗口未吃 vsync），重跑`);
+    return false;
+  }
   const long34 = deltas.filter(d => d > 34).length;
   const long50 = deltas.filter(d => d > 50).length;
   console.log(`[frames] ${deltas.length} 帧：中位 ${med.toFixed(1)}ms（${(1000 / med).toFixed(1)}fps）`
@@ -123,16 +129,19 @@ const countExpr = `(function(){
 })()`;
 
 async function reduce(sid) {
-  // 两侧都从刚 reload 的干净状态量，否则动态边注会把计数带偏
+  // 两侧都从刚 reload 的干净状态量，否则动态边注会把计数带偏；
+  // 字体没就绪时内联元素可能量出 0×0，先等 fonts.ready（实测±2 的假差异）
   await send('Emulation.setEmulatedMedia',
     { features: [{ name: 'prefers-reduced-motion', value: '' }] }, sid);
   await send('Page.reload', {}, sid);
   await new Promise(r => setTimeout(r, 2000));
+  await evaljs(sid, 'document.fonts.ready.then(() => 1)', true);
   const normal = await evaljs(sid, countExpr);
   await send('Emulation.setEmulatedMedia',
     { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] }, sid);
   await send('Page.reload', {}, sid);
   await new Promise(r => setTimeout(r, 2000));
+  await evaljs(sid, 'document.fonts.ready.then(() => 1)', true);
   const rm = await evaljs(sid, `(function(){
     const mm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const offsets = [...document.querySelectorAll('.fig .draw')]

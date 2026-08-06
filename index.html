@@ -227,6 +227,14 @@ img{max-width:100%;height:auto;display:block}
   margin-top:calc(var(--u)*1.5);padding-top:calc(var(--u)*1);border-top:1px solid var(--rule)}
 .plate figcaption b{color:var(--brass);font-weight:600;margin-right:8px}
 
+/* §6 顾问图版三联：肖像也是图版，与全站同一身份 */
+.advs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:calc(var(--u)*3);
+  margin-top:calc(var(--u)*5)}
+.advs .plate{margin-top:0}
+@media (max-width:640px){
+  .advs{grid-template-columns:1fr}
+}
+
 /* 注记层已撤（2026-08-04）：标本注记只在告诉读者「眼睛看不到的东西」时
    才有价值；只标注看得见的特征就是摆设——业主第三轮校准时点名删除。 */
 
@@ -889,8 +897,23 @@ tr[hidden]{display:none}
     </section>
 
     <!-- ============ §6 团队 ============ -->
-    <section class="sec" id="s6" data-marg="资历写在明处，供核对。不用头像卡，也不写成功率。">
+    <section class="sec" id="s6" data-marg="资历写在明处，供核对。肖像是图版，不是头像卡；也不写成功率。">
       <div class="sec-h"><span class="n m">§6</span><h2>团队<small>Team</small></h2></div>
+
+      <div class="advs">
+        <figure class="plate">
+          <img src="assets/plates/pl-mira.png" alt="Mira Shi 肖像图版：户外石狮子旁着红衣，双色调网点" loading="lazy" width="560" height="700">
+          <figcaption><b>图版 四</b>Mira Shi · 创始人 &amp; 首席顾问</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/plates/pl-wilson.png" alt="Dr. Wilson 肖像图版：桌前伏案工作，双色调网点" loading="lazy" width="560" height="700">
+          <figcaption><b>图版 五</b>Dr. Wilson · 学术总监</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/plates/pl-sarah.png" alt="Sarah Chen 肖像图版：戴眼镜着橙色外套，双色调网点" loading="lazy" width="560" height="700">
+          <figcaption><b>图版 六</b>Sarah Chen · 资深顾问</figcaption>
+        </figure>
+      </div>
       <div class="tbl" style="margin-top:calc(var(--u)*4)">
         <p class="tbl-h"><b>表 3</b>顾问资历</p>
         <table>
@@ -987,7 +1010,7 @@ tr[hidden]{display:none}
         <dt>图表</dt><dd>全部为矢量线条图，随阅读逐条画出；系统开启「减弱动态效果」时，直接呈现完整图形。</dd>
         <dt>可读性</dt><dd>文字与底色的对比度全部达到 WCAG AA 无障碍标准；手机、平板、桌面逐档核对，没有横向滚动。</dd>
         <dt>口径</dt><dd>全文不含录取率、学员总数一类无法核对的统计。案例为往期学员真实录取，背景要点已匿名化。</dd>
-        <dt>图版</dt><dd>四张（零至三）：实物照片转成网点印刷版，只用墨与黄铜两色——网点本身就是印刷品的证据。除微信二维码外，本刊不使用其他图片。</dd>
+        <dt>图版</dt><dd>七张（零至六）：照片与肖像画一律转成网点印刷版，只用墨与黄铜两色——网点本身就是印刷品的证据。除微信二维码外，本刊不使用其他图片。</dd>
       </dl>
     </footer>
 
