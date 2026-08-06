@@ -1,4 +1,4 @@
-# 部署只带站点本体：单页 + 资产 + 检索三件套。
+# 部署只带站点本体：单页 + 资产 + 检索三件套 + 表单 API。
 # 其余（录屏、art-src、.shots、tools、docs、.git）一律不上。
 *
 !index.html
@@ -6,3 +6,5 @@
 !sitemap.xml
 !assets
 !assets/**
+!api
+!api/**
