@@ -216,110 +216,97 @@ img{max-width:100%;height:auto;display:block}
 #fig1.hl-bot .fstep:hover,#fig1.hl-bot .fstep:focus{opacity:1}
 #fig1.hl-top .arc-top path,#fig1.hl-bot .arc-bot path{stroke:var(--ink);stroke-width:1.6}
 
-/* ---------- §4 系统静帧电影 ----------
-   墨纸气质假界面；宽屏 sticky 滚帧，窄屏 / 降级 / 打印改纵向叠帧，不吞内容。 */
-.sys-cinema{margin-top:calc(var(--u)*6)}
-.sc-track{position:relative;height:calc(var(--sc-frames,6) * 85vh)}
-.sc-stage{
-  position:sticky;top:calc(var(--bar-h,52px) + 12px);
-  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);
-  gap:calc(var(--u)*3);align-items:start;
-  min-height:calc(100vh - var(--bar-h,52px) - 36px);
-  padding:calc(var(--u)*1) 0 calc(var(--u)*2);
-  background:var(--paper);
-}
-.sc-meta{padding-top:calc(var(--u)*1)}
-.sc-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--brass);margin:0 0 10px}
-.sc-title{font-size:clamp(22px,2.6vw,32px);font-weight:600;letter-spacing:-.02em;
-  line-height:1.2;margin:0 0 12px;color:var(--ink)}
-.sc-body{font-size:14.5px;line-height:24px;color:var(--ink-2);margin:0 0 18px;max-width:34ch}
-.sc-body .en{display:block;font-family:var(--mono);font-size:11.5px;line-height:18px;
-  color:var(--ink-3);margin-top:6px}
-.sc-dots{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.sc-dots button{
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;min-height:32px;
-  padding:4px 10px;border:1px solid var(--rule-2);border-radius:2px;color:var(--ink-3);
-  background:transparent}
-.sc-dots button[aria-current="true"]{border-color:var(--ink);color:var(--ink);background:var(--paper-2)}
-.sc-dots button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
-.sc-screen{
-  position:relative;border:1px solid var(--rule);background:var(--paper-2);
-  min-height:340px;overflow:hidden}
-.sc-frame{display:none;padding:14px 14px 16px}
-.sys-cinema[data-frame="0"] .sc-frame[data-i="0"],
-.sys-cinema[data-frame="1"] .sc-frame[data-i="1"],
-.sys-cinema[data-frame="2"] .sc-frame[data-i="2"],
-.sys-cinema[data-frame="3"] .sc-frame[data-i="3"],
-.sys-cinema[data-frame="4"] .sc-frame[data-i="4"],
-.sys-cinema[data-frame="5"] .sc-frame[data-i="5"]{display:block}
-.sc-win{
-  border:1px solid var(--rule-2);background:var(--paper);
-  box-shadow:0 1px 0 var(--rule)}
-.sc-win-bar{
-  display:flex;align-items:center;gap:6px;padding:7px 10px;
-  border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
-.sc-win-bar .dot{width:7px;height:7px;border-radius:50%;background:var(--rule-2)}
-.sc-win-bar .dot:nth-child(2){background:var(--brass);opacity:.55}
-.sc-win-bar .dot:nth-child(3){background:var(--ink);opacity:.35}
-.sc-win-bar b{margin-left:auto;font-weight:400;color:var(--ink-2)}
-.sc-chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;
-  padding:2px 7px;border:1px solid var(--rule-2);color:var(--brass);margin-right:4px}
-.sc-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-  padding:8px 0;border-bottom:1px solid var(--rule);font-size:12.5px}
-.sc-row:last-child{border-bottom:0}
-.sc-row .k{font-weight:600;color:var(--ink)}
-.sc-row .v{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
-.sc-bar{height:4px;background:var(--rule);margin-top:6px}
-.sc-bar>i{display:block;height:100%;background:var(--ink);opacity:.7}
-.sc-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sc-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.sc-card{border:1px solid var(--rule);padding:10px;background:var(--paper)}
-.sc-card h4{margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:-.01em}
-.sc-card p{margin:0;font-size:11.5px;line-height:17px;color:var(--ink-2)}
-.sc-float{
-  position:absolute;right:18px;bottom:18px;max-width:220px;
-  border:1px solid var(--ink);background:var(--paper);padding:10px 12px;
-  font-size:12px;line-height:18px;box-shadow:3px 3px 0 var(--rule)}
-.sc-float b{display:block;font-family:var(--mono);font-size:10.5px;color:var(--brass);
-  letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-.sc-plane{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
-  gap:1px;background:var(--rule);border:1px solid var(--rule);min-height:200px}
-.sc-quad{background:var(--paper);padding:10px;position:relative}
-.sc-quad .lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+/* ---------- §4 系统标本 ----------
+   与 .steps / 图 1 同构：编号目录 + 就地切换一帧。
+   不劫持滚动（Precision over spectacle / Quiet technology）。 */
+.sys-spec{margin-top:calc(var(--u)*6);border-top:1px solid var(--rule)}
+.ss-head{padding:calc(var(--u)*2) 0 calc(var(--u)*1);
+  font-family:var(--mono);font-size:11.5px;line-height:18px;color:var(--ink-2)}
+.ss-head b{color:var(--brass);font-weight:600;margin-right:8px}
+.ss-layout{
+  display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);
+  gap:calc(var(--u)*3);align-items:start;padding-top:calc(var(--u)*1)}
+.ss-rail{border-top:1px solid var(--rule)}
+.ss-rail button{
+  display:grid;grid-template-columns:28px 1fr;gap:calc(var(--u)*1);
+  width:100%;text-align:left;padding:calc(var(--u)*1.5) 0;
+  border-bottom:1px solid var(--rule);align-items:baseline;min-height:44px}
+.ss-rail button .n{font-family:var(--mono);font-size:12px;color:var(--brass)}
+.ss-rail button .t{font-size:13.5px;font-weight:600;letter-spacing:-.008em;color:var(--ink-2)}
+.ss-rail button .t small{display:block;font-family:var(--mono);font-weight:400;font-size:10.5px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:3px}
+.ss-rail button[aria-selected="true"] .t{color:var(--ink)}
+.ss-rail button[aria-selected="true"]{background:linear-gradient(90deg,var(--paper-2),transparent)}
+.ss-rail button:hover .t{color:var(--ink)}
+.ss-rail button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.ss-pane{border:1px solid var(--rule);background:var(--paper);min-width:0}
+.ss-panel{display:none;padding:calc(var(--u)*2)}
+.sys-spec[data-i="0"] .ss-panel[data-i="0"],
+.sys-spec[data-i="1"] .ss-panel[data-i="1"],
+.sys-spec[data-i="2"] .ss-panel[data-i="2"],
+.sys-spec[data-i="3"] .ss-panel[data-i="3"],
+.sys-spec[data-i="4"] .ss-panel[data-i="4"],
+.sys-spec[data-i="5"] .ss-panel[data-i="5"]{display:block}
+.ss-lede{margin:0 0 calc(var(--u)*2);padding-bottom:calc(var(--u)*1.5);border-bottom:1px solid var(--rule)}
+.ss-lede h3{font-size:18px;font-weight:600;letter-spacing:-.015em;margin:0 0 6px}
+.ss-lede p{margin:0;font-size:13.5px;line-height:22px;color:var(--ink-2);max-width:58ch}
+.ss-lede .en{display:block;font-family:var(--mono);font-size:11.5px;line-height:18px;
+  color:var(--ink-3);margin-top:5px}
+.ss-sheet{border:1px solid var(--rule-2);background:var(--paper-2)}
+.ss-sheet-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);padding:8px 12px;border-bottom:1px solid var(--rule)}
+.ss-sheet-b{padding:12px}
+.ss-chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  padding:2px 7px;border:1px solid var(--rule-2);color:var(--brass);margin:0 4px 8px 0}
+.ss-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:7px 0;border-bottom:1px solid var(--rule);font-size:12.5px}
+.ss-row:last-child{border-bottom:0}
+.ss-row .k{font-weight:600}
+.ss-row .v{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.ss-meter{height:3px;background:var(--rule);margin-top:5px}
+.ss-meter>i{display:block;height:100%;background:var(--ink);opacity:.65}
+.ss-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ss-cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ss-cell{border:1px solid var(--rule);padding:10px;background:var(--paper)}
+.ss-cell h4{margin:0 0 5px;font-size:13px;font-weight:600}
+.ss-cell p{margin:0;font-size:11.5px;line-height:17px;color:var(--ink-2)}
+.ss-scatter{display:grid;gap:8px}
+.ss-scatter .ss-cell:nth-child(1){margin-left:0}
+.ss-scatter .ss-cell:nth-child(2){margin-left:12%}
+.ss-scatter .ss-cell:nth-child(3){margin-left:6%}
+.ss-plane{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+  gap:1px;background:var(--rule);border:1px solid var(--rule);min-height:188px}
+.ss-quad{background:var(--paper);padding:10px;position:relative}
+.ss-quad .lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink-3)}
-.sc-dot{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--ink)}
-.sc-cap{font-family:var(--mono);font-size:11.5px;line-height:18px;color:var(--ink-2);
+.ss-mark{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--ink)}
+.ss-mail{display:grid;grid-template-columns:100px 1fr;min-height:200px}
+.ss-mail nav{border-right:1px solid var(--rule);padding:10px;font-family:var(--mono);
+  font-size:11px;color:var(--ink-2)}
+.ss-mail nav strong{display:block;color:var(--ink);margin-bottom:8px}
+.ss-mail nav p{margin:0 0 5px}
+.ss-mail .list{padding:2px 12px}
+.ss-note{margin-top:10px;padding:8px 10px;border:1px solid var(--rule-2);
+  font-size:12px;line-height:18px;color:var(--ink-2);background:var(--paper)}
+.ss-note b{font-family:var(--mono);font-size:10.5px;color:var(--brass);
+  letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.ss-cap{font-family:var(--mono);font-size:11.5px;line-height:18px;color:var(--ink-2);
   margin-top:calc(var(--u)*2);padding-top:calc(var(--u)*1);border-top:1px solid var(--rule)}
-.sc-cap b{color:var(--brass);font-weight:600;margin-right:8px}
-.sc-chaos{position:relative;height:260px;background:var(--paper-2);border:1px solid var(--rule)}
-.sc-chaos .sc-card{position:absolute;width:42%}
-.sc-chaos .a{left:8%;top:14%;transform:rotate(-3deg)}
-.sc-chaos .b{right:10%;top:28%;transform:rotate(2.5deg);width:38%}
-.sc-chaos .c{left:22%;bottom:12%;transform:rotate(1.5deg);width:46%}
-.sc-mail{display:grid;grid-template-columns:110px 1fr;min-height:240px}
-.sc-mail nav{border-right:1px solid var(--rule);padding:10px;font-family:var(--mono);font-size:11px;color:var(--ink-2)}
-.sc-mail nav strong{display:block;color:var(--ink);margin-bottom:10px}
-.sc-mail nav p{margin:0 0 6px}
-.sc-mail .list{padding:4px 10px}
+.ss-cap b{color:var(--brass);font-weight:600;margin-right:8px}
 @media (max-width:860px){
-  .sc-track{height:auto}
-  .sc-stage{position:static;display:block;min-height:0;padding:0;background:transparent}
-  .sc-meta{margin-bottom:calc(var(--u)*2)}
-  .sc-dots{display:none}
-  .sc-screen{min-height:0;overflow:visible;border:0;background:transparent}
-  .sc-frame{display:block!important;margin-bottom:calc(var(--u)*3);
-    padding:0;border:1px solid var(--rule);background:var(--paper-2)}
-  .sc-frame::before{
-    content:attr(data-label);
-    display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--brass);padding:10px 12px 0}
-  .sc-title[data-live],.sc-body[data-live],.sc-kicker[data-live]{display:none}
-}
-@media (prefers-reduced-motion:reduce){
-  /* 降级不叠帧、不藏字：只取消 sticky 钉屏，JS 落在最后一幕，可见元素数与正常态一致 */
-  .sc-track{height:auto}
-  .sc-stage{position:static;min-height:0;padding:calc(var(--u)*1) 0}
+  .ss-layout{grid-template-columns:1fr;gap:calc(var(--u)*2)}
+  .ss-rail{display:flex;flex-wrap:wrap;gap:6px;border-top:0;padding-bottom:calc(var(--u)*1);
+    border-bottom:1px solid var(--rule)}
+  .ss-rail button{display:inline-flex;align-items:center;gap:6px;width:auto;
+    border:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2);
+    padding:8px 10px;background:transparent}
+  .ss-rail button[aria-selected="true"]{background:var(--ink);border-color:var(--ink)}
+  .ss-rail button[aria-selected="true"] .n,
+  .ss-rail button[aria-selected="true"] .t,
+  .ss-rail button[aria-selected="true"] .t small{color:var(--paper)}
+  .ss-rail button .t small{display:none}
+  .ss-cols,.ss-cols3{grid-template-columns:1fr}
+  .ss-scatter .ss-cell{margin-left:0!important}
 }
 
 /* ---------- 图版：物证，双色调网点 ----------
@@ -527,15 +514,15 @@ tr[hidden]{display:none}
   .sec-h{ break-after:avoid }
   h1,h2,h3{ break-after:avoid }
 
-  /* 静帧电影：纸上叠帧，取消 sticky */
-  .sc-track{height:auto!important}
-  .sc-stage{position:static!important;display:block!important;min-height:0!important;background:transparent!important}
-  .sc-dots,.sc-title[data-live],.sc-body[data-live],.sc-kicker[data-live]{display:none!important}
-  .sc-screen{min-height:0!important;overflow:visible!important;border:0!important;background:transparent!important}
-  .sc-frame{display:block!important;break-inside:avoid;margin-bottom:6mm;padding:3mm;border:1px solid #000}
+  /* 系统标本：纸上按目录全展开 */
+  .ss-rail{display:none!important}
+  .ss-layout{display:block!important}
+  .ss-pane{border:0!important}
+  .ss-panel{display:block!important;break-inside:avoid;margin-bottom:6mm;
+    padding:3mm;border:1px solid #000}
 
   /* 图版与图表不许跨页撕裂 */
-  .plate, .fig, .tbl, figure, table, .sc-frame{ break-inside:avoid }
+  .plate, .fig, .tbl, figure, table, .ss-panel{ break-inside:avoid }
   .plate img{ max-height:120mm; object-fit:contain }
   tr{ break-inside:avoid }
   thead{ display:table-header-group }   /* 长表跨页时表头重复 */
@@ -817,164 +804,169 @@ tr[hidden]{display:none}
         <figcaption><b>系统</b>三端环绕总台，各管一块难事；底层是自动化工具，仍在完善。</figcaption>
       </figure>
 
-      <!-- 静帧电影：从各产品站营销界面抽取，年刊墨纸重画；滚动画帧，窄屏叠放 -->
-      <div class="sys-cinema" id="sys-cinema" data-frame="0" style="--sc-frames:6" aria-label="系统界面演示：滚动切换六幕">
-        <div class="sc-track" id="sc-track">
-          <div class="sc-stage">
-            <div class="sc-meta">
-              <p class="sc-kicker m" data-live id="sc-kicker">幕 1 · Terra</p>
-              <h3 class="sc-title" data-live id="sc-title">散落的申请桌面</h3>
-              <p class="sc-body" data-live id="sc-body">文件夹、微信、任务条分在三处。顾问找一条进度，要开好几个窗口。
-                <span class="en">Folders, chat, and tasks in three places.</span></p>
-              <ol class="sc-dots" id="sc-dots" aria-label="演示幕次">
-                <li><button type="button" data-jump="0" aria-current="true">Terra · 散落</button></li>
-                <li><button type="button" data-jump="1">Terra · 总台</button></li>
-                <li><button type="button" data-jump="2">Life-Echo</button></li>
-                <li><button type="button" data-jump="3">选校 · 路径</button></li>
-                <li><button type="button" data-jump="4">选校 · 沙盘</button></li>
-                <li><button type="button" data-jump="5">申请邮箱</button></li>
-              </ol>
+      <!-- 系统标本：就地切换，不劫持滚动；结构对齐 §2 步骤表 -->
+      <div class="sys-spec" id="sys-spec" data-i="0">
+        <p class="ss-head m"><b>标本</b>六帧界面示意，点左侧编号切换。不是可登录演示站。</p>
+        <div class="ss-layout">
+          <div class="ss-rail" role="tablist" aria-label="系统标本目录">
+            <button type="button" role="tab" id="ss-tab-0" aria-controls="ss-p-0" aria-selected="true" data-i="0">
+              <span class="n">01</span><span class="t">Terra<small>散落桌面</small></span></button>
+            <button type="button" role="tab" id="ss-tab-1" aria-controls="ss-p-1" aria-selected="false" data-i="1">
+              <span class="n">02</span><span class="t">Terra<small>顾问总台</small></span></button>
+            <button type="button" role="tab" id="ss-tab-2" aria-controls="ss-p-2" aria-selected="false" data-i="2">
+              <span class="n">03</span><span class="t">Life-Echo<small>测评报告</small></span></button>
+            <button type="button" role="tab" id="ss-tab-3" aria-controls="ss-p-3" aria-selected="false" data-i="3">
+              <span class="n">04</span><span class="t">选校<small>路径校准</small></span></button>
+            <button type="button" role="tab" id="ss-tab-4" aria-controls="ss-p-4" aria-selected="false" data-i="4">
+              <span class="n">05</span><span class="t">选校<small>组合沙盘</small></span></button>
+            <button type="button" role="tab" id="ss-tab-5" aria-controls="ss-p-5" aria-selected="false" data-i="5">
+              <span class="n">06</span><span class="t">申请邮箱<small>往来归档</small></span></button>
+          </div>
+          <div class="ss-pane">
+            <div class="ss-panel" role="tabpanel" id="ss-p-0" data-i="0" aria-labelledby="ss-tab-0">
+              <div class="ss-lede">
+                <h3>散落的申请桌面</h3>
+                <p>文件夹、微信、任务条分在三处。顾问找一条进度，要开好几个窗口。
+                  <span class="en">Folders, chat, and tasks in three places.</span></p>
+              </div>
+              <div class="ss-sheet">
+                <div class="ss-sheet-h">Before · 申请桌面</div>
+                <div class="ss-sheet-b ss-scatter">
+                  <div class="ss-cell"><h4>文件夹</h4><p>学生档案 · 截止日期 · 文书记录</p></div>
+                  <div class="ss-cell"><h4>微信</h4><p>模考时间确定了吗？竞赛证明发一下。</p></div>
+                  <div class="ss-cell"><h4>任务条</h4><p>今晚提醒 Kira · 未标负责人</p></div>
+                </div>
+              </div>
             </div>
-            <div class="sc-screen" id="sc-screen">
-              <!-- 0 Terra chaos -->
-              <div class="sc-frame" data-i="0" data-label="Terra · 散落"
-                   data-kicker="幕 1 · Terra" data-title="散落的申请桌面"
-                   data-body="文件夹、微信、任务条分在三处。顾问找一条进度，要开好几个窗口。"
-                   data-en="Folders, chat, and tasks in three places.">
-                <div class="sc-chaos" aria-hidden="true">
-                  <div class="sc-card a"><h4>文件夹</h4><p>学生档案 · 截止日期 · 文书记录</p></div>
-                  <div class="sc-card b"><h4>微信</h4><p>模考时间确定了吗？竞赛证明发一下。</p></div>
-                  <div class="sc-card c"><h4>任务条</h4><p>今晚提醒 Kira · 未标负责人</p></div>
-                </div>
+            <div class="ss-panel" role="tabpanel" id="ss-p-1" data-i="1" aria-labelledby="ss-tab-1" hidden>
+              <div class="ss-lede">
+                <h3>归位到一张总台</h3>
+                <p>风险、截止、未完成任务先进入同一个队列。顾问先判轻重，再进单学生工作台。
+                  <span class="en">One calm queue before opening any student.</span></p>
               </div>
-              <!-- 1 Terra desk -->
-              <div class="sc-frame" data-i="1" data-label="Terra · 总台"
-                   data-kicker="幕 2 · Terra" data-title="归位到一张总台"
-                   data-body="风险、截止、未完成任务先进入同一个队列。顾问先判轻重，再进单学生工作台。"
-                   data-en="One calm queue before opening any student.">
-                <div class="sc-win">
-                  <div class="sc-win-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>Terra · 顾问工作台 · Kira</b></div>
-                  <div style="padding:12px">
-                    <div style="margin-bottom:10px">
-                      <span class="sc-chip">今日跟进</span>
-                      <span class="sc-chip">队列 3</span>
-                    </div>
-                    <div class="sc-row"><span class="k">Kira Chen · 文书第 3 稿</span><span class="v">今日 · 高</span></div>
-                    <div class="sc-row"><span class="k">截止提醒 · UCL 材料包</span><span class="v">3 天后</span></div>
-                    <div class="sc-row"><span class="k">家长摘要待发</span><span class="v">待办</span></div>
-                    <div class="sc-grid3" style="margin-top:12px">
-                      <div class="sc-card"><h4>画像</h4><p>目标、背景、证据归位。</p></div>
-                      <div class="sc-card"><h4>年度路径</h4><p>考试、文书、活动排成线。</p></div>
-                      <div class="sc-card"><h4>本周行动</h4><p>策略落成下一项任务。</p></div>
-                    </div>
+              <div class="ss-sheet">
+                <div class="ss-sheet-h">Terra · 顾问工作台 · Kira</div>
+                <div class="ss-sheet-b">
+                  <span class="ss-chip">今日跟进</span><span class="ss-chip">队列 3</span>
+                  <div class="ss-row"><span class="k">Kira Chen · 文书第 3 稿</span><span class="v">今日 · 高</span></div>
+                  <div class="ss-row"><span class="k">截止提醒 · UCL 材料包</span><span class="v">3 天后</span></div>
+                  <div class="ss-row"><span class="k">家长摘要待发</span><span class="v">待办</span></div>
+                  <div class="ss-cols3" style="margin-top:12px">
+                    <div class="ss-cell"><h4>画像</h4><p>目标、背景、证据归位。</p></div>
+                    <div class="ss-cell"><h4>年度路径</h4><p>考试、文书、活动排成线。</p></div>
+                    <div class="ss-cell"><h4>本周行动</h4><p>策略落成下一项任务。</p></div>
                   </div>
                 </div>
               </div>
-              <!-- 2 Life-Echo -->
-              <div class="sc-frame" data-i="2" data-label="Life-Echo"
-                   data-kicker="幕 3 · Life-Echo" data-title="测评收成可行动线索"
-                   data-body="人生故事访谈与大五人格并排放。报告给顾问继续追问的方向，不替人下结论。"
-                   data-en="Structured signals for the next question.">
-                <div class="sc-grid2">
-                  <div class="sc-card" style="background:var(--ink);color:var(--paper);border-color:var(--ink)">
-                    <p class="m" style="font-size:10px;letter-spacing:.14em;color:var(--brass);margin:0 0 8px">STUDENT</p>
-                    <h4 style="color:var(--paper);font-size:20px;margin:0 0 12px">Kira Chen</h4>
-                    <div class="sc-row" style="border-color:rgba(251,250,247,.2)"><span class="k" style="color:var(--paper)">访谈章节</span><span class="v" style="color:var(--brass)">完成</span></div>
-                    <div class="sc-bar"><i style="width:100%;background:var(--brass)"></i></div>
-                    <div class="sc-row" style="border-color:rgba(251,250,247,.2)"><span class="k" style="color:var(--paper)">关键时刻</span><span class="v" style="color:var(--paper);opacity:.7">待继续</span></div>
-                    <div class="sc-bar"><i style="width:58%;background:var(--brass)"></i></div>
-                    <div class="sc-row" style="border:0"><span class="k" style="color:var(--paper)">未来脚本</span><span class="v" style="color:var(--paper);opacity:.7">待继续</span></div>
-                    <div class="sc-bar"><i style="width:36%;background:var(--brass)"></i></div>
+            </div>
+            <div class="ss-panel" role="tabpanel" id="ss-p-2" data-i="2" aria-labelledby="ss-tab-2" hidden>
+              <div class="ss-lede">
+                <h3>测评收成可行动线索</h3>
+                <p>人生故事访谈与大五人格并排放。报告给顾问继续追问的方向，不替人下结论。
+                  <span class="en">Structured signals for the next question.</span></p>
+              </div>
+              <div class="ss-cols">
+                <div class="ss-sheet">
+                  <div class="ss-sheet-h">Student · Kira Chen</div>
+                  <div class="ss-sheet-b">
+                    <div class="ss-row"><span class="k">访谈章节</span><span class="v">完成</span></div>
+                    <div class="ss-meter"><i style="width:100%"></i></div>
+                    <div class="ss-row"><span class="k">关键时刻</span><span class="v">待继续</span></div>
+                    <div class="ss-meter"><i style="width:58%"></i></div>
+                    <div class="ss-row"><span class="k">未来脚本</span><span class="v">待继续</span></div>
+                    <div class="ss-meter"><i style="width:36%"></i></div>
                   </div>
-                  <div class="sc-win">
-                    <div class="sc-win-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>Life-Echo report</b></div>
-                    <div style="padding:12px">
-                      <p class="m" style="font-size:10px;letter-spacing:.12em;color:var(--brass);margin:0 0 8px">BIG FIVE</p>
-                      <div class="sc-row"><span class="k">开放性</span><span class="v">82</span></div>
-                      <div class="sc-bar"><i style="width:82%"></i></div>
-                      <div class="sc-row"><span class="k">尽责性</span><span class="v">74</span></div>
-                      <div class="sc-bar"><i style="width:74%"></i></div>
-                      <div class="sc-row"><span class="k">外向性</span><span class="v">58</span></div>
-                      <div class="sc-bar"><i style="width:58%"></i></div>
-                      <p style="margin:12px 0 0;font-size:12px;line-height:18px;color:var(--ink-2)">报告信号：探索深度 · 写作声音 · 协作偏好 · 压力节奏</p>
-                    </div>
+                </div>
+                <div class="ss-sheet">
+                  <div class="ss-sheet-h">Life-Echo · Big Five</div>
+                  <div class="ss-sheet-b">
+                    <div class="ss-row"><span class="k">开放性</span><span class="v">82</span></div>
+                    <div class="ss-meter"><i style="width:82%"></i></div>
+                    <div class="ss-row"><span class="k">尽责性</span><span class="v">74</span></div>
+                    <div class="ss-meter"><i style="width:74%"></i></div>
+                    <div class="ss-row"><span class="k">外向性</span><span class="v">58</span></div>
+                    <div class="ss-meter"><i style="width:58%"></i></div>
+                    <p style="margin:12px 0 0;font-size:12px;line-height:18px;color:var(--ink-2)">报告信号：探索深度 · 写作声音 · 协作偏好 · 压力节奏</p>
                   </div>
                 </div>
               </div>
-              <!-- 3 School path -->
-              <div class="sc-frame" data-i="3" data-label="选校 · 路径"
-                   data-kicker="幕 4 · 选校沙盘" data-title="先定路径，再铺名单"
-                   data-body="美本主申、英本课程、或双轨。路径定了，后面的组合才有口径，不拿一张总排名往上套。"
-                   data-en="Path before list — read the thesis, not the league table.">
-                <div class="sc-grid3">
-                  <div class="sc-card" style="border-color:var(--ink)">
-                    <span class="sc-chip">推荐</span>
-                    <h4 style="margin-top:8px">美国主申</h4>
-                    <p>以综合评估与院校组合为主线，突出活动深度与长期成长信号。</p>
-                  </div>
-                  <div class="sc-card">
-                    <span class="sc-chip">课程导向</span>
-                    <h4 style="margin-top:8px">英国主申</h4>
-                    <p>课程选择先于学校名单；按院校与课程适配共同筛选。</p>
-                  </div>
-                  <div class="sc-card">
-                    <span class="sc-chip">风险平衡</span>
-                    <h4 style="margin-top:8px">美英双轨</h4>
-                    <p>美国承载广度，英国补课程确定性与战略弹性。</p>
-                  </div>
+            </div>
+            <div class="ss-panel" role="tabpanel" id="ss-p-3" data-i="3" aria-labelledby="ss-tab-3" hidden>
+              <div class="ss-lede">
+                <h3>先定路径，再铺名单</h3>
+                <p>美本主申、英本课程、或双轨。路径定了，后面的组合才有口径，不拿一张总排名往上套。
+                  <span class="en">Path before list: read the thesis, not the league table.</span></p>
+              </div>
+              <div class="ss-cols3">
+                <div class="ss-cell" style="border-color:var(--ink)">
+                  <span class="ss-chip">推荐</span>
+                  <h4>美国主申</h4>
+                  <p>以综合评估与院校组合为主线，突出活动深度与长期成长信号。</p>
+                </div>
+                <div class="ss-cell">
+                  <span class="ss-chip">课程导向</span>
+                  <h4>英国主申</h4>
+                  <p>课程选择先于学校名单；按院校与课程适配共同筛选。</p>
+                </div>
+                <div class="ss-cell">
+                  <span class="ss-chip">风险平衡</span>
+                  <h4>美英双轨</h4>
+                  <p>美国承载广度，英国补课程确定性与战略弹性。</p>
                 </div>
               </div>
-              <!-- 4 School portfolio -->
-              <div class="sc-frame" data-i="4" data-label="选校 · 沙盘"
-                   data-kicker="幕 5 · 选校沙盘" data-title="冲 · 配 · 稳，落在一盘"
-                   data-body="每所学校一张决策卡。组合按档位摆开，策略可导出留存，回头能说清为什么是这一组。"
-                   data-en="Reach, match, safety — one plane, exportable.">
-                <div class="sc-win">
-                  <div class="sc-win-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>策略会 · 组合沙盘</b></div>
-                  <div class="sc-plane" aria-hidden="true">
-                    <div class="sc-quad"><span class="lab">冲刺 Reach</span>
-                      <span class="sc-dot" style="left:28%;top:42%"></span>
-                      <span class="sc-dot" style="left:62%;top:28%"></span></div>
-                    <div class="sc-quad"><span class="lab">匹配 Match</span>
-                      <span class="sc-dot" style="left:40%;top:50%"></span>
-                      <span class="sc-dot" style="left:70%;top:36%"></span>
-                      <span class="sc-dot" style="left:22%;top:64%"></span></div>
-                    <div class="sc-quad"><span class="lab">稳健 Safety</span>
-                      <span class="sc-dot" style="left:48%;top:40%"></span>
-                      <span class="sc-dot" style="left:30%;top:60%"></span></div>
-                    <div class="sc-quad"><span class="lab">彩票 Lottery</span>
-                      <span class="sc-dot" style="left:55%;top:45%"></span></div>
-                  </div>
+            </div>
+            <div class="ss-panel" role="tabpanel" id="ss-p-4" data-i="4" aria-labelledby="ss-tab-4" hidden>
+              <div class="ss-lede">
+                <h3>冲 · 配 · 稳，落在一盘</h3>
+                <p>每所学校一张决策卡。组合按档位摆开，策略可导出留存，回头能说清为什么是这一组。
+                  <span class="en">Reach, match, safety: one plane, exportable.</span></p>
+              </div>
+              <div class="ss-sheet">
+                <div class="ss-sheet-h">策略会 · 组合沙盘</div>
+                <div class="ss-plane" aria-hidden="true">
+                  <div class="ss-quad"><span class="lab">冲刺 Reach</span>
+                    <span class="ss-mark" style="left:28%;top:42%"></span>
+                    <span class="ss-mark" style="left:62%;top:28%"></span></div>
+                  <div class="ss-quad"><span class="lab">匹配 Match</span>
+                    <span class="ss-mark" style="left:40%;top:50%"></span>
+                    <span class="ss-mark" style="left:70%;top:36%"></span>
+                    <span class="ss-mark" style="left:22%;top:64%"></span></div>
+                  <div class="ss-quad"><span class="lab">稳健 Safety</span>
+                    <span class="ss-mark" style="left:48%;top:40%"></span>
+                    <span class="ss-mark" style="left:30%;top:60%"></span></div>
+                  <div class="ss-quad"><span class="lab">彩票 Lottery</span>
+                    <span class="ss-mark" style="left:55%;top:45%"></span></div>
                 </div>
               </div>
-              <!-- 5 MailHub -->
-              <div class="sc-frame" data-i="5" data-label="申请邮箱"
-                   data-kicker="幕 6 · 申请邮箱" data-title="往来不被收件箱淹没"
-                   data-body="申请季邮件集中托管。关键节点留得住；AI 只做翻译与摘要，判断仍在人手里。"
-                   data-en="Correspondence that stays traceable.">
-                <div class="sc-win" style="position:relative">
-                  <div class="sc-win-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>MailHub · 收件箱</b></div>
-                  <div class="sc-mail">
-                    <nav>
-                      <strong>收件箱 23</strong>
-                      <p>星标</p>
-                      <p>草稿</p>
-                      <p>已发送</p>
-                    </nav>
-                    <div class="list">
-                      <div class="sc-row"><span class="k">University of Toronto</span><span class="v">已收</span></div>
-                      <div class="sc-row"><span class="k">USC Admission</span><span class="v">材料</span></div>
-                      <div class="sc-row"><span class="k">University of Edinburgh</span><span class="v">更新</span></div>
-                      <div class="sc-row"><span class="k">UCL Admissions</span><span class="v">更新</span></div>
-                    </div>
+            </div>
+            <div class="ss-panel" role="tabpanel" id="ss-p-5" data-i="5" aria-labelledby="ss-tab-5" hidden>
+              <div class="ss-lede">
+                <h3>往来不被收件箱淹没</h3>
+                <p>申请季邮件集中托管。关键节点留得住；AI 只做翻译与摘要，判断仍在人手里。
+                  <span class="en">Correspondence that stays traceable.</span></p>
+              </div>
+              <div class="ss-sheet">
+                <div class="ss-sheet-h">MailHub · 收件箱</div>
+                <div class="ss-mail">
+                  <nav>
+                    <strong>收件箱 23</strong>
+                    <p>星标</p>
+                    <p>草稿</p>
+                    <p>已发送</p>
+                  </nav>
+                  <div class="list">
+                    <div class="ss-row"><span class="k">University of Toronto</span><span class="v">已收</span></div>
+                    <div class="ss-row"><span class="k">USC Admission</span><span class="v">材料</span></div>
+                    <div class="ss-row"><span class="k">University of Edinburgh</span><span class="v">更新</span></div>
+                    <div class="ss-row"><span class="k">UCL Admissions</span><span class="v">更新</span></div>
                   </div>
-                  <div class="sc-float"><b>AI 摘要</b>邮件已翻译并生成摘要。只作提示，发送前仍由顾问核对。</div>
                 </div>
+                <div class="ss-note"><b>AI 摘要</b>邮件已翻译并生成摘要。只作提示，发送前仍由顾问核对。</div>
               </div>
             </div>
           </div>
         </div>
-        <p class="sc-cap m"><b>演示</b>六幕静帧，自 Terra 总台与三端工具的产品界面抽取；滚动切换，不是可登录的演示站。想细看可预约。</p>
+        <p class="ss-cap m"><b>读法</b>与步骤表同一语法：编号点选，标本就地替换。打印时六帧全部展开。</p>
       </div>
 
       <div class="tbl">
@@ -1338,76 +1330,47 @@ tr[hidden]{display:none}
       }
     }
 
-    cinemaPass();
   }
 
-  /* ---------- §4 静帧电影：宽屏 sticky 滚帧；窄屏 / 降级改叠帧，由 CSS 接管 ---------- */
-  var cinema = document.getElementById("sys-cinema");
-  var scTrack = document.getElementById("sc-track");
-  var scKicker = document.getElementById("sc-kicker");
-  var scTitle = document.getElementById("sc-title");
-  var scBody = document.getElementById("sc-body");
-  var scFrames = cinema ? [].slice.call(cinema.querySelectorAll(".sc-frame")) : [];
-  var scDots = cinema ? [].slice.call(cinema.querySelectorAll(".sc-dots button")) : [];
-  var scCur = -1;
-  var scNarrow = matchMedia("(max-width:860px)");
+  /* ---------- §4 系统标本：就地切换，不进滚动通道 ---------- */
+  (function(){
+    var root = document.getElementById("sys-spec");
+    if(!root) return;
+    var tabs = [].slice.call(root.querySelectorAll('.ss-rail [role="tab"]'));
+    var panels = [].slice.call(root.querySelectorAll(".ss-panel"));
 
-  function scSetFrame(idx){
-    if(!cinema || idx === scCur) return;
-    scCur = idx;
-    cinema.setAttribute("data-frame", String(idx));
-    var fr = scFrames[idx];
-    if(fr && scKicker){
-      scKicker.textContent = fr.getAttribute("data-kicker") || "";
-      scTitle.textContent = fr.getAttribute("data-title") || "";
-      var en = fr.getAttribute("data-en") || "";
-      scBody.innerHTML = (fr.getAttribute("data-body") || "") +
-        (en ? '<span class="en">' + en + "</span>" : "");
+    function show(i){
+      root.setAttribute("data-i", String(i));
+      tabs.forEach(function(tab, n){
+        var on = n === i;
+        tab.setAttribute("aria-selected", String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(function(p, n){
+        if(n === i) p.removeAttribute("hidden");
+        else p.setAttribute("hidden", "");
+      });
     }
-    scDots.forEach(function(btn, n){
-      btn.setAttribute("aria-current", String(n === idx));
-    });
-  }
 
-  function cinemaPass(){
-    if(!cinema || !scTrack || reduce || scNarrow.matches) return;
-    var rect = scTrack.getBoundingClientRect();
-    var total = scTrack.offsetHeight - innerHeight;
-    if(total <= 1){ scSetFrame(0); return; }
-    var passed = Math.min(total, Math.max(0, -rect.top));
-    var p = passed / total;
-    var n = scFrames.length || 6;
-    var idx = Math.min(n - 1, Math.floor(p * n + 0.001));
-    if(p >= 0.985) idx = n - 1;
-    scSetFrame(idx);
-  }
-
-  if(cinema){
-    scSetFrame(0);
-    scDots.forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var jump = Number(btn.getAttribute("data-jump") || 0);
-        if(reduce){
-          scSetFrame(jump);
-          return;
-        }
-        if(scNarrow.matches){
-          var fr = scFrames[jump];
-          if(fr) fr.scrollIntoView({ block:"center", behavior:"smooth" });
-          return;
-        }
-        if(!scTrack) return;
-        var total = scTrack.offsetHeight - innerHeight;
-        var n = scFrames.length || 6;
-        var target = scTrack.getBoundingClientRect().top + scrollY +
-          (total * ((jump + 0.5) / n));
-        scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+    tabs.forEach(function(tab){
+      tab.addEventListener("click", function(){
+        show(Number(tab.getAttribute("data-i") || 0));
+      });
+      tab.addEventListener("keydown", function(e){
+        var i = Number(tab.getAttribute("data-i") || 0);
+        var next = i;
+        if(e.key === "ArrowDown" || e.key === "ArrowRight") next = (i + 1) % tabs.length;
+        else if(e.key === "ArrowUp" || e.key === "ArrowLeft") next = (i - 1 + tabs.length) % tabs.length;
+        else if(e.key === "Home") next = 0;
+        else if(e.key === "End") next = tabs.length - 1;
+        else return;
+        e.preventDefault();
+        show(next);
+        tabs[next].focus();
       });
     });
-    if(!reduce){
-      scNarrow.addEventListener("change", function(){ scCur = -1; cinemaPass(); });
-    }
-  }
+    show(0);
+  })();
 
 
   /* ---------- §5 筛选：品牌说"可核对"，那就让读者真的去核对 ---------- */
